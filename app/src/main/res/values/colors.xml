@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>            <!-- 100%纯白 -->
+    <!-- 主蓝色 - 用于主要按钮、重要文字 -->
+    <color name="primary_blue_100">#FF165DFF</color>  <!-- 100% -->
+    <color name="primary_blue_90">#E6165DFF</color>   <!-- 90% -->
+    <color name="primary_blue_80">#CC165DFF</color>   <!-- 80% -->
+    <!-- 中性灰色系 -->
+    <color name="gray_dark_100">#FF000000</color>          <!-- 100%纯黑 -->
+    <color name="gray_dark_80">#CC000000</color>           <!-- 80%纯黑 -->
+    <color name="gray_dark_73">#BA000000</color>          <!-- 73%纯黑 -->
+
+    <color name="gray_medium">#666666</color>        <!-- 中灰 -->
+    <color name="gray_light">#999999</color>         <!-- 浅灰 -->
+    <color name="gray_lighter">#E0E0E0</color>       <!-- 更浅灰 -->
+    <color name="gray_lightest">#F5F5F5</color>      <!-- 最浅灰 -->
+    <!-- 蓝色系变体 -->
+    <color name="blue_dark">#005B94</color>          <!-- 深蓝 -->
+    <color name="blue_light">#CC60BFFF</color>         <!-- 浅蓝 -->
+    <color name="blue_lightest">#E2EBFF</color>      <!-- 最浅蓝 -->
+    <color name="success_green">#00F48D</color>      <!-- 认证状态 -->
+    <color name="transparent">#00000000</color>      <!-- 透明色 -->
+
+    <color name="color_262626">#FF262626</color>
+    <color name="color_e7e9eb">#FFE7E9EB</color>
+    <color name="color_242c2f">#FF242C2F</color>
+    <color name="color_37474f">#FF37474F</color>
+    <color name="color_8b9fa6">#FF8B9FA6</color>
+    <color name="color_525252">#FF525252</color>
+    <color name="color_00705a">#FF00705A</color>
+    <color name="color_00a987">#FF00A987</color>
+    <color name="color_00897b">#FF00897B</color>
+    <color name="color_519677">#FF519677</color>
+    <color name="color_ebfff1">#FFEBFFF1</color>
+    <color name="color_003f71">#FF003F71</color>
+    <color name="color_008dff">#FF008DFF</color>
+    <color name="color_0d47a1">#FF0D47A1</color>
+    <color name="color_4c7698">#FF4C7698</color>
+    <color name="color_8cc3fb">#FF8CC3FB</color>
+    <color name="color_ff7e7e">#FFFF7E7E</color>
+    <color name="color_ff8c00">#FFFF8C00</color>
+    <color name="color_ffb700">#FFFFB700</color>
+    <color name="color_ffe57d">#FFFFE57D</color>
+    <color name="color_fff2d7">#FFFFF2D7</color>
+    <color name="color_fff7cb">#FFFFF7CB</color>
+    <color name="color_5e5e5e">#FF5E5E5E</color>
+    <color name="color_c7eaff">#FFC7EAFF</color>
+    <color name="color_f1f1f1">#FFF1F1F1</color>
+    <color name="color_a1d5ff">#FFA1D5FF</color>
+    <color name="color_c1e0ff">#FFC1E0FF</color>
+</resources>

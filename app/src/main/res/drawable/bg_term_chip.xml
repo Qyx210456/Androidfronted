@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/gray_lightest" /> <!-- 背景色与整体一致 -->
+    <corners android:radius="12dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/color_f1f1f1" /> <!-- 浅灰边框，更精致 -->
+
+</shape>

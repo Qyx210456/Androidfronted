@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_lightest">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!--vertical垂直布局-->
+
+        <!-- 用户信息容器 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@drawable/bg_profile_header_gradient">
+
+            <!--用户头像-->
+            <ImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="46dp"
+                android:src="@drawable/ic_profile_avatar"
+                android:contentDescription="@string/avatar" />
+
+            <!--用户昵称-->
+            <TextView
+                android:id="@+id/tv_username"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="107dp"
+                android:layout_marginTop="46dp"
+                android:text="@string/text_username"
+                android:textSize="13sp"
+                android:textColor="@color/gray_dark_100"
+                android:gravity="center_vertical" />
+            <!--center_vertical垂直对齐-->
+
+            <!--用户实名认证情况-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="107dp"
+                android:layout_marginTop="69dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <!--horizontal水平布局-->
+
+                <!--实名认证图标-->
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_profile_verified"
+                    android:contentDescription="@string/text_certified" />
+
+                <!--实名认证情况text-->
+                <TextView
+                    android:layout_width="62dp"
+                    android:layout_height="15dp"
+                    android:layout_marginStart="2dp"
+                    android:text="@string/text_certified"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!--用户信用等级情况-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="107dp"
+                android:layout_marginTop="86dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!--信用等级图标-->
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_profile_credit"
+                    android:contentDescription="@string/text_credit_rating" />
+
+                <!--信用等级text-->
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="2dp"
+                    android:text="@string/text_credit_rating"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_dark_100"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- 表单功能列表 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical">
+
+            <!-- 1. 账户与安全 -->
+            <LinearLayout
+                android:id="@+id/item_account_security"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_security_item_gradient"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+                <!--paddingStart,paddingEnd视图的起始边距-->
+
+                <!--账户与安全图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_security"
+                    android:contentDescription="@string/menu_account_security" />
+
+                <!--账户与安全text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_account_security"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 2. 个人信息认证 -->
+            <LinearLayout
+                android:id="@+id/item_personal_auth"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--个人信息认证图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_authentication"
+                    android:contentDescription="@string/menu_personal_info_auth" />
+
+                <!--个人信息认证text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_personal_info_auth"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 3. 我的银行卡 -->
+            <LinearLayout
+                android:id="@+id/item_bank_card"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--我的银行卡图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_bank"
+                    android:contentDescription="@string/menu_my_bank_card" />
+
+                <!--我的银行卡text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_my_bank_card"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 4. 借款记录 -->
+            <LinearLayout
+                android:id="@+id/item_loan_records"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--借款记录图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_loan_history"
+                    android:contentDescription="@string/menu_loan_records" />
+
+                <!--借款记录text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_loan_records"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 5. 还款记录 -->
+            <LinearLayout
+                android:id="@+id/item_repayment_records"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--还款记录图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_repayment"
+                    android:contentDescription="@string/menu_repayment_records" />
+
+                <!--还款记录text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_repayment_records"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 6. 消息中心 -->
+            <LinearLayout
+                android:id="@+id/item_message_center"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--消息中心图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_messages"
+                    android:contentDescription="@string/menu_message_center" />
+
+                <!--消息中心text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_message_center"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 7. 常见问题 -->
+            <LinearLayout
+                android:id="@+id/item_faq"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--常见问题图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_help"
+                    android:contentDescription="@string/menu_faq" />
+
+                <!--常见问题text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_faq"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 8. 用户隐私政策条款 -->
+            <LinearLayout
+                android:id="@+id/item_privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--用户隐私政策条款图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_privacy"
+                    android:contentDescription="@string/menu_privacy_policy" />
+
+                <!--用户隐私政策条款text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_privacy_policy"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+            <!-- 9. 设置 -->
+            <LinearLayout
+                android:id="@+id/item_settings"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!--设置图标-->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_profile_settings"
+                    android:contentDescription="@string/menu_settings" />
+
+                <!--设置text-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:text="@string/menu_settings"
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark_100" />
+
+                <!--查看详情右箭头-->
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile_right"
+                    android:contentDescription="@string/go_detail" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

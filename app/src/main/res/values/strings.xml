@@ -1,0 +1,118 @@
+<resources>
+    <string name="app_name">Android fronted</string>
+
+    <!-- 登录相关 -->
+    <string name="login_banner">您好，\n欢迎使用XXX</string>
+    <string name="login_verification_code">验证码登录</string>
+    <string name="login_password">密码登录</string>
+    <string name="hint_phone_number">请输入手机号码</string>
+    <string name="hint_verification_code">请输入验证码</string>
+    <string name="hint_username">请输入用户名</string>
+    <string name="hint_password">请输入密码</string>
+    <string name="hint_confirm_password">确认密码</string>
+    <string name="btn_login">立即登录</string>
+    <string name="btn_register">立即注册</string>
+    <string name="btn_next">下一步</string>
+    <string name="btn_previous">←上一步</string>
+    <string name="btn_get_verification_code">获取验证码</string>
+    <string name="text_no_account">还没有账号？</string>
+    <string name="text_no_accountA">去注册</string>
+    <string name="text_has_account">已经有账号？</string>
+    <string name="text_has_accountB">去登录</string>
+    <string name="text_forgot_password">忘记密码？</string>
+    <string name="text_register_title">用户注册</string>
+    <string name="text_agree_terms">同意并接受《服务条款》和《隐私政策》</string>
+
+    <!-- 个人信息界面 -->
+    <string name="text_username">Username</string>
+    <string name="text_certified">已实名认证</string>
+    <string name="text_credit_rating">信用等级：优</string>
+
+    <!-- 功能列表 -->
+    <string name="menu_account_security">账户与安全</string>
+    <string name="menu_personal_info_auth">个人信息认证</string>
+    <string name="menu_my_bank_card">我的银行卡</string>
+    <string name="menu_loan_records">借款记录</string>
+    <string name="menu_repayment_records">还款记录</string>
+    <string name="menu_message_center">消息中心</string>
+    <string name="menu_faq">常见问题</string>
+    <string name="menu_privacy_policy">用户隐私政策条款</string>
+    <string name="menu_settings">设置</string>
+
+    <!-- 底部导航 -->
+    <string name="nav_home">首页</string>
+    <string name="nav_loan">贷款</string>
+    <string name="nav_profile">我的</string>
+    <string name="go_detail">进入详情</string>
+    <string name="avatar">用户头像</string>
+
+    <!--首页-->
+    <string name="app_logo">Logo</string>
+    <string name="search_loan_product">搜索贷款产品</string>
+    <!-- 系统公告 -->
+    <string name="system_announcement">系统公告:......</string>
+
+    <!-- 广告相关 -->
+    <string name="advertisements">广告</string>
+    <string name="ad_position">广告位</string>
+
+    <!-- 快捷入口 -->
+    <string name="quick_entry">快捷入口</string>
+
+    <!-- 贷款流程介绍 -->
+    <string name="loan_process_intro">贷款流程介绍</string>
+    <string name="clear_process_and_materials">流程清晰\n材料明确</string>
+
+    <!-- 我的授信额度 -->
+    <string name="my_credit_limit">我的授信额度</string>
+    <string name="credit_confirmation_and_usage">授信确认\n灵活动用</string>
+
+    <!-- 申请进度查询 -->
+    <string name="application_progress_query">申请进度查询</string>
+    <string name="real_time_tracking_and_transparency">实时追踪\n审批透明</string>
+
+    <!-- 热门产品 -->
+    <string name="hot_products">热门产品</string>
+    <string name="xxx_loan">XXX贷</string>
+
+    <!-- 标签和详情 -->
+    <string name="description">低利率，适合长期资金需求</string>
+    <string name="annual_interest_rate">年化利率</string>
+    <string name="highest_limit">最高额度</string>
+    <string name="loan_term">贷款期限</string>
+    <string name="loan_usage">贷款用途</string>
+    <string name="interest_rate_value">XXX%</string>
+    <string name="limit_value">XXX元</string>
+    <string name="term_value">X-X月</string>
+    <string name="learn_more">了解详情</string>
+    <string name="exp_loan_usage">购房、装修、大额消费</string>
+
+    <!--贷款详情页-->
+    <string name="nav_back">返回</string>
+    <string name="loan_limit">贷款额度</string>
+    <string name="repayment_method">还款方式</string>
+    <string name="preferential_policy">优惠政策</string>
+    <string name="product_detail">产品详情</string>
+    <string name="limit_value1">X-X元</string>
+    <string name="example_method">等额本息</string>
+    <string name="example_policy">首月利息减免，审批通过即享</string>
+    <string name="loan_term_value">可选x,x,x,x,x,x期</string>
+    <string name="apply_now">去申请</string>
+
+    <!--贷款申请页-->
+    <string name="loan_apply">贷款申请</string>
+    <string name="true_name">姓名</string>
+    <string name="hint_true_name">请输入真实姓名</string>
+    <string name="phone_number">手机号码</string>
+    <string name="id_card_type">证件类型</string>
+    <string name="id_card_number">证件号码</string>
+    <string name="hint_id_card_number">请输入证件号码</string>
+    <string name="loan_amount">贷款金额</string>
+    <string name="exp_loan_amount1">5000元</string>
+    <string name="exp_loan_amount2">10000元</string>
+    <string name="exp_loan_amount3">20000元</string>
+    <string name="exp_loan_amount4">50000元</string>
+    <string name="exp_loan_term">X期</string>
+    <string name="apply_now2">立即申请</string>
+    <string name="selected_loan_plan">已选贷款方案</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--这是我的界面中用户头像昵称项的渐变背景-->
+    <corners
+        android:bottomLeftRadius="90dp"
+        android:bottomRightRadius="90dp" />
+    <gradient
+        android:startColor="@color/primary_blue_100"
+        android:centerColor="@color/blue_light"
+        android:endColor="@color/blue_lightest"
+        android:angle="270" />
+
+</shape>
