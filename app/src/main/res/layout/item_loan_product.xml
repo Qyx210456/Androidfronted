@@ -1,6 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="9dp"
+    android:background="@drawable/bg_hot_product_item">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 第一行：产品名称 + 描述 -->
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        android:paddingBottom="0dp">
+
+        <!-- 产品名称：左间距 16dp -->
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- 产品描述：仅与名称间距 10dp，无右间距 -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/color_ffe57d"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium" />
+
+    </LinearLayout>
+
+    <!-- 第二行：最高额度、贷款期限（全部terms）、贷款用途 -->
+    <LinearLayout
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/line1"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <!-- 最高额度 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/highest_limit"
+                android:textColor="@android:color/black"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/tvLimitValue"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <!-- 贷款期限（展示所有 terms，如 "3,6,9,12,24,36"）-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/loan_term"
+                android:textColor="@android:color/black"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/tvTermValue"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:ellipsize="end"
+                android:maxLines="1" />
+        </LinearLayout>
+
+        <!-- 贷款用途 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/loan_usage"
+                android:textColor="@android:color/black"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/tvLoanUsage"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 第三行：“了解详情”按钮 -->
+    <TextView
+        android:id="@+id/btnLearnMore"
+        android:layout_width="55dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/line2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_learn_more_button"
+        android:gravity="center"
+        android:text="@string/learn_more"
+        android:textSize="12sp"
+        android:textColor="@color/color_ff8c00"
+        android:fontFamily="sans-serif-medium" />
+
+</RelativeLayout>

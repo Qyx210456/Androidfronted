@@ -33,13 +33,40 @@ public class RegisterStep1Activity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private boolean isConfirmVisible = false;
 
+    // 密码输入规则：8-20位，含大小写字母、数字、特殊字符
+    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_register_step1);
 
         initViews();
+        // 从第二步返回时接收并填充数据
+        receiveDataFromStep2();
         setupClickListeners();
+    }
+
+    // 接收从第二步返回的数据
+    private void receiveDataFromStep2() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            String savedUsername = intent.getStringExtra("USERNAME");
+            String savedPassword = intent.getStringExtra("PASSWORD");
+
+            // 调试信息，确认数据接收
+            if (savedUsername != null || savedPassword != null) {
+                Toast.makeText(this, "已恢复之前填写的数据", Toast.LENGTH_SHORT).show();
+            }
+
+            if (savedUsername != null && etUsername != null) {
+                etUsername.setText(savedUsername);
+            }
+            if (savedPassword != null && etPassword != null && etConfirmPassword != null) {
+                etPassword.setText(savedPassword);
+                etConfirmPassword.setText(savedPassword);
+            }
+        }
     }
 
     private void initViews() {
@@ -49,14 +76,17 @@ public class RegisterStep1Activity extends AppCompatActivity {
         ivTogglePassword = findViewById(R.id.ivTogglePassword);
         ivToggleConfirm = findViewById(R.id.ivToggleConfirmPassword);
         btnNext = findViewById(R.id.btnNext);
-        // 注意：此处不 findViewById(R.id.cbAgreement)，因为 step1 布局中不存在
     }
 
     private void setupClickListeners() {
         ivTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
         ivToggleConfirm.setOnClickListener(v -> toggleConfirmPasswordVisibility());
         btnNext.setOnClickListener(v -> goToStep2());
-        findViewById(R.id.loginLink).setOnClickListener(v -> finish());
+        findViewById(R.id.loginLink).setOnClickListener(v -> {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // 结束当前注册页面，避免回退栈混乱
+        });
     }
 
     private void goToStep2() {
@@ -64,8 +94,24 @@ public class RegisterStep1Activity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         String confirm = etConfirmPassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirm)) {
-            Toast.makeText(this, "请填写所有字段", Toast.LENGTH_SHORT).show();
+        // 逐项校验输入信息完整性及合规性
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "请输入用户名", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!password.matches(PASSWORD_PATTERN)) {
+            Toast.makeText(this, "密码需包含大小写字母、数字和特殊字符（如!@#$%），长度8-20位", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(confirm)) {
+            Toast.makeText(this, "请再次输入密码", Toast.LENGTH_SHORT).show();
             return;
         }
 

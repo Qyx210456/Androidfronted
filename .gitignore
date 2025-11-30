@@ -1,0 +1,26 @@
+# Android Studio IDE files (IGNORE ENTIRE .idea DIRECTORY)
+.idea/
+
+# Module files
+*.iml
+
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Local configuration (SDK path, etc)
+local.properties
+
+# External native builds
+.externalNativeBuild/
+.cxx/
+
+# Captures (screen recordings from emulator)
+captures/
+
+# macOS
+.DS_Store
+
+# Avoid double-ignoring
+# (no need to list individual .idea files if .idea/ is ignored)git rm -r --cached .

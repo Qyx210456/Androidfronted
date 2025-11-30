@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-  
+    <!--首页界面快捷入口处申请进度查询背景图-->
+    <solid android:color="@color/color_8cc3fb"/>
+    <corners android:radius="8dp"/>
 </shape>

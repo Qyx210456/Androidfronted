@@ -1,6 +1,347 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_lightest">
+
+    <!--顶部导航栏-->
+    <RelativeLayout
+        android:id="@+id/top_leading"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/white"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--返回按钮-->
+        <ImageView
+            android:id="@+id/apply_btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_arrow_back"/>
+
+        <!--页面标题，贷款申请-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/loan_apply"
+            android:textColor="@color/color_262626"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+    </RelativeLayout>
+
+    <!--用户基础贷款信息填写-->
+    <LinearLayout
+        android:id="@+id/user_basic_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        app:layout_constraintTop_toBottomOf="@id/top_leading">
+
+        <!--基础信息1：姓名-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/color_f1f1f1"
+            android:dividerPadding="0dp"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+            <!--姓名-->
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="@string/true_name"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/color_262626"
+                android:textSize="15sp"/>
+
+            <!--姓名输入框-->
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:fontFamily="sans-serif"
+                android:hint="@string/hint_true_name"
+                android:textColorHint="#BABABA"
+                android:textSize="15sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+        </LinearLayout>
+
+        <!--基础信息2：手机号码-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/color_f1f1f1"
+            android:dividerPadding="0dp"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:layout_marginTop="16dp">
+
+            <!--手机号码-->
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="@string/phone_number"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/color_262626"
+                android:textSize="15sp"/>
+
+            <!--手机号码输入框-->
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_phone_number"
+                android:textColorHint="#BABABA"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginEnd="0dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+        </LinearLayout>
+
+        <!--证件类型选择-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/color_f1f1f1"
+            android:dividerPadding="0dp"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="@string/id_card_type"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/color_262626"
+                android:textSize="15sp" />
+
+            <Spinner
+                android:id="@+id/spinner_id_type"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:paddingStart="16dp"
+                android:paddingEnd="40dp"
+                android:drawableEnd="@drawable/ic_arrow_drop_down"
+                android:spinnerMode="dropdown"
+                android:gravity="center_vertical" />
+
+        </LinearLayout>
+
+        <!--基础信息3：证件号码-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/color_f1f1f1"
+            android:dividerPadding="0dp"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:layout_marginTop="16dp">
+
+            <!--证件号码-->
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:text="@string/id_card_number"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/color_262626"
+                android:textSize="15sp"/>
+
+            <!--证件号码输入框-->
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_id_card_number"
+                android:textColorHint="#BABABA"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginEnd="0dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+        </LinearLayout>
+
+        <!--基础信息4：已选贷款方案-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/selected_loan_plan"
+                android:textColor="@color/color_262626"
+                android:textSize="15sp" />
+
+            <!-- 方案详情 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_bg"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- 贷款金额 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/loan_amount"
+                        android:textColor="@color/color_262626"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvSelectedAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/gray_dark_100"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+
+                <!-- 年化利率 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/annual_interest_rate"
+                        android:textColor="@color/color_262626"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvSelectedRate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/gray_dark_100"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- 贷款期限 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="贷款年限"
+                        android:textColor="@color/color_262626"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvSelectedLoanPeriod"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/gray_dark_100"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+
+                <!-- 还款方式 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/repayment_method"
+                        android:textColor="@color/color_262626"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvSelectedRepayType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/gray_dark_100"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="还款期数："
+                        android:textColor="@color/color_262626"/>
+                    <TextView
+                        android:id="@+id/tvSelectedTerm"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <!--  贷款方案展示结束 -->
+
+    </LinearLayout>
+
+    <!--立即申请按钮-->
+    <Button
+        android:id="@+id/btn_apply"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/user_basic_messages"
+        android:background="@drawable/bg_button_primary_rounded"
+        app:backgroundTint="@null"
+        android:text="@string/apply_now2"
+        android:textColor="@color/color_ffb700"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

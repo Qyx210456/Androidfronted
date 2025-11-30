@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-  
+    <!--首页系统公告渐变背景-->
+    <gradient
+        android:startColor="@color/color_a1d5ff"
+        android:centerColor="@color/color_c1e0ff"
+        android:endColor="@color/blue_lightest"
+        android:angle="0" />
+    <corners android:radius="8dp" />
 </shape>

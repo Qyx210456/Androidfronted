@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -9,26 +10,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AndroidFronted">
+        android:theme="@style/Theme.AndroidFronted"
+        android:usesCleartextTraffic="true">
 
-
-        <activity android:name=".ui.RegisterStep1Activity" />
-        <activity android:name=".ui.RegisterStep2Activity" />
-
+        <!-- MainActivity 作为主入口 -->
         <activity
-            android:name=".ui.LoginActivity"
-            android:exported="true">
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.MainActivity" />
+        <!-- LoginActivity 作为登录页，不导出 -->
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="false" />
+
+        <!-- 其他 Activity -->
+        <activity android:name=".ui.RegisterStep1Activity" />
+        <activity android:name=".ui.RegisterStep2Activity" />
         <activity
             android:name=".ui.ProductDetailActivity"
-            android:exported="false"
-            android:parentActivityName=".ui.MainActivity" />
+            android:exported="false" />
         <activity android:name=".ui.ProductApplyActivity" />
 
     </application>

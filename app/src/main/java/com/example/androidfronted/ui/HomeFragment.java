@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,14 +32,12 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvProducts;
     private LoanProductAdapter adapter;
     private LoanProductRepository repository;
-    private List<LoanProduct> productList;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         repository = new LoanProductRepository(requireContext());
-        productList = new ArrayList<>();
         adapter = new LoanProductAdapter();
     }
 
@@ -59,18 +58,36 @@ public class HomeFragment extends Fragment {
         loadLoanProducts();
     }
 
+    // HomeFragment调试信息 - 添加加载状态
     private void loadLoanProducts() {
-        repository.getLoanProducts(new LoanProductRepository.AuthCallback<>() { // 类型推断
+        Log.d("HomeFragment", "开始加载贷款产品...");
+
+        // 显示加载状态
+        if (getView() != null) {
+            getView().findViewById(R.id.loading_indicator).setVisibility(View.VISIBLE);
+        }
+
+        repository.getLoanProducts(new LoanProductRepository.AuthCallback<>() {
             @Override
             public void onSuccess(LoanProductResponse response) {
-                productList.clear();
-                productList.addAll(response.getData());
-                adapter.notifyDataSetChanged();
+                Log.d("HomeFragment", "成功加载 " + response.getData().size() + " 个产品");
+                adapter.setProducts(response.getData());
+
+                // 隐藏加载状态
+                if (getView() != null) {
+                    getView().findViewById(R.id.loading_indicator).setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void onError(String errorMessage) {
+                Log.e("HomeFragment", "加载失败: " + errorMessage);
                 Toast.makeText(getContext(), "加载失败: " + errorMessage, Toast.LENGTH_SHORT).show();
+
+                // 隐藏加载状态
+                if (getView() != null) {
+                    getView().findViewById(R.id.loading_indicator).setVisibility(View.GONE);
+                }
             }
         });
     }

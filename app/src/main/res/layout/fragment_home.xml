@@ -328,6 +328,15 @@
                 android:textColor="@color/color_262626"
                 android:fontFamily="sans-serif-medium" />
 
+            <!-- 在 fragment_home.xml 的 RecyclerView 前面添加 -->
+            <ProgressBar
+                android:id="@+id/loading_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:visibility="gone" />
+
             <!-- 产品列表 -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_loan_products"
