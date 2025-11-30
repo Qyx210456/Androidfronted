@@ -3,6 +3,9 @@ package com.example.androidfronted.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,10 +37,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         // 绑定产品基本信息
-        TextView tvProductName = findViewById(R.id.tvProductName);
-        TextView tvDescription = findViewById(R.id.tvDescription);
-        tvProductName.setText(product.getProductName());
-        tvDescription.setText(product.getDescription());
+        bindProductInfo();
 
         // 设置还款期数 Spinner
         setupTermSpinner();
@@ -46,8 +46,76 @@ public class ProductDetailActivity extends AppCompatActivity {
         bindOptions();
     }
 
-    private void setupTermSpinner() {
+    private void bindProductInfo() {
+        TextView tvProductName = findViewById(R.id.tvProductName);
+        TextView tvDescription = findViewById(R.id.tvDescription);
+        TextView tvLoanUsage = findViewById(R.id.tvLoanUsage);
+        TextView tvPromotionDetails = findViewById(R.id.tvPromotionDetails);
 
+        // 绑定产品名称和描述
+        tvProductName.setText(product.getProductName());
+        tvDescription.setText(product.getDescription());
+
+        // 绑定贷款用途
+        if (product.getLoanUsage() != null && !product.getLoanUsage().isEmpty()) {
+            tvLoanUsage.setText(product.getLoanUsage());
+        } else {
+            tvLoanUsage.setText("暂无说明");
+        }
+
+        // 绑定优惠政策
+        if (product.getPromotionDetails() != null && !product.getPromotionDetails().isEmpty()) {
+            tvPromotionDetails.setText(product.getPromotionDetails());
+        } else {
+            tvPromotionDetails.setText("暂无优惠");
+        }
+    }
+
+    private void setupTermSpinner() {
+        Spinner spinnerTerm = findViewById(R.id.spinnerTerm);
+
+        if (product.getTerms() != null && !product.getTerms().isEmpty()) {
+            // 将整数列表转换为字符串列表
+            String[] termArray = new String[product.getTerms().size()];
+            for (int i = 0; i < product.getTerms().size(); i++) {
+                termArray[i] = product.getTerms().get(i) + "期";
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    termArray
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerTerm.setAdapter(adapter);
+
+            // 设置默认选择第一个
+            spinnerTerm.setSelection(0);
+            selectedTerm = product.getTerms().get(0);
+
+            // 设置选择监听器
+            spinnerTerm.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selectedTerm = product.getTerms().get(position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    selectedTerm = -1;
+                }
+            });
+        } else {
+            // 如果没有terms数据，显示提示
+            String[] noTerms = {"暂无期数可选"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    noTerms
+            );
+            spinnerTerm.setAdapter(adapter);
+            spinnerTerm.setEnabled(false);
+        }
     }
 
     private void bindOptions() {
