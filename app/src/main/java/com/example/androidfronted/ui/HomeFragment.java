@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import android.util.Log;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +56,14 @@ public class HomeFragment extends Fragment {
         rvProducts.setLayoutManager(new LinearLayoutManager(getContext()));
         rvProducts.setAdapter(adapter);
 
+        //了解详情监听器
+        adapter.setOnLearnMoreClickListener(product -> {
+            Log.d("HomeFragment", "点击产品: " + product.getProductName());
+
+            Intent intent = new Intent(getActivity(), ProductDetailActivity.class);
+            intent.putExtra("loan_product", product);
+            startActivity(intent);
+        });
         loadLoanProducts();
     }
 
