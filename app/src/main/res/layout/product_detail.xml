@@ -36,7 +36,7 @@
     </RelativeLayout>
 
     <!-- 内容区域 -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -84,7 +84,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end" />
+                    android:gravity="end"
+                    android:singleLine="false"
+                    android:maxLines="5"
+                    android:ellipsize="end"/>
+
             </LinearLayout>
 
             <!-- 贷款用途 -->
@@ -104,7 +108,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end" />
+                    android:gravity="end"
+                    android:singleLine="false"
+                    android:maxLines="3"
+                    android:ellipsize="end"/>
             </LinearLayout>
 
             <!-- 优惠政策 -->
@@ -124,7 +131,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end" />
+                    android:gravity="end"
+                    android:singleLine="false"
+                    android:maxLines="3"
+                    android:ellipsize="end"/>
             </LinearLayout>
 
             <!-- 可选还款期数（terms） -->
@@ -163,7 +173,27 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
 
+            <!-- 留出空间给底部按钮 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
         </LinearLayout>
-    </ScrollView>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- “去申请”按钮（固定底部） -->
+    <Button
+        android:id="@+id/btnApplyGlobal"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_primary_rounded"
+        app:backgroundTint="@null"
+        android:text="去申请"
+        android:textColor="@color/color_ffb700"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

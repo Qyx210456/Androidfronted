@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--贷款详情页中option被选中时的边框颜色改变，变为：ff8c00-->
+    <solid android:color="@color/white" />
+    <stroke android:width="2dp" android:color="@color/color_ff8c00" />
+    <corners android:radius="5dp" />
+</shape>

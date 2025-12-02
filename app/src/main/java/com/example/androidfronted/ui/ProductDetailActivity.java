@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,9 @@ import java.util.List;
 public class ProductDetailActivity extends AppCompatActivity {
 
     private LoanProduct product;
-    private int selectedTerm = -1; // 用户在顶部 Spinner 中选择的期数
+    private int selectedTerm = -1;// 用户在顶部 Spinner 中选择的期数
+    private LoanProduct.LoanOption selectedOption = null;
+    private LoanOptionAdapter optionAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,25 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         // 绑定贷款方案列表
         bindOptions();
+
+        Button btnApplyGlobal = findViewById(R.id.btnApplyGlobal);
+
+        btnApplyGlobal.setOnClickListener(v -> {
+            //  必须选择 term 和 option
+            if (selectedTerm <= 0) {
+                Toast.makeText(this, "请选择还款期数", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedOption == null) {
+                Toast.makeText(this, "请选择贷款方案", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(ProductDetailActivity.this, ProductApplyActivity.class);
+            intent.putExtra("selected_option", selectedOption);
+            intent.putExtra("selected_term", selectedTerm);
+            intent.putExtra("product_id", product.getProductId());
+            startActivity(intent);
+        });
     }
 
     private void bindProductInfo() {
@@ -122,19 +144,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.rvOptions);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        LoanOptionAdapter adapter = new LoanOptionAdapter(product.getOptions(), option -> {
-            if (selectedTerm <= 0) {
-                android.widget.Toast.makeText(this, "请选择还款期数", android.widget.Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Intent intent = new Intent(ProductDetailActivity.this, ProductApplyActivity.class);
-            intent.putExtra("selected_option", option);      // 完整对象
-            intent.putExtra("selected_term", selectedTerm);  // 用户选的 term
-            intent.putExtra("product_id", product.getProductId());  // 产品 ID（用于校验）
-            startActivity(intent);
+        optionAdapter = new LoanOptionAdapter(product.getOptions(), option -> {
+            selectedOption = option;
         });
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(optionAdapter);
     }
 }

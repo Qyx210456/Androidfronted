@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="8dp"
+        android:paddingTop="10dp"
         android:paddingBottom="0dp">
 
         <!-- 产品名称：左间距 16dp -->
@@ -41,25 +41,27 @@
 
     </LinearLayout>
 
-    <!-- 第二行：最高额度、贷款期限（全部terms）、贷款用途 -->
+    <!-- 第二行：最高额度、贷款期限、贷款用途 -->
     <LinearLayout
         android:id="@+id/line2"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/line1"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <!-- 最高额度 -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingVertical="9dp">
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/highest_limit"
@@ -68,23 +70,24 @@
             <TextView
                 android:id="@+id/tvLimitValue"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textColor="@color/color_ff5900"
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- 贷款期限（展示所有 terms，如 "3,6,9,12,24,36"）-->
+        <!-- 贷款期限（terms只显示 min-max：如 "3-24"）-->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingVertical="9dp">
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/loan_term"
@@ -93,11 +96,11 @@
             <TextView
                 android:id="@+id/tvTermValue"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textColor="@android:color/black"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:ellipsize="end"
                 android:maxLines="1" />
         </LinearLayout>
@@ -105,13 +108,14 @@
         <!-- 贷款用途 -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingVertical="9dp">
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/loan_usage"
@@ -120,11 +124,11 @@
             <TextView
                 android:id="@+id/tvLoanUsage"
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -141,7 +145,7 @@
         android:background="@drawable/bg_learn_more_button"
         android:gravity="center"
         android:text="@string/learn_more"
-        android:textSize="12sp"
+        android:textSize="13sp"
         android:textColor="@color/color_ff8c00"
         android:fontFamily="sans-serif-medium" />
 

@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--贷款详情页中option未被选中时的背景颜色：白色-->
+    <solid android:color="@color/white" />
+    <corners android:radius="5dp" />
+</shape>

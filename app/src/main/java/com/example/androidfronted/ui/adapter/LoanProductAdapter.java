@@ -11,6 +11,7 @@ import com.example.androidfronted.data.model.LoanProduct;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * 贷款产品列表适配器
@@ -120,8 +121,16 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
             // 绑定描述
             tvDescription.setText(product.getDescription());
 
-            // 绑定贷款用途
-            tvLoanUsage.setText(product.getLoanUsage());
+            // 绑定贷款用途,最多展示6个字，其余用省略号
+            String usage = product.getLoanUsage();
+            if (usage != null && !usage.isEmpty()) {
+                if (usage.length() > 6) {
+                    usage = usage.substring(0, 6) + "…";
+                }
+            } else {
+                usage = "暂无说明";
+            }
+            tvLoanUsage.setText(usage);
 
             //  计算最高额度：遍历所有 options，取 loanAmount 最大值
             double maxAmount = 0;
@@ -137,13 +146,19 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
                 tvLimitValue.setText("--");
             }
 
-            //展示所有 terms：如 "3,6,12,24"
-            if (product.getTerms() != null && !product.getTerms().isEmpty()) {
-                String termsText = android.text.TextUtils.join(",", product.getTerms());
-                tvTermValue.setText(termsText);
-            } else {
-                tvTermValue.setText("--");
+            //terms只显示 min-max：如 "3-24"
+            String termsText = "--";
+            List<Integer> terms = product.getTerms();
+            if (terms != null && !terms.isEmpty()) {
+                int min = Collections.min(terms);
+                int max = Collections.max(terms);
+                if (min == max) {
+                    termsText = String.valueOf(min);
+                } else {
+                    termsText = min + "-" + max;
+                }
             }
+            tvTermValue.setText(termsText);
 
             // 设置“了解详情”按钮点击事件
             btnLearnMore.setOnClickListener(v -> {

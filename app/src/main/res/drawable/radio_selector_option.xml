@@ -1,0 +1,5 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--切换圆环颜色-->
+    <item android:state_checked="true" android:drawable="@drawable/ic_radio_selected" />
+    <item android:drawable="@drawable/ic_radio_unselected" />
+</selector>

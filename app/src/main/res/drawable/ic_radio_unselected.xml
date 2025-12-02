@@ -1,0 +1,6 @@
+<shape android:shape="oval" xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--option右上角未被选中状态下的圆环button-->
+    <stroke android:width="2dp" android:color="#CCCCCC" />
+    <solid android:color="@android:color/transparent" />
+    <size android:width="24dp" android:height="24dp" />
+</shape>

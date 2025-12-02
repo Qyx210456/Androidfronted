@@ -32,7 +32,7 @@
     <string name="menu_account_security">账户与安全</string>
     <string name="menu_personal_info_auth">个人信息认证</string>
     <string name="menu_my_bank_card">我的银行卡</string>
-    <string name="menu_loan_records">借款记录</string>
+    <string name="menu_loan_records">申请记录</string>
     <string name="menu_repayment_records">还款记录</string>
     <string name="menu_message_center">消息中心</string>
     <string name="menu_faq">常见问题</string>

@@ -5,7 +5,24 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:layout_marginTop="9dp">
+
+    <!-- 右上角选择按钮 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <RadioButton
+            android:id="@+id/rbSelected"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:button="@null"
+            android:background="@drawable/radio_selector_option" />
+    </FrameLayout>
 
     <!-- 贷款金额 -->
     <LinearLayout
@@ -86,18 +103,5 @@
             android:layout_weight="1"
             android:gravity="end" />
     </LinearLayout>
-
-    <!-- 申请按钮 -->
-    <Button
-        android:id="@+id/btnApply"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_button_primary_rounded"
-        app:backgroundTint="@null"
-        android:text="去申请"
-        android:textColor="@color/color_ffb700"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
 
 </LinearLayout>
