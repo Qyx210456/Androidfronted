@@ -44,6 +44,15 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
     private File socialSecurityFile;
     private File creditReportFile;
 
+    private String getMimeType(String filePath) {
+        String type = null;
+        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(filePath);
+        if (extension != null) {
+            type = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -189,15 +198,19 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
             okhttp3.RequestBody creditReportRequestBody = null;
             
             if (socialSecurityFile != null) {
+                String mimeType = getMimeType(socialSecurityFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 socialSecurityRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     socialSecurityFile
                 );
             }
             
             if (creditReportFile != null) {
+                String mimeType = getMimeType(creditReportFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 creditReportRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     creditReportFile
                 );
             }

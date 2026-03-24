@@ -286,32 +286,38 @@ public class RemoteDataSource {
                 .addFormDataPart("bankCardId", bankCardId);
 
         if (propertyFile != null) {
-            builder.addFormDataPart("propertyFile", "property_" + System.currentTimeMillis(), propertyFile);
+            String extension = getFileExtension(propertyFile);
+            builder.addFormDataPart("propertyFile", "property_" + System.currentTimeMillis() + extension, propertyFile);
         } else {
             builder.addFormDataPart("propertyFile", "");
         }
         if (carFile != null) {
-            builder.addFormDataPart("carFile", "car_" + System.currentTimeMillis(), carFile);
+            String extension = getFileExtension(carFile);
+            builder.addFormDataPart("carFile", "car_" + System.currentTimeMillis() + extension, carFile);
         } else {
             builder.addFormDataPart("carFile", "");
         }
         if (employmentFile != null) {
-            builder.addFormDataPart("employmentFile", "employment_" + System.currentTimeMillis(), employmentFile);
+            String extension = getFileExtension(employmentFile);
+            builder.addFormDataPart("employmentFile", "employment_" + System.currentTimeMillis() + extension, employmentFile);
         } else {
             builder.addFormDataPart("employmentFile", "");
         }
         if (salaryFile != null) {
-            builder.addFormDataPart("salaryFile", "salary_" + System.currentTimeMillis(), salaryFile);
+            String extension = getFileExtension(salaryFile);
+            builder.addFormDataPart("salaryFile", "salary_" + System.currentTimeMillis() + extension, salaryFile);
         } else {
             builder.addFormDataPart("salaryFile", "");
         }
         if (socialSecurityFile != null) {
-            builder.addFormDataPart("socialSecurityFile", "social_security_" + System.currentTimeMillis(), socialSecurityFile);
+            String extension = getFileExtension(socialSecurityFile);
+            builder.addFormDataPart("socialSecurityFile", "social_security_" + System.currentTimeMillis() + extension, socialSecurityFile);
         } else {
             builder.addFormDataPart("socialSecurityFile", "");
         }
         if (creditReportFile != null) {
-            builder.addFormDataPart("creditReportFile", "credit_report_" + System.currentTimeMillis(), creditReportFile);
+            String extension = getFileExtension(creditReportFile);
+            builder.addFormDataPart("creditReportFile", "credit_report_" + System.currentTimeMillis() + extension, creditReportFile);
         } else {
             builder.addFormDataPart("creditReportFile", "");
         }
@@ -375,6 +381,10 @@ public class RemoteDataSource {
         public RefreshTokenRequest(String refreshToken) {
             this.refreshToken = refreshToken;
         }
+    }
+
+    private String getFileExtension(okhttp3.RequestBody requestBody) {
+        return ".jpg";
     }
 
     public interface NetworkCallback<T> {

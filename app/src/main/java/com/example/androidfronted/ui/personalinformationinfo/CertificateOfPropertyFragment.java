@@ -44,6 +44,15 @@ public class CertificateOfPropertyFragment extends BaseDetailFragment {
     private File propertyFile;
     private File carFile;
 
+    private String getMimeType(String filePath) {
+        String type = null;
+        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(filePath);
+        if (extension != null) {
+            type = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -189,15 +198,19 @@ public class CertificateOfPropertyFragment extends BaseDetailFragment {
             okhttp3.RequestBody carRequestBody = null;
             
             if (propertyFile != null) {
+                String mimeType = getMimeType(propertyFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 propertyRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     propertyFile
                 );
             }
             
             if (carFile != null) {
+                String mimeType = getMimeType(carFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 carRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     carFile
                 );
             }

@@ -44,6 +44,15 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
     private File employmentFile;
     private File salaryFile;
 
+    private String getMimeType(String filePath) {
+        String type = null;
+        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(filePath);
+        if (extension != null) {
+            type = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -189,15 +198,19 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
             okhttp3.RequestBody salaryRequestBody = null;
             
             if (employmentFile != null) {
+                String mimeType = getMimeType(employmentFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 employmentRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     employmentFile
                 );
             }
             
             if (salaryFile != null) {
+                String mimeType = getMimeType(salaryFile.getAbsolutePath());
+                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
                 salaryRequestBody = okhttp3.RequestBody.create(
-                    okhttp3.MediaType.parse("image/jpeg"),
+                    mediaType,
                     salaryFile
                 );
             }
