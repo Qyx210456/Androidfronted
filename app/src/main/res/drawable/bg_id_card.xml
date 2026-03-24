@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- 1. 设置背景颜色为白色 -->
+    <solid android:color="#FFFFFF" />
+
+    <!-- 2. 设置描边 (Stroke) -->
+    <!-- width: 描边宽度 (1dp) -->
+    <!-- color: 描边颜色 (#979797) -->
+    <stroke
+        android:width="1dp"
+        android:color="#CC979797" />
+
+    <!-- 设置圆角 -->
+    <corners android:radius="12dp" />
+
+    <!-- 设置内边距 -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+
+</shape>

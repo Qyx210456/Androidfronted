@@ -2,7 +2,7 @@
     <string name="app_name">Android fronted</string>
 
     <!-- 登录相关 -->
-    <string name="login_banner">您好，\n欢迎使用XXX</string>
+    <string name="login_banner">您好，\n欢迎使用贷款助手</string>
     <string name="login_verification_code">验证码登录</string>
     <string name="login_password">密码登录</string>
     <string name="hint_phone_number">请输入手机号码</string>
@@ -41,7 +41,7 @@
 
     <!-- 底部导航 -->
     <string name="nav_home">首页</string>
-    <string name="nav_loan">贷款</string>
+    <string name="nav_loan">贷款管理</string>
     <string name="nav_profile">我的</string>
     <string name="go_detail">进入详情</string>
     <string name="avatar">用户头像</string>
@@ -84,7 +84,7 @@
     <string name="interest_rate_value">XXX%</string>
     <string name="limit_value">XXX元</string>
     <string name="term_value">X-X月</string>
-    <string name="learn_more">了解详情</string>
+    <string name="learn_more">立即办理</string>
     <string name="exp_loan_usage">购房、装修、大额消费</string>
 
     <!--贷款详情页-->
@@ -113,6 +113,94 @@
     <string name="exp_loan_amount3">20000元</string>
     <string name="exp_loan_amount4">50000元</string>
     <string name="exp_loan_term">X期</string>
-    <string name="apply_now2">立即申请</string>
+    <string name="apply_now2">确认信息无误，提交申请</string>
     <string name="selected_loan_plan">已选贷款方案</string>
+
+    <!-- ========== 贷款列表页面新增字符串 ========== -->
+    <string name="search">搜索</string>
+    <string name="clear">清除</string>
+    <string name="tab_all_products">全部产品</string>
+    <string name="tab_my_applications">我的申请</string>
+    <string name="filter">筛选</string>
+    <string name="apply_filter">应用筛选</string>
+    <string name="min">最低利率</string>
+    <string name="max">最高利率</string>
+    <string name="min_month">最小期限</string>
+    <string name="max_month">最大期限</string>
+    <string name="min_rate">最低利率</string>
+    <string name="max_rate">最高利率</string>
+
+    <!--所有贷款产品页面-->
+    <string name="personal_consumption">个人消费</string>
+    <string name="agricultural_production">农业生产</string>
+    <string name="business_operation">企业经营</string>
+    <string name="rate">利率</string>
+    <string name="amount">额度</string>
+    <string name="term">期限</string>
+
+    <!--个人信息认证页面-->
+    <string name="personal_info">个人信息认证</string>
+    <string name="info_banner_one">完善\n个人信息</string>
+    <string name="info_banner_two">贷款快人一步</string>
+    <string name="id_info">实名认证</string>
+    <string name="job_info">工作证明</string>
+    <string name="house_info">房产证明</string>
+    <string name="other_info">第三方证明</string>
+    <string name="no_info">未认证</string>
+    <string name="al_info">已认证</string>
+
+    <!--实名认证页面-->
+    <string name="upload_the_face_of_your_ID_card">点击上传身份证人像面</string>
+    <string name="upload_the_back_of_your_ID_card">点击上传身份证国徽面</string>
+    <string name="your_name">您的姓名</string>
+    <string name="ID_number">身份证号</string>
+    <string name="enter_your_name">请输入您的真实姓名</string>
+    <string name="enter_your_ID_card">请输入您的身份证号码</string>
+    <string name="conform_submission">确认提交</string>
+    <string name="no_info_id">您还未上传实名认证</string>
+    <string name="upload_id_hint">上传实名认证以提高贷款额度</string>
+    <string name="upload_id">上传实名认证</string>
+
+    <!--我的银行卡页面-->
+    <string name="no_info_bank_card">暂未认证银行卡</string>
+    <string name="goto_info_bank_card">认证银行卡</string>
+    <string name="bank_card_number">银行卡号</string>
+    <string name="bank_name">银行名称</string>
+    <string name="enter_bank_card_number">请输入银行卡号</string>
+    <string name="enter_bank_name">请输入银行名称</string>
+    <string name="manage_my_bank_card">管理</string>
+
+    <!--不动产证明页面-->
+    <string name="property_cert">不动产证明</string>
+    <string name="no_info_property">您还未上传不动产证明</string>
+    <string name="upload_property_hint">上传不动产证明以提高贷款额度</string>
+    <string name="upload_property">上传不动产证明</string>
+
+    <!--工作证明页面-->
+    <string name="job_cert">工作证明</string>
+    <string name="no_info_job">您还未上传工作证明</string>
+    <string name="upload_job_hint">上传工作证明以提高贷款额度</string>
+    <string name="upload_job">上传工作证明</string>
+
+    <!--第三方证明页面-->
+    <string name="third_party_cert">第三方证明</string>
+    <string name="no_info_third_party">您还未上传第三方证明</string>
+    <string name="upload_third_party_hint">上传第三方证明以提高贷款额度</string>
+    <string name="upload_third_party">上传第三方证明</string>
+
+    <!--通用上传页面-->
+    <string name="upload_material_type">上传资料类型</string>
+    <string name="click_upload_image">点击上传证明图片</string>
+    <string name="confirm_upload">确认上传</string>
+    <string name="filter_label">筛选：</string>
+    <string name="manage">管理</string>
+    <string name="add_material">添加证明材料</string>
+    <string name="add_bank_card">添加银行卡</string>
+
+    <!--已上传页面-->
+    <string name="name_label">姓名：</string>
+    <string name="id_number_label">身份证号：</string>
+    <string name="id_front_label">身份证正面：</string>
+    <string name="id_back_label">身份证反面：</string>
+    <string name="modify_id_info">修改实名认证</string>
 </resources>

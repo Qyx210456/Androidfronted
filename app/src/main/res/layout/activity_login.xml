@@ -64,6 +64,7 @@
             android:text="@string/login_password"
             android:gravity="center"
             android:background="@color/transparent"
+            android:textStyle="bold"
             android:textColor="@color/tab_text_selector"/>
 
     </LinearLayout>

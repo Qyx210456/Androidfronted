@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--首页了解详情按钮-->
-    <solid android:color="@android:color/white" />
-    <stroke android:color="@color/color_ffb700" android:width="1dp" />
-    <corners android:radius="3dp" />
+    <!--贷款产品页了解详情按钮-->
+    <gradient
+        android:startColor="#FF2D7FF9"
+        android:endColor="#FF60BFFF"
+        android:angle="90" />
+    <corners android:radius="12dp" />
 </shape>

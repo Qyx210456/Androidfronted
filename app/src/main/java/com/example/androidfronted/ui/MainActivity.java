@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidfronted.R;
@@ -15,10 +18,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "ProductMainActivity";
     private HomeFragment homeFragment;
     private LoanFragment loanFragment;
     private ProfileFragment profileFragment;
     private Fragment currentFragment;
+    private BottomNavigationView bottomNav;
+    private View container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MyApp", "开始初始化主界面");
 
         // 检查布局组件
-        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-        if (bottomNav == null) {
-            Log.e("MyApp", "底部导航栏未找到，界面初始化失败");
+        bottomNav = findViewById(R.id.bottomNav);
+        container = findViewById(R.id.container);
+        
+        if (bottomNav == null || container == null) {
+            Log.e("MyApp", "底部导航栏或容器未找到，界面初始化失败");
             Toast.makeText(this, "界面加载失败", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -105,6 +113,21 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MyApp", "主界面初始化完成");
     }
 
+    public void setBottomNavigationVisible(boolean visible) {
+        Log.d("MainActivity", "setBottomNavigationVisible called with visible = " + visible);
+        if (bottomNav != null) {
+            if (visible) {
+                Log.d("MainActivity", "Setting bottomNav to VISIBLE");
+                bottomNav.setVisibility(View.VISIBLE);
+            } else {
+                Log.d("MainActivity", "Setting bottomNav to GONE");
+                bottomNav.setVisibility(View.GONE);
+            }
+        } else {
+            Log.d("MainActivity", "bottomNav is null");
+        }
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -116,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         if (intent != null) {
             String keyword = intent.getStringExtra("search_keyword");
             if (keyword != null && !keyword.isEmpty()) {
-                BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
                 if (bottomNav != null) {
                     bottomNav.setSelectedItemId(R.id.nav_loan);
                 }

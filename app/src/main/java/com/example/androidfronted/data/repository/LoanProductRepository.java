@@ -2,83 +2,94 @@ package com.example.androidfronted.data.repository;
 
 import android.content.Context;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
+import com.example.androidfronted.data.mapper.LoanProductMapper;
+import com.example.androidfronted.data.model.LoanProduct;
 import com.example.androidfronted.data.model.LoanProductResponse;
-import com.example.androidfronted.network.NetworkClient;
-import com.example.androidfronted.util.TokenManager;
-import com.google.gson.Gson;
+import com.example.androidfronted.data.source.LocalDataSource;
+import com.example.androidfronted.data.source.RemoteDataSource;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-/**
- * 贷款产品仓库
- * - GET /api/loan-products/user
- * - 自动携带 Token（由 AuthInterceptor 处理）
- */
 public class LoanProductRepository {
-    private static final String BASE_URL = "http://10.0.2.2:8080/api/loan-products/user";
     private static final String TAG = "LoanProductRepo";
+    private static LoanProductRepository instance;
 
-    private final OkHttpClient client;
-    private final Gson gson;
-    private final Context context;
+    private final LocalDataSource localDataSource;
+    private final RemoteDataSource remoteDataSource;
 
-    public LoanProductRepository(Context context) {
-        this.context = context;
-        this.client = NetworkClient.getOkHttpClient(context);
-        this.gson = new Gson();
+    private LoanProductRepository(Context context) {
+        this.localDataSource = new LocalDataSource(context);
+        this.remoteDataSource = new RemoteDataSource(context);
     }
 
-    public void getLoanProducts(@NonNull AuthCallback<LoanProductResponse> callback) {
-        // 调试：检查当前token
-        String currentToken = new TokenManager(context).getToken();
-        Log.d(TAG, "Current token for request: " + (currentToken != null ? "exists" : "null"));
+    public static synchronized LoanProductRepository getInstance(Context context) {
+        if (instance == null) {
+            instance = new LoanProductRepository(context.getApplicationContext());
+        }
+        return instance;
+    }
 
-        Request request = new Request.Builder()
-                .url(BASE_URL)
-                .get()
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+    public void getLoanProducts(@NonNull AuthCallback<List<LoanProduct>> callback) {
+        remoteDataSource.getLoanProducts(new RemoteDataSource.NetworkCallback<LoanProductResponse>() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "Load loan products failed", e);
-                postToMainThread(() -> callback.onError("网络错误"));
+            public void onSuccess(LoanProductResponse response) {
+                if (response != null && response.getData() != null) {
+                    List<LoanProduct> products = response.getData();
+                    saveLoanProductsToLocal(products);
+                    callback.onSuccess(products);
+                } else {
+                    callback.onError("获取贷款产品失败");
+                }
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                try {
-                    if (!response.isSuccessful()) {
-                        postToMainThread(() -> callback.onError("加载失败: " + response.code()));
-                        return;
-                    }
-                    String responseBody = response.body().string();
-                    LoanProductResponse res = gson.fromJson(responseBody, LoanProductResponse.class);
-                    if (res != null && res.getCode() == 200 && res.getData() != null) {
-                        postToMainThread(() -> callback.onSuccess(res));
-                    } else {
-                        String msg = (res != null && res.getMessage() != null) ? res.getMessage() : "未知错误";
-                        postToMainThread(() -> callback.onError(msg));
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Parse loan products failed", e);
-                    postToMainThread(() -> callback.onError("数据解析失败"));
-                }
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Get loan products from remote failed: " + errorMessage);
+                loadLoanProductsFromLocal(callback);
             }
         });
     }
 
-    private void postToMainThread(Runnable runnable) {
-        new android.os.Handler(android.os.Looper.getMainLooper()).post(runnable);
+    private void saveLoanProductsToLocal(List<LoanProduct> products) {
+        List<com.example.androidfronted.data.local.entity.LoanProductEntity> entities = new ArrayList<>();
+        for (LoanProduct product : products) {
+            entities.add(LoanProductMapper.toEntity(product));
+        }
+        localDataSource.saveLoanProducts(entities, new LocalDataSource.DataSourceCallback<Void>() {
+            @Override
+            public void onSuccess(Void data) {
+                Log.d(TAG, "Loan products saved to local database");
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to save loan products: " + errorMessage);
+            }
+        });
+    }
+
+    private void loadLoanProductsFromLocal(@NonNull AuthCallback<List<LoanProduct>> callback) {
+        localDataSource.getAllLoanProducts(new LocalDataSource.DataSourceCallback<List<com.example.androidfronted.data.local.entity.LoanProductEntity>>() {
+            @Override
+            public void onSuccess(List<com.example.androidfronted.data.local.entity.LoanProductEntity> entities) {
+                if (entities != null && !entities.isEmpty()) {
+                    List<LoanProduct> products = new ArrayList<>();
+                    for (com.example.androidfronted.data.local.entity.LoanProductEntity entity : entities) {
+                        products.add(LoanProductMapper.fromEntity(entity));
+                    }
+                    callback.onSuccess(products);
+                } else {
+                    callback.onError("无可用数据");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                callback.onError(errorMessage);
+            }
+        });
     }
 
     public interface AuthCallback<T> {

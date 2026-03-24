@@ -49,4 +49,87 @@
     <color name="color_f1f1f1">#FFF1F1F1</color>
     <color name="color_a1d5ff">#FFA1D5FF</color>
     <color name="color_c1e0ff">#FFC1E0FF</color>
+
+    <!-- ========== 新增UI规范颜色 ========== -->
+    <!-- 主色调 - 蓝色系 -->
+    <color name="main_blue">#FF2D7FF9</color>
+    <color name="light_blue">#FF5C9EFF</color>
+    <color name="bg_notification">#FFF0F7FF</color>
+    <color name="lightest_blue">#FFF8FAFF</color>
+    <color name="notification_blue">#FFF0F7FF</color>
+
+    <!-- 文字颜色层级 -->
+    <color name="text_primary">#FF1A1A1A</color>
+    <color name="text_secondary">#FF333333</color>
+    <color name="text_tertiary">#FF666666</color>
+    <color name="text_quaternary">#FF999999</color>
+
+    <!-- 突出数字颜色 -->
+    <color name="number_amount">#FF2D7FF9</color>
+    <color name="number_rate">#FFFF6B6B</color>
+
+    <!-- 边框颜色 -->
+    <color name="border_regular">#FFE6EAF2</color>
+    <color name="border_light">#FFF0F0F0</color>
+    <color name="border_selected">#FF2D7FF9</color>
+
+    <!-- 状态颜色 -->
+    <color name="status_success">#FF4CAF50</color>
+    <color name="status_warning">#FFFF9800</color>
+    <color name="status_error">#FFF44336</color>
+    <color name="status_disabled">#FFCCCCCC</color>
+
+    <!-- 阴影颜色 -->
+    <color name="shadow_light">#1A2D7FF9</color>
+    <color name="shadow_medium">#332D7FF9</color>
+    <color name="shadow_dark">#66000000</color>
+    <color name="shadow_nav">#0A000000</color>
+
+    <!-- 渐变颜色 -->
+    <color name="gradient_blue_start">#FF2D7FF9</color>
+    <color name="gradient_blue_end">#FF5C9EFF</color>
+    <color name="gradient_white_start">#FFFFFFFF</color>
+    <color name="gradient_white_end">#E6FFFFFF</color>
+
+    <!-- 贷款管理页面颜色 -->
+
+    <!-- 功能色系 -->
+    <color name="func_purple">#FF8B39FF</color>        <!-- 紫色功能色 -->
+    <color name="func_purple_light">#FFF2E8FF</color>  <!-- 浅紫色背景 -->
+
+    <color name="func_green">#FF00A987</color>         <!-- 绿色功能色 -->
+    <color name="func_green_light">#FFE6F7F2</color>   <!-- 浅绿色背景 -->
+
+    <color name="func_teal">#FF00897B</color>          <!-- 青色功能色 -->
+    <color name="func_teal_light">#FFE0F2F1</color>   <!-- 浅青色背景 -->
+
+    <!-- 按钮色 -->
+    <color name="btn_dark">#FF242C2F</color>          <!-- 深灰按钮 -->
+    <color name="btn_dark_pressed">#FF37474F</color>  <!-- 深灰按钮按下 -->
+
+    <!-- 卡片背景 -->
+    <color name="card_bg_gray">#FFF1F1F1</color>      <!-- 卡片灰色背景 -->
+
+    <!-- 徽章颜色 -->
+    <color name="badge_orange">#FFFF8C00</color>      <!-- 橙色徽章 -->
+    <color name="badge_red">#FFFF5900</color>         <!-- 红色徽章 -->
+
+    <!-- 装饰色 -->
+    <color name="decoration_blue">#FF8CC3FB</color>   <!-- 装饰蓝色 -->
+    <!-- 卡片背景色 -->
+    <color name="card_blue_gradient_start">#FFEFF5FF</color>
+    <color name="card_blue_gradient_end">#FFE0ECFF</color>
+
+    <!-- 按钮颜色 -->
+    <color name="btn_blue_normal">#FF2D7FF9</color>
+    <color name="btn_blue_pressed">#FF1A6CE6</color>
+
+    <!-- 功能项边框 -->
+    <color name="func_border_purple">#20FF8B39</color>
+    <color name="func_border_green">#2000A987</color>
+    <color name="func_border_teal">#2000897B</color>
+
+    <!--认证界面认证状态颜色切换-->
+    <color name="no_info">#CCF44336</color>
+    <color name="al_info">#FF00A987</color>
 </resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- 圆形背景 -->
+    <path
+        android:fillColor="#E8E8E8"
+        android:pathData="M60,10a50,50 0,1 0,0 100a50,50 0,1 0,0 -100z" />
+
+    <!-- 购物袋图标 -->
+    <group>
+        <!-- 袋子主体 -->
+        <path
+            android:fillColor="#CCCCCC"
+            android:pathData="M40,40h40v40h-40z" />
+
+        <!-- 袋子顶部 -->
+        <path
+            android:fillColor="#CCCCCC"
+            android:pathData="M45,35h30v10h-30z" />
+
+        <!-- 袋子手柄 -->
+        <path
+            android:fillColor="#CCCCCC"
+            android:pathData="M55,25h10v10h-10z"
+            android:strokeColor="#CCCCCC"
+            android:strokeWidth="2" />
+    </group>
+
+    <!-- 贷款符号 ¥ -->
+    <group
+        android:translateX="60"
+        android:translateY="60">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-5,0h2v20h-2z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-15,8h30v2h-30z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-8,8h2v12h-2z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M6,8h2v12h-2z" />
+    </group>
+
+</vector>

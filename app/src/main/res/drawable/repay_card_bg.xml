@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 新还款卡片背景 - 蓝色渐变 -->
+
+    <!-- 基础白色背景 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- 蓝色渐变背景 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="@color/white"
+                android:endColor="@color/card_blue_gradient_start"
+                android:angle="90" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <!-- 蓝色边框
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="1.5dp"
+                android:color="@color/border_selected" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+    -->
+
+    <!-- 外阴影 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="24dp" />
+            <padding
+                android:bottom="4dp"
+                android:left="4dp"
+                android:right="4dp"
+                android:top="4dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -23,4 +23,3 @@ captures/
 .DS_Store
 
 # Avoid double-ignoring
-# (no need to list individual .idea files if .idea/ is ignored)git rm -r --cached .

@@ -9,7 +9,7 @@ package com.example.androidfronted.data.model;
  *     "message": "操作成功"
  * }
  */
-public class ProductApplyRespose {
+public class ProductApplyResponse {
     private int code;
     private String data;
     private String message;

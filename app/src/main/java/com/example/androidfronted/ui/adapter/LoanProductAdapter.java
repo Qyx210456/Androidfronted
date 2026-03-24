@@ -3,6 +3,7 @@ package com.example.androidfronted.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,49 +11,28 @@ import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.LoanProduct;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 贷款产品列表适配器
- * <p>
- * 用于在首页 RecyclerView 中动态展示贷款产品卡片。
- * </p>
+ * - 展示：产品名、描述、最高额度、最低利率、期数范围
+ * - 点击“了解详情”跳转到详情页
  */
 public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.ViewHolder> {
 
-    /**
-     * 贷款产品数据列表
-     */
     private List<LoanProduct> products = new ArrayList<>();
-
-    /**
-     * “了解详情”按钮点击事件监听器
-     */
     private OnLearnMoreClickListener onLearnMoreClickListener;
 
-    /**
-     * 设置贷款产品数据列表并刷新界面
-     *
-     * @param products 新的贷款产品列表
-     */
     public void setProducts(List<LoanProduct> products) {
         this.products = products != null ? products : new ArrayList<>();
         notifyDataSetChanged();
     }
 
-    /**
-     * 设置“了解详情”按钮的点击监听器
-     *
-     * @param listener 点击监听器
-     */
     public void setOnLearnMoreClickListener(OnLearnMoreClickListener listener) {
         this.onLearnMoreClickListener = listener;
     }
 
-    /**
-     * 创建 ViewHolder 实例，加载 item_loan_product 布局
-     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,106 +41,60 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
         return new ViewHolder(view);
     }
 
-    /**
-     * 绑定数据到指定位置的 ViewHolder
-     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LoanProduct product = products.get(position);
         holder.bind(product);
     }
 
-    /**
-     * 返回贷款产品总数
-     */
     @Override
     public int getItemCount() {
         return products.size();
     }
 
-    /**
-     * 贷款产品项的 ViewHolder，持有所有子控件引用
-     */
-    class ViewHolder extends RecyclerView.ViewHolder {
+     class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvProductName, tvDescription, tvLimitValue, tvTermValue, tvMinRateValue;
+        Button btnLearnMore;
 
-        // 产品名称
-        TextView tvProductName;
-        // 产品描述
-        TextView tvDescription;
-        // 最高额度
-        TextView tvLimitValue;
-        // 贷款期限
-        TextView tvTermValue;
-        // 贷款用途
-        TextView tvLoanUsage;
-        // “了解详情”按钮
-        TextView btnLearnMore;
-
-        /**
-         * 构造函数：查找并绑定所有子视图
-         */
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvLimitValue = itemView.findViewById(R.id.tvLimitValue);
             tvTermValue = itemView.findViewById(R.id.tvTermValue);
-            tvLoanUsage = itemView.findViewById(R.id.tvLoanUsage);
+            tvMinRateValue = itemView.findViewById(R.id.tvMinInterestRate);
             btnLearnMore = itemView.findViewById(R.id.btnLearnMore);
         }
 
-        /**
-         * 将 LoanProduct 数据绑定到 UI 控件
-         *
-         * @param product 要绑定的贷款产品对象
-         */
         void bind(LoanProduct product) {
-            // 绑定产品名称
             tvProductName.setText(product.getProductName());
-
-            // 绑定描述
             tvDescription.setText(product.getDescription());
 
-            // 绑定贷款用途,最多展示6个字，其余用省略号
-            String usage = product.getLoanUsage();
-            if (usage != null && !usage.isEmpty()) {
-                if (usage.length() > 6) {
-                    usage = usage.substring(0, 6) + "…";
-                }
-            } else {
-                usage = "暂无说明";
-            }
-            tvLoanUsage.setText(usage);
+            // 显示最高额度
+            double maxAmount = product.getMaxAmount();
+            tvLimitValue.setText(maxAmount > 0 ? String.format("¥%,.0f", maxAmount) : "--");
 
-            //  计算最高额度：遍历所有 options，取 loanAmount 最大值
-            double maxAmount = 0;
-            if (product.getOptions() != null && !product.getOptions().isEmpty()) {
-                for (LoanProduct.LoanOption option : product.getOptions()) {
-                    if (option.getLoanAmount() > maxAmount) {
-                        maxAmount = option.getLoanAmount();
-                    }
+            // 计算最低利率
+            double minRate = Double.MAX_VALUE;
+            if (product.getOptions() != null) {
+                for (LoanProduct.LoanOption opt : product.getOptions()) {
+                    minRate = Math.min(minRate, opt.getInterestRate());
                 }
-                String formattedAmount = String.format("¥%,.0f", maxAmount);
-                tvLimitValue.setText(formattedAmount);
-            } else {
-                tvLimitValue.setText("--");
             }
+            tvMinRateValue.setText(
+                    minRate < Double.MAX_VALUE ? new DecimalFormat("#.##%").format(minRate) : "--"
+            );
 
-            //terms只显示 min-max：如 "3-24"
+            // 构建期数范围文本
             String termsText = "--";
             List<Integer> terms = product.getTerms();
             if (terms != null && !terms.isEmpty()) {
                 int min = Collections.min(terms);
                 int max = Collections.max(terms);
-                if (min == max) {
-                    termsText = String.valueOf(min);
-                } else {
-                    termsText = min + "-" + max;
-                }
+                termsText = (min == max) ? String.valueOf(min) : min + "-" + max;
             }
             tvTermValue.setText(termsText);
 
-            // 设置“了解详情”按钮点击事件
             btnLearnMore.setOnClickListener(v -> {
                 if (onLearnMoreClickListener != null) {
                     onLearnMoreClickListener.onLearnMoreClick(product);
@@ -169,17 +103,7 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
         }
     }
 
-    /**
-     * “了解详情”按钮点击事件回调接口
-     */
     public interface OnLearnMoreClickListener {
-        /**
-         * 当用户点击某产品的“了解详情”按钮时触发
-         *
-         * @param product 被点击的贷款产品
-         */
         void onLearnMoreClick(LoanProduct product);
     }
 }
-
-

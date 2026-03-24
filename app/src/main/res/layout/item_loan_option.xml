@@ -5,16 +5,13 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:orientation="vertical"
-    android:layout_marginTop="9dp">
+    android:layout_marginTop="9dp"
+    android:background="@drawable/bg_option_normal">
 
     <!-- 右上角选择按钮 -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
         <RadioButton
             android:id="@+id/rbSelected"
             android:layout_width="24dp"
@@ -24,84 +21,88 @@
             android:background="@drawable/radio_selector_option" />
     </FrameLayout>
 
-    <!-- 贷款金额 -->
+    <!-- 三列布局容器 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="贷款金额："
-            android:textColor="@color/color_262626"
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/tvLoanAmount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end" />
-    </LinearLayout>
+        android:layout_marginTop="8dp">
 
-    <!-- 年化利率 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="年化利率："
-            android:textColor="@color/color_262626"
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/tvInterestRate"
+        <!-- 第一列：年化利率 -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="9dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="年化利率"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"/>
+            <TextView
+                android:id="@+id/tvInterestRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/number_rate"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"/>
+        </LinearLayout>
 
-    <!-- 贷款期限 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="贷款年限："
-            android:textColor="@color/color_262626"
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/tvLoanPeriod"
+        <!-- 第二列：贷款年限 -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="9dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="贷款年限"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"/>
+            <TextView
+                android:id="@+id/tvLoanPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"/>
+        </LinearLayout>
 
-    <!-- 还款方式 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="还款方式："
-            android:textColor="@color/color_262626"
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/tvRepaidType"
+        <!-- 第三列：还款方式 -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingVertical="9dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="还款方式"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"/>
+            <TextView
+                android:id="@+id/tvRepaidType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="4dp"
+                android:gravity="center_horizontal"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

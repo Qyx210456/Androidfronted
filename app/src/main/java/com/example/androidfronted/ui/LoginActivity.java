@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
                     .beginTransaction()
                     .add(R.id.viewPager, fragments.get(0), "verify")
                     .add(R.id.viewPager, fragments.get(1), "password")
-                    .hide(fragments.get(1))
+                    .hide(fragments.get(0))
                     .commit();
         } else {
             // 从保存状态恢复Fragment
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     private void setupTabs() {
         findViewById(R.id.tabVerifyCode).setOnClickListener(v -> switchTab(0));
         findViewById(R.id.tabPassword).setOnClickListener(v -> switchTab(1));
-        selectTab(0);
+        selectTab(1);
     }
 
     private void switchTab(int index) {

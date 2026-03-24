@@ -57,12 +57,11 @@ public class LoanOptionAdapter extends RecyclerView.Adapter<LoanOptionAdapter.Vi
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvLoanAmount, tvInterestRate, tvLoanPeriod, tvRepaidType;
+        TextView tvInterestRate, tvLoanPeriod, tvRepaidType;
         RadioButton rbSelected;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvLoanAmount = itemView.findViewById(R.id.tvLoanAmount);
             tvInterestRate = itemView.findViewById(R.id.tvInterestRate);
             tvLoanPeriod = itemView.findViewById(R.id.tvLoanPeriod);
             tvRepaidType = itemView.findViewById(R.id.tvRepaidType);
@@ -75,10 +74,6 @@ public class LoanOptionAdapter extends RecyclerView.Adapter<LoanOptionAdapter.Vi
          * @param option 要绑定的贷款方案对象
          */
         void bind(LoanProduct.LoanOption option,boolean isSelected) {
-            // 格式化贷款金额：¥50,000
-            String amount = String.format("¥%,.0f", option.getLoanAmount());
-            tvLoanAmount.setText(amount);
-
             // 格式化年化利率：4.90%
             String rate = new DecimalFormat("#.##%").format(option.getInterestRate());
             tvInterestRate.setText(rate);
@@ -102,9 +97,9 @@ public class LoanOptionAdapter extends RecyclerView.Adapter<LoanOptionAdapter.Vi
             rbSelected.setChecked(isSelected);
 
             if (isSelected) {
-                itemView.setBackgroundResource(R.drawable.bg_option_card_selected);
+                itemView.setBackgroundResource(R.drawable.bg_option_selected);
             } else {
-                itemView.setBackgroundResource(R.drawable.bg_option_card);
+                itemView.setBackgroundResource(R.drawable.bg_option_normal);
             }
 
             itemView.setOnClickListener(v -> selectOption(option));

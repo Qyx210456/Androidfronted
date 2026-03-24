@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+ <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_lightest">
+    android:background="#FFF8FAFF">
     <!--NestedScrollView布局确保内容可滚动-->
 
     <!-- 首页内容区域-->
@@ -11,347 +11,283 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
-        <!-- 第一部分：Logo + 搜索框 -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
 
-            <!-- Logo 文本 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/app_logo"
-                android:textSize="15sp"
-                android:textColor="@color/primary_blue_100"
-                android:textStyle="bold"
-                android:gravity="center_vertical"/>
-
-            <!-- 弹性空间 -->
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <!-- 搜索框 -->
+            <!-- 使用LinearLayout包裹ImageView和TextView，并将其居中 -->
             <LinearLayout
-                android:layout_width="200dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/bg_search_box"
-                android:gravity="center_vertical">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center">
 
+                <!-- Logo 图标 -->
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="16dp"
-                    android:background="@drawable/ic_home_search" />
+                    android:id="@+id/ivLogo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_app_logo"
+                    android:contentDescription="Logo"/>
 
-                <EditText
-                    android:id="@+id/etSearch"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_margin="16dp"
-                    android:hint="@string/search_loan_product"
-                    android:fontFamily="sans-serif-medium"
-                    android:background="@drawable/edittext_bg"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="16dp"
-                    android:textSize="14sp"
-                    android:inputType="text"
-                    android:imeOptions="actionSearch"
-                    android:singleLine="true" />
-
+                <!-- 应用名称 -->
+                <TextView
+                    android:id="@+id/tvAppName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="贷款助手"
+                    android:textColor="@color/primary_blue_100"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <!-- 第二部分：系统公告 -->
-        <LinearLayout
+        <!-- 2. 系统公告行 -->
+        <RelativeLayout
+            android:id="@+id/layoutSystemNotice"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/bg_system_announcement"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="48dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_notification_rounded"
+            android:clickable="true"
+            android:focusable="true">
 
             <!-- 喇叭图标 -->
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="9dp"
-                android:background="@drawable/ic_home_speaker"/>
+                android:id="@+id/ivNoticeIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/ic_home_speaker"
+                app:tint="@color/primary_blue_100"/>
 
-            <!-- 公告文本 (可滚动) -->
+            <!-- 公告文本 -->
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="20dp"
-                android:layout_weight="1"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="9dp"
-                android:text="@string/system_announcement"
-                android:textSize="12sp"
+                android:id="@+id/tvSystemNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/ivNoticeIcon"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="12dp"
+                android:text="最新利率下调2.5%，点击查看详情 >"
+                android:textColor="@color/primary_blue_100"
+                android:textSize="14sp"
                 android:ellipsize="marquee"
                 android:singleLine="true"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:scrollHorizontally="true"/>
+                android:focusableInTouchMode="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
-        <!-- 第三部分：广告位 -->
-        <FrameLayout
+        <!-- 3. 广告位轮播 -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="9dp"
-            android:background="@color/color_c7eaff"
-            android:clipToOutline="true">
+            android:layout_height="180dp"
+            android:layout_marginBottom="16dp">
+
+            <!-- 静态广告图片 -->
+            <ImageView
+                android:id="@+id/ivAdImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/bg_home_advertisement"/>
 
             <!-- 广告标签 -->
             <TextView
                 android:layout_width="50dp"
                 android:layout_height="25dp"
-                android:layout_gravity="top|end"
+                android:layout_alignParentEnd="true"
                 android:background="@color/color_f1f1f1"
-                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="@string/advertisements"
+                android:text="广告"
                 android:textColor="@color/gray_medium"
-                android:textSize="12sp" />
-        </FrameLayout>
+                android:textSize="12sp"/>
 
-        <!-- 第四部分：快捷入口 -->
+        </RelativeLayout>
+
+        <!-- 广告轮播指示器,暂不实现
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/adIndicatorLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:orientation="vertical">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"/>
+            -->
 
-            <!-- 标题 -->
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="20dp"
-                android:text="@string/quick_entry"
-                android:textSize="13sp"
-                android:textColor="@color/color_262626"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center_vertical"/>
+        <!-- 4. 额度查询卡片 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCreditQuery"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="9dp"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_blue_vertical"
+                android:padding="20dp">
 
-                <!-- 贷款流程介绍 -->
+                <!-- 左侧图标 + 文字组合 -->
                 <LinearLayout
-                    android:layout_width="117dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_loan_process_intro"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <!--贷款流程介绍text-->
-                    <TextView
-                        android:layout_width="90dp"
-                        android:layout_height="20dp"
-                        android:text="@string/loan_process_intro"
-                        android:textSize="13sp"
-                        android:textColor="@color/color_242c2f"
-                        android:fontFamily="sans-serif-medium"/>
-
-                    <!--小字部分text-->
-                    <TextView
-                        android:layout_width="90dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/clear_process_and_materials"
-                        android:textSize="11sp"
-                        android:textColor="@color/color_525252"/>
+                    <ImageView
+                        android:id="@+id/ivWalletIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_wallet"
+                        app:tint="@color/white" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="bottom">
-
-                        <!--图标-->
-                        <ImageView
-                            android:layout_width="31dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_home_agreement"
-                            android:contentDescription="@null"/>
-                        <!--占位-->
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="30dp"
-                            android:layout_weight="1" />
-
-                        <!--双箭头图标-->
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/ic_home_doublerightgray"
-                            android:contentDescription="@null" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!-- 我的授信额度 -->
-                <LinearLayout
-                    android:layout_width="117dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_my_credit_limit"
-                    android:padding="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="90dp"
-                        android:layout_height="20dp"
-                        android:text="@string/my_credit_limit"
-                        android:textSize="13sp"
-                        android:textColor="@color/color_00705a"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:layout_width="90dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/credit_confirmation_and_usage"
-                        android:textSize="11sp"
-                        android:textColor="@color/color_519677" />
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:gravity="bottom">
+                        <TextView
+                            android:id="@+id/tvCreditTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="额度查询"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
 
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_home_credit"
-                            android:contentDescription="@null" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="30dp"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/ic_home_doublerightgreen"
-                            android:contentDescription="@null" />
+                        <TextView
+                            android:id="@+id/tvCreditSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="点击查看您的可贷额度"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"
+                            android:alpha="0.9" />
 
                     </LinearLayout>
-
                 </LinearLayout>
 
-                <!-- 申请进度查询 -->
-                <LinearLayout
-                    android:layout_width="117dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_application_progress_query"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_profile_right"
+                    app:tint="@color/white"/>
 
-                    <TextView
-                        android:layout_width="90dp"
-                        android:layout_height="20dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@string/application_progress_query"
-                        android:textColor="@color/color_003f71"
-                        android:textSize="13sp" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="90dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/real_time_tracking_and_transparency"
-                        android:textColor="@color/color_4c7698"
-                        android:textSize="11sp" />
+        </androidx.cardview.widget.CardView>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="bottom"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="31dp"
-                            android:layout_height="25dp"
-                            android:contentDescription="@null"
-                            android:src="@drawable/ic_home_find" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="30dp"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:contentDescription="@null"
-                            android:src="@drawable/ic_home_doublerightblue" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- 第五部分：热门产品 -->
-        <LinearLayout
+        <!-- 5. 热门产品标题 -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
-            android:orientation="vertical">
+            android:layout_height="32dp"
+            android:layout_marginBottom="0dp">
 
-            <!-- 标题 -->
             <TextView
-                android:layout_width="60dp"
-                android:layout_height="20dp"
-                android:text="@string/hot_products"
-                android:textSize="13sp"
-                android:textColor="@color/color_262626"
-                android:fontFamily="sans-serif-medium" />
-
-            <!-- 在 fragment_home.xml 的 RecyclerView 前面添加 -->
-            <ProgressBar
-                android:id="@+id/loading_indicator"
+                android:id="@+id/tvHotProductsTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:visibility="gone" />
+                android:layout_centerVertical="true"
+                android:text="热门产品"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-            <!-- 产品列表 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_loan_products"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:nestedScrollingEnabled="false"/>
+        </RelativeLayout>
 
-        </LinearLayout>
-
-        <!-- 底部留白，避免被遮挡 -->
-        <View
+        <!-- 6. 产品轮播容器 -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="24dp" />
+            android:layout_height="180dp"
+            android:layout_marginBottom="4dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerProducts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:clipChildren="false"
+                android:clipToPadding="false"/>
+
+        </RelativeLayout>
+
+        <!-- 产品轮播指示器 -->
+        <LinearLayout
+            android:id="@+id/productIndicatorLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"/>
+
+        <!-- 7. 探索更多按钮 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardExploreMore"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_blue_horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvExploreMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="探索更多贷款产品"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/tvExploreMore"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_profile_right"
+                    app:tint="@color/white"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="24dp" />
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

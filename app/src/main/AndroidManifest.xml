@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 存储权限 - 用于图片选择和保存 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- 相机权限 - 用于拍照 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Android 13+ 媒体权限 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" android:minSdkVersion="33" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +43,12 @@
             android:name=".ui.LoginActivity"
             android:exported="false" />
 
+        <!-- ImagePreviewActivity - 图片预览页面 -->
+        <activity
+            android:name=".ui.ImagePreviewActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- 其他 Activity -->
         <activity android:name=".ui.RegisterStep1Activity" />
         <activity android:name=".ui.RegisterStep2Activity" />
@@ -37,6 +56,8 @@
             android:name=".ui.ProductDetailActivity"
             android:exported="false" />
         <activity android:name=".ui.ProductApplyActivity" />
+        <activity android:name=".ui.ProductAllActivity" />
+        <activity android:name=".ui.ProductApplySuccessActivity" />
 
     </application>
 

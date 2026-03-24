@@ -53,7 +53,7 @@ public class PasswordLoginFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authRepository = new AuthRepository(requireContext());
+        authRepository = AuthRepository.getInstance(requireContext());
     }
 
     @Nullable

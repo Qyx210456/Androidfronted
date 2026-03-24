@@ -12,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.viewmodel.auth.RegisterStep1ViewModel;
+import com.example.androidfronted.viewmodel.base.NavigationEvent;
 
 /**
  * 注册第一步：输入用户名、密码、确认密码
@@ -22,6 +25,8 @@ import com.example.androidfronted.R;
  * - 验证密码一致性后跳转到第二步
  */
 public class RegisterStep1Activity extends AppCompatActivity {
+
+    private RegisterStep1ViewModel viewModel;
 
     private EditText etUsername;
     private EditText etPassword;
@@ -33,38 +38,52 @@ public class RegisterStep1Activity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private boolean isConfirmVisible = false;
 
-    // 密码输入规则：8-20位，含大小写字母、数字、特殊字符
-    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_register_step1);
 
+        viewModel = new ViewModelProvider(this).get(RegisterStep1ViewModel.class);
+
+        setupObservers();
         initViews();
-        // 从第二步返回时接收并填充数据
         receiveDataFromStep2();
         setupClickListeners();
     }
 
-    // 接收从第二步返回的数据
+    private void setupObservers() {
+        viewModel.getValidationError().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getNavigationEvent().observe(this, event -> {
+            if (event != null) {
+                handleNavigation(event);
+            }
+        });
+    }
+
     private void receiveDataFromStep2() {
         Intent intent = getIntent();
         if (intent != null) {
             String savedUsername = intent.getStringExtra("USERNAME");
             String savedPassword = intent.getStringExtra("PASSWORD");
 
-            // 调试信息，确认数据接收
             if (savedUsername != null || savedPassword != null) {
                 Toast.makeText(this, "已恢复之前填写的数据", Toast.LENGTH_SHORT).show();
             }
 
             if (savedUsername != null && etUsername != null) {
                 etUsername.setText(savedUsername);
+                viewModel.setUsername(savedUsername);
             }
             if (savedPassword != null && etPassword != null && etConfirmPassword != null) {
                 etPassword.setText(savedPassword);
                 etConfirmPassword.setText(savedPassword);
+                viewModel.setPassword(savedPassword);
+                viewModel.setConfirmPassword(savedPassword);
             }
         }
     }
@@ -81,49 +100,31 @@ public class RegisterStep1Activity extends AppCompatActivity {
     private void setupClickListeners() {
         ivTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
         ivToggleConfirm.setOnClickListener(v -> toggleConfirmPasswordVisibility());
-        btnNext.setOnClickListener(v -> goToStep2());
-        findViewById(R.id.loginLink).setOnClickListener(v -> {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // 结束当前注册页面，避免回退栈混乱
+        btnNext.setOnClickListener(v -> {
+            viewModel.setUsername(etUsername.getText().toString().trim());
+            viewModel.setPassword(etPassword.getText().toString().trim());
+            viewModel.setConfirmPassword(etConfirmPassword.getText().toString().trim());
+            viewModel.navigateToStep2();
         });
-    }
+        findViewById(R.id.loginLink).setOnClickListener(v -> viewModel.navigateToLogin());
 
-    private void goToStep2() {
-        String username = etUsername.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
-        String confirm = etConfirmPassword.getText().toString().trim();
+        etUsername.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                viewModel.setUsername(etUsername.getText().toString().trim());
+            }
+        });
 
-        // 逐项校验输入信息完整性及合规性
-        if (TextUtils.isEmpty(username)) {
-            Toast.makeText(this, "请输入用户名", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        etPassword.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                viewModel.setPassword(etPassword.getText().toString().trim());
+            }
+        });
 
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!password.matches(PASSWORD_PATTERN)) {
-            Toast.makeText(this, "密码需包含大小写字母、数字和特殊字符（如!@#$%），长度8-20位", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (TextUtils.isEmpty(confirm)) {
-            Toast.makeText(this, "请再次输入密码", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!password.equals(confirm)) {
-            Toast.makeText(this, "两次密码不一致", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Intent intent = new Intent(this, RegisterStep2Activity.class);
-        intent.putExtra("USERNAME", username);
-        intent.putExtra("PASSWORD", password);
-        startActivity(intent);
+        etConfirmPassword.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                viewModel.setConfirmPassword(etConfirmPassword.getText().toString().trim());
+            }
+        });
     }
 
     private void togglePasswordVisibility() {
@@ -147,6 +148,28 @@ public class RegisterStep1Activity extends AppCompatActivity {
             et.setSelection(et.getText().length());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleNavigation(NavigationEvent event) {
+        switch (event.getNavigationType()) {
+            case NavigationEvent.NAVIGATE_TO_REGISTER_STEP_2:
+                RegisterStep1ViewModel.RegisterData data = (RegisterStep1ViewModel.RegisterData) event.getData();
+                if (data != null) {
+                    Intent intent = new Intent(this, RegisterStep2Activity.class);
+                    intent.putExtra("USERNAME", data.username);
+                    intent.putExtra("PASSWORD", data.password);
+                    startActivity(intent);
+                }
+                break;
+            case NavigationEvent.NAVIGATE_TO_LOGIN:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case NavigationEvent.NAVIGATE_BACK:
+                finish();
+                break;
         }
     }
 }
