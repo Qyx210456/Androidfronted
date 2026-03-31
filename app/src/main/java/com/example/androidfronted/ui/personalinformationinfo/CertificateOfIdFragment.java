@@ -15,6 +15,7 @@ import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
 import com.example.androidfronted.ui.base.BaseDetailFragment;
+import com.example.androidfronted.utils.IdCardValidator;
 import com.example.androidfronted.viewmodel.auth.IdCertViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 
@@ -97,6 +98,14 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
                 Toast.makeText(getContext(), "请输入身份证号", Toast.LENGTH_SHORT).show();
                 return;
             }
+            
+            String errorMessage = IdCardValidator.getErrorMessage(idNumber);
+            if (!errorMessage.isEmpty()) {
+                android.util.Log.w("CertificateOfIdFragment", "Invalid idCard: " + errorMessage);
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
             android.util.Log.d("CertificateOfIdFragment", "calling viewModel.submitCert");
             viewModel.submitCert(idNumber);
         });

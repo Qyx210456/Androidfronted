@@ -241,7 +241,8 @@
                         android:background="@null"
                         android:textSize="15sp"
                         android:hint="@string/enter_your_ID_card"
-                        android:inputType="number"
+                        android:inputType="text"
+                        android:digits="0123456789Xx"
                         android:maxLength="18"/>
                 </LinearLayout>
 
