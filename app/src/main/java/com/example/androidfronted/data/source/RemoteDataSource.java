@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.androidfronted.data.model.AuthSubmitResponse;
+import com.example.androidfronted.data.model.AvatarUpdateResponse;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.LoanProductResponse;
 import com.example.androidfronted.data.model.LoginRequest;
@@ -391,18 +392,27 @@ public class RemoteDataSource {
 
     public void updateUserInfo(String token, String username, okhttp3.RequestBody avatar, final NetworkCallback<UserInfoResponse> callback) {
         if (avatar != null) {
-            okhttp3.MultipartBody.Builder builder = new okhttp3.MultipartBody.Builder()
-                    .setType(okhttp3.MultipartBody.FORM)
-                    .addFormDataPart("file", "avatar_" + System.currentTimeMillis() + ".jpg", avatar);
+            updateAvatar(token, avatar, new NetworkCallback<AvatarUpdateResponse>() {
+                @Override
+                public void onSuccess(AvatarUpdateResponse response) {
+                    if (response != null && response.getCode() == 200) {
+                        UserInfoResponse userInfoResponse = new UserInfoResponse();
+                        userInfoResponse.setCode(response.getCode());
+                        userInfoResponse.setMessage(response.getMessage());
+                        UserInfoResponse.UserData userData = new UserInfoResponse.UserData();
+                        userData.setAvatar(response.getData());
+                        userInfoResponse.setData(userData);
+                        callback.onSuccess(userInfoResponse);
+                    } else {
+                        callback.onError(response != null ? response.getMessage() : "上传失败");
+                    }
+                }
 
-            okhttp3.RequestBody requestBody = builder.build();
-            Request httpRequest = new Request.Builder()
-                    .url(BASE_URL + "/users/avatar")
-                    .addHeader("Authorization", "Bearer " + token)
-                    .post(requestBody)
-                    .build();
-
-            executeRequestWithErrorHandling(httpRequest, "Update avatar", UserInfoResponse.class, callback);
+                @Override
+                public void onError(String errorMessage) {
+                    callback.onError(errorMessage);
+                }
+            });
         } else if (username != null && !username.isEmpty()) {
             okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(
                     okhttp3.MediaType.parse("text/plain"), username);
@@ -416,6 +426,21 @@ public class RemoteDataSource {
 
             executeRequestWithErrorHandling(httpRequest, "Update username", UserInfoResponse.class, callback);
         }
+    }
+
+    public void updateAvatar(String token, okhttp3.RequestBody avatar, final NetworkCallback<AvatarUpdateResponse> callback) {
+        okhttp3.MultipartBody.Builder builder = new okhttp3.MultipartBody.Builder()
+                .setType(okhttp3.MultipartBody.FORM)
+                .addFormDataPart("file", "avatar_" + System.currentTimeMillis() + ".jpg", avatar);
+
+        okhttp3.RequestBody requestBody = builder.build();
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/users/avatar")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(requestBody)
+                .build();
+
+        executeRequestWithErrorHandling(httpRequest, "Update avatar", AvatarUpdateResponse.class, callback);
     }
 
     private static class RefreshTokenRequest {
