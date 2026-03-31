@@ -27,12 +27,12 @@
             android:src="@drawable/ic_arrow_back_white"
             android:contentDescription="@string/nav_back" />
 
-        <!--页面标题，认证银行卡-->
+        <!--页面标题，修改头像-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="个人资料"
+            android:text="修改头像"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -55,84 +55,42 @@
         app:layout_constraintTop_toBottomOf="@id/top_leading">
 
         <LinearLayout
-            android:id="@+id/ll_avatar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="头像"
-                android:textSize="16sp"
-                android:textColor="@color/text_secondary" />
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="32dp">
 
             <ImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_profile_avatar"
                 android:background="@drawable/shape_circle_avatar"
                 android:clipToOutline="true"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="16dp"/>
-
-            <!--查看详情右箭头-->
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_profile_right"
-                android:contentDescription="@string/go_detail" />
-
-        </LinearLayout>
-
-        <!--分隔线-->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_e7e9eb" />
-
-        <LinearLayout
-            android:id="@+id/ll_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground">
+                android:scaleType="centerCrop"/>
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="用户名"
-                android:textSize="16sp"
-                android:textColor="@color/text_secondary" />
-
-            <TextView
-                android:id="@+id/tv_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XXX"
-                android:textSize="16sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginEnd="16dp"/>
-
-            <!--查看详情右箭头-->
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_profile_right"
-                android:contentDescription="@string/go_detail" />
+                android:layout_marginTop="16dp"
+                android:text="点击头像更换图片"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary"/>
 
         </LinearLayout>
+
+        <!--保存按钮-->
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_gradient_blue_horizontal"
+            android:text="保存"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

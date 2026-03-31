@@ -20,7 +20,7 @@ import com.example.androidfronted.data.local.entity.UserEntity;
         CertificationEntity.class,
         LoanProductEntity.class
     },
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

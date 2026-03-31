@@ -1,150 +1,99 @@
 package com.example.androidfronted.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.io.InputStream;
 
-/**
- * 图片上传辅助类
- * 处理图片选择、裁剪、压缩和预览功能
- */
 public class ImageUploadHelper {
     private static final String TAG = "ImageUploadHelper";
-    private static final int MAX_IMAGE_SIZE = 1024; // 最大图片尺寸（宽或高）
-    private static final int MAX_IMAGE_QUALITY = 85; // 图片压缩质量
-    private static final int MAX_IMAGE_FILE_SIZE = 2 * 1024 * 1024; // 最大文件大小 2MB
-
-    public interface ImageUploadCallback {
-        void onImageSelected(Uri imageUri);
-        void onImageCompressed(File compressedFile);
-        void onError(String errorMessage);
-    }
-
-    /**
-     * 打开图片选择器
-     * 支持从相册选择和拍照
-     */
-    public static void openImagePicker(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-        fragment.startActivityForResult(Intent.createChooser(intent, "选择图片"), requestCode);
-    }
-
-    /**
-     * 打开相机拍照
-     */
-    public static void openCamera(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fragment.startActivityForResult(intent, requestCode);
-    }
+    private static final int MAX_WIDTH = 800;
+    private static final int MAX_HEIGHT = 800;
+    private static final int QUALITY = 80;
 
     /**
      * 压缩图片
      * @param context 上下文
-     * @param imageUri 图片URI
-     * @param callback 回调
+     * @param uri 图片URI
+     * @return 压缩后的图片文件
      */
-    public static void compressImage(Context context, Uri imageUri, ImageUploadCallback callback) {
+    public static File compressImage(Context context, Uri uri) throws IOException {
+        // 读取图片
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.close();
+
+        // 计算压缩比例
+        int inSampleSize = calculateInSampleSize(options, MAX_WIDTH, MAX_HEIGHT);
+
+        // 解码图片
+        inputStream = context.getContentResolver().openInputStream(uri);
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = inSampleSize;
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.close();
+
+        // 旋转图片（如果需要）
+        bitmap = rotateBitmap(bitmap, getImageRotation(context, uri));
+
+        // 压缩图片
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, bos);
+
+        // 保存压缩后的图片
+        File outputDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File outputFile = new File(outputDir, "compressed_" + System.currentTimeMillis() + ".jpg");
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        fos.write(bos.toByteArray());
+        fos.flush();
+        fos.close();
+
+        Log.d(TAG, "Compressed image saved to: " + outputFile.getAbsolutePath());
+        Log.d(TAG, "Original size: " + (options.outWidth * options.outHeight) + " pixels");
+        Log.d(TAG, "Compressed size: " + (bitmap.getWidth() * bitmap.getHeight()) + " pixels");
+
+        return outputFile;
+    }
+
+    /**
+     * 压缩图片（带回调）
+     * @param context 上下文
+     * @param uri 图片URI
+     * @param callback 回调接口
+     */
+    public static void compressImage(Context context, Uri uri, ImageUploadCallback callback) {
         try {
-            // 获取图片的原始尺寸
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
-
-            int originalWidth = options.outWidth;
-            int originalHeight = options.outHeight;
-
-            Log.d(TAG, "原始图片尺寸: " + originalWidth + "x" + originalHeight);
-
-            // 计算缩放比例
-            int scale = 1;
-            if (originalWidth > MAX_IMAGE_SIZE || originalHeight > MAX_IMAGE_SIZE) {
-                scale = Math.min(
-                    MAX_IMAGE_SIZE / originalWidth,
-                    MAX_IMAGE_SIZE / originalHeight
-                );
-            }
-
-            // 重新加载图片，应用缩放
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = calculateInSampleSize(originalWidth, originalHeight, MAX_IMAGE_SIZE, MAX_IMAGE_SIZE);
-
-            Bitmap bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(imageUri), null, options);
-
-            if (bitmap == null) {
-                callback.onError("图片加载失败");
-                return;
-            }
-
-            // 如果需要进一步缩放
-            if (bitmap.getWidth() > MAX_IMAGE_SIZE || bitmap.getHeight() > MAX_IMAGE_SIZE) {
-                float ratio = Math.min(
-                    (float) MAX_IMAGE_SIZE / bitmap.getWidth(),
-                    (float) MAX_IMAGE_SIZE / bitmap.getHeight()
-                );
-                int newWidth = Math.round(bitmap.getWidth() * ratio);
-                int newHeight = Math.round(bitmap.getHeight() * ratio);
-                bitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
-            }
-
-            Log.d(TAG, "压缩后图片尺寸: " + bitmap.getWidth() + "x" + bitmap.getHeight());
-
-            // 保存压缩后的图片
-            File compressedFile = createImageFile(context);
-            if (compressedFile != null) {
-                FileOutputStream fos = new FileOutputStream(compressedFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, MAX_IMAGE_QUALITY, fos);
-                fos.flush();
-                fos.close();
-
-                Log.d(TAG, "压缩后文件大小: " + compressedFile.length() / 1024 + "KB");
-
-                // 如果文件仍然过大，继续压缩
-                if (compressedFile.length() > MAX_IMAGE_FILE_SIZE) {
-                    Log.d(TAG, "文件仍然过大，继续压缩");
-                    compressFurther(compressedFile, bitmap);
-                }
-
-                callback.onImageCompressed(compressedFile);
-            }
-
-            bitmap.recycle();
-            callback.onImageSelected(imageUri);
-
+            File compressedFile = compressImage(context, uri);
+            callback.onSuccess(compressedFile.getAbsolutePath());
         } catch (IOException e) {
-            Log.e(TAG, "图片压缩失败", e);
-            callback.onError("图片压缩失败: " + e.getMessage());
+            e.printStackTrace();
+            callback.onError("图片压缩失败");
         }
     }
 
     /**
-     * 计算采样率
+     * 计算压缩比例
      */
-    private static int calculateInSampleSize(int reqWidth, int reqHeight, int maxWidth, int maxHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (reqHeight > maxHeight || reqWidth > maxWidth) {
-            final int halfHeight = reqHeight / 2;
-            final int halfWidth = reqWidth / 2;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
 
-            while ((halfHeight / inSampleSize) >= maxHeight
-                    && (halfWidth / inSampleSize) >= maxWidth) {
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }
@@ -153,40 +102,35 @@ public class ImageUploadHelper {
     }
 
     /**
-     * 进一步压缩图片
+     * 旋转图片
      */
-    private static void compressFurther(File file, Bitmap bitmap) throws IOException {
-        int quality = MAX_IMAGE_QUALITY;
-        while (file.length() > MAX_IMAGE_FILE_SIZE && quality > 50) {
-            quality -= 10;
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-            fos.flush();
-            fos.close();
-            Log.d(TAG, "继续压缩，质量: " + quality + ", 大小: " + file.length() / 1024 + "KB");
+    private static Bitmap rotateBitmap(Bitmap bitmap, int rotation) {
+        if (rotation == 0) {
+            return bitmap;
         }
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotation);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     /**
-     * 创建临时图片文件
+     * 获取图片旋转角度
      */
-    private static File createImageFile(Context context) throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if (storageDir != null && !storageDir.exists()) {
-            storageDir.mkdirs();
-        }
-        return File.createTempFile(imageFileName, ".jpg", storageDir);
+    private static int getImageRotation(Context context, Uri uri) {
+        // 这里可以通过 ExifInterface 获取图片的旋转角度
+        // 简化处理，暂时返回 0
+        return 0;
     }
 
     /**
-     * 删除临时文件
+     * 图片上传回调接口
      */
-    public static void deleteTempFile(File file) {
-        if (file != null && file.exists()) {
-            file.delete();
-            Log.d(TAG, "删除临时文件: " + file.getAbsolutePath());
+    public interface ImageUploadCallback {
+        void onSuccess(String imagePath);
+        void onError(String errorMessage);
+        default void onProgress(int progress) {
+            // 默认实现，子类可以选择性重写
         }
     }
 }

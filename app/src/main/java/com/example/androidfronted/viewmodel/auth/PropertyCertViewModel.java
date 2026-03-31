@@ -9,18 +9,20 @@ import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
 import com.example.androidfronted.data.repository.AuthRepository;
 import com.example.androidfronted.viewmodel.base.BaseViewModel;
-
+import com.example.androidfronted.viewmodel.base.NavigationEvent;
 public class PropertyCertViewModel extends BaseViewModel {
     private final AuthRepository repository;
     private final MutableLiveData<AuthSubmitResponse> submitResult = new MutableLiveData<>();
-    private final MutableLiveData<CertState> certState = new MutableLiveData<>(CertState.NOT_CERTIFIED);
+    private final MutableLiveData<CertState> certState = new MutableLiveData<>();
     private final MutableLiveData<CertInfoResponse.ImmovablesCert> certData = new MutableLiveData<>();
     private final MutableLiveData<String> bankCardId = new MutableLiveData<>();
-    private CertState previousState = CertState.NOT_CERTIFIED;
+    private CertState previousState = null;
 
     public PropertyCertViewModel(@NonNull Application application) {
         super(application);
         this.repository = AuthRepository.getInstance(application);
+        // 在构造函数中加载本地认证信息
+        loadLocalCertInfo();
     }
 
     public MutableLiveData<AuthSubmitResponse> getSubmitResult() {
@@ -63,10 +65,10 @@ public class PropertyCertViewModel extends BaseViewModel {
                          immovablesCert.getCarCertPath() != null && !immovablesCert.getCarCertPath().isEmpty())) {
                         certState.postValue(CertState.CERTIFIED);
                     } else {
-                        certState.postValue(CertState.NOT_CERTIFIED);
+                        // 网络请求成功但数据为空时，保持当前状态，不设置为 NOT_CERTIFIED
+                        // 这样可以避免覆盖本地的已认证状态，防止页面闪烁
+                        Log.d("PropertyCertViewModel", "getCertInfo, immovablesCert is null or empty, keeping current state");
                     }
-                } else {
-                    certState.postValue(CertState.NOT_CERTIFIED);
                 }
                 
                 if (callback != null) {
@@ -76,7 +78,6 @@ public class PropertyCertViewModel extends BaseViewModel {
 
             @Override
             public void onError(String errorMsg) {
-                certState.postValue(CertState.NOT_CERTIFIED);
                 if (callback != null) {
                     callback.onError(errorMsg);
                 }
@@ -113,5 +114,21 @@ public class PropertyCertViewModel extends BaseViewModel {
 
     public void navigateToUpload() {
         navigate(com.example.androidfronted.viewmodel.base.NavigationEvent.NAVIGATE_TO_PROPERTY_CERT_UPLOAD);
+    }
+    
+    private void loadLocalCertInfo() {
+        Log.d("PropertyCertViewModel", "loadLocalCertInfo called");
+        repository.getLocalPropertyCertState(new AuthRepository.AuthCallback<CertState>() {
+            @Override
+            public void onSuccess(CertState certStateValue) {
+                Log.d("PropertyCertViewModel", "loadLocalCertInfo, onSuccess, certState: " + certStateValue);
+                certState.postValue(certStateValue);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.d("PropertyCertViewModel", "loadLocalCertInfo, onError: " + errorMessage);
+            }
+        });
     }
 }

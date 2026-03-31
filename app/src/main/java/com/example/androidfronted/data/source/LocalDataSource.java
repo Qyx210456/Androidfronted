@@ -38,6 +38,18 @@ public class LocalDataSource {
         executor.execute(() -> userDao.insert(user));
     }
 
+    public void getUser(DataSourceCallback<UserEntity> callback) {
+        executor.execute(() -> {
+            try {
+                UserEntity result = userDao.getUser();
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
     public void getUserById(int userId, DataSourceCallback<UserEntity> callback) {
         executor.execute(() -> {
             try {
@@ -51,9 +63,13 @@ public class LocalDataSource {
     }
 
     public void saveToken(String token, String refreshToken) {
+        android.util.Log.d("LocalDataSource", "saveToken called, token: " + (token != null ? "not null" : "null"));
         executor.execute(() -> {
-            AuthTokenEntity entity = new AuthTokenEntity(token, refreshToken);
+            Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+            android.util.Log.d("LocalDataSource", "UserId from token: " + userId);
+            AuthTokenEntity entity = new AuthTokenEntity(token, refreshToken, userId);
             authTokenDao.insert(entity);
+            android.util.Log.d("LocalDataSource", "Token saved to database");
         });
     }
 

@@ -71,9 +71,14 @@ public class CertInfoResponse {
         private String employmentCertPath;
         private String salaryCertPath;
 
+        public WorkCert() {}
+
         public int getWorkCertId() { return workCertId; }
+        public void setWorkCertId(int workCertId) { this.workCertId = workCertId; }
         public String getEmploymentCertPath() { return employmentCertPath; }
+        public void setEmploymentCertPath(String employmentCertPath) { this.employmentCertPath = employmentCertPath; }
         public String getSalaryCertPath() { return salaryCertPath; }
+        public void setSalaryCertPath(String salaryCertPath) { this.salaryCertPath = salaryCertPath; }
     }
 
     /**

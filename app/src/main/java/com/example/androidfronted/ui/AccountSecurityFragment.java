@@ -24,5 +24,24 @@ public class AccountSecurityFragment extends BaseDetailFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // 自动隐藏导航栏，自动绑定返回键
+
+        // 个人资料点击事件
+        view.findViewById(R.id.ll_personal_info).setOnClickListener(v -> {
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, new PersonalInformationFragment())
+                    .addToBackStack("PersonalInformation")
+                    .commit();
+        });
+
+        // 账户密码点击事件
+        view.findViewById(R.id.ll_account_password).setOnClickListener(v -> {
+            // 跳转到账户密码页面
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, new AccountPasswordFragment())
+                    .addToBackStack("AccountPassword")
+                    .commit();
+        });
     }
 }

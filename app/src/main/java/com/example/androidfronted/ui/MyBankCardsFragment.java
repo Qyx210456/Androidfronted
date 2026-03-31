@@ -148,10 +148,14 @@ public class MyBankCardsFragment extends BaseDetailFragment {
         if (btnAddBankCard != null) btnAddBankCard.setVisibility(View.GONE);
         if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.GONE);
 
+        if (state == null) {
+            // 状态为 null，不显示任何内容，避免闪烁
+            return;
+        }
+
         switch (state) {
             case NOT_CERTIFIED:
                 if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);
-                if (btnAddBankCard != null) btnAddBankCard.setVisibility(View.VISIBLE);
                 break;
             case UPLOADING:
                 if (containerUploading != null) containerUploading.setVisibility(View.VISIBLE);
@@ -178,7 +182,7 @@ public class MyBankCardsFragment extends BaseDetailFragment {
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.getCertInfo();
+        // 移除重复请求，避免页面闪烁
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.example.androidfronted.data.model.ProductApplyRequest;
 import com.example.androidfronted.data.model.ProductApplyResponse;
 import com.example.androidfronted.data.model.RegisterRequest;
 import com.example.androidfronted.data.model.RegisterResponse;
+import com.example.androidfronted.data.model.UserInfoResponse;
 import com.example.androidfronted.network.NetworkClient;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -210,6 +211,9 @@ public class RemoteDataSource {
         } else if (response instanceof ProductApplyResponse) {
             ProductApplyResponse res = (ProductApplyResponse) response;
             return (res != null && res.getMessage() != null) ? res.getMessage() : "提交失败";
+        } else if (response instanceof UserInfoResponse) {
+            UserInfoResponse res = (UserInfoResponse) response;
+            return (res != null && res.getMessage() != null) ? res.getMessage() : "请求失败 (" + statusCode + ")";
         }
         return "请求失败 (" + statusCode + ")";
     }
@@ -373,6 +377,45 @@ public class RemoteDataSource {
                         return response != null && response.getCode() == 200;
                     }
                 }, callback);
+    }
+
+    public void getUserInfo(String token, final NetworkCallback<UserInfoResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/users/me")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get user info", UserInfoResponse.class, callback);
+    }
+
+    public void updateUserInfo(String token, String username, okhttp3.RequestBody avatar, final NetworkCallback<UserInfoResponse> callback) {
+        if (avatar != null) {
+            okhttp3.MultipartBody.Builder builder = new okhttp3.MultipartBody.Builder()
+                    .setType(okhttp3.MultipartBody.FORM)
+                    .addFormDataPart("file", "avatar_" + System.currentTimeMillis() + ".jpg", avatar);
+
+            okhttp3.RequestBody requestBody = builder.build();
+            Request httpRequest = new Request.Builder()
+                    .url(BASE_URL + "/users/avatar")
+                    .addHeader("Authorization", "Bearer " + token)
+                    .post(requestBody)
+                    .build();
+
+            executeRequestWithErrorHandling(httpRequest, "Update avatar", UserInfoResponse.class, callback);
+        } else if (username != null && !username.isEmpty()) {
+            okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(
+                    okhttp3.MediaType.parse("text/plain"), username);
+
+            Request httpRequest = new Request.Builder()
+                    .url(BASE_URL + "/users/me")
+                    .addHeader("Authorization", "Bearer " + token)
+                    .addHeader("Content-Type", "text/plain")
+                    .post(requestBody)
+                    .build();
+
+            executeRequestWithErrorHandling(httpRequest, "Update username", UserInfoResponse.class, callback);
+        }
     }
 
     private static class RefreshTokenRequest {

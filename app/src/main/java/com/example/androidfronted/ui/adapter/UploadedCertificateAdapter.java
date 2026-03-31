@@ -7,8 +7,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.androidfronted.R;
+import com.example.androidfronted.utils.ImageLoader;
+import com.example.androidfronted.utils.ImageUrlHelper;
 
+/**
+ * 已上传证明列表适配器
+ * 使用Glide加载图片，避免闪烁问题
+ */
 public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCertificateAdapter.ViewHolder> {
     
     public static class CertificateItem {
@@ -54,12 +61,20 @@ public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCer
         holder.tvType.setText(item.getType());
         
         if (item.getImagePath() != null && !item.getImagePath().isEmpty()) {
-            holder.ivImage.setImageResource(R.drawable.info_upload_picture);
-            holder.ivImage.setAlpha(1.0f);
+            String imageUrl = ImageUrlHelper.getFullImageUrl(item.getImagePath());
+            android.util.Log.d("UploadedCertificateAdapter", "Loading image: " + imageUrl);
+            ImageLoader.loadImage(holder.itemView.getContext(), imageUrl, holder.ivImage);
         } else {
+            android.util.Log.d("UploadedCertificateAdapter", "No image path available");
             holder.ivImage.setImageResource(R.drawable.info_upload_picture);
             holder.ivImage.setAlpha(0.3f);
         }
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(holder.itemView.getContext()).clear(holder.ivImage);
     }
 
     @Override

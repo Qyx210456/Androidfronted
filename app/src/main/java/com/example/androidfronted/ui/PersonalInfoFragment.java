@@ -99,14 +99,19 @@ public class PersonalInfoFragment extends BaseDetailFragment {
         });
     }
 
-    private void updateStatusText(int statusTextViewId, boolean hasInfo) {
+    private void updateStatusText(int statusTextViewId, Boolean hasInfo) {
         if (getView() != null) {
             TextView statusText = getView().findViewById(statusTextViewId);
             if (statusText != null) {
-                statusText.setText(hasInfo ? "已认证" : "未认证");
-                statusText.setTextColor(hasInfo ? 
-                    getResources().getColor(R.color.al_info) : 
-                    getResources().getColor(R.color.no_info));
+                if (hasInfo == null) {
+                    // 状态为 null，不显示任何内容，避免闪烁
+                    statusText.setText("");
+                } else {
+                    statusText.setText(hasInfo ? "已认证" : "未认证");
+                    statusText.setTextColor(hasInfo ? 
+                        getResources().getColor(R.color.al_info) : 
+                        getResources().getColor(R.color.no_info));
+                }
             }
         }
     }
@@ -149,10 +154,6 @@ public class PersonalInfoFragment extends BaseDetailFragment {
     public void onResume() {
         super.onResume();
         android.util.Log.d("PersonalInfoFragment", "onResume called");
-
-        android.util.Log.d("PersonalInfoFragment", "About to call getCertInfo()");
-        viewModel.getCertInfo();
-        android.util.Log.d("PersonalInfoFragment", "getCertInfo() called");
 
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBottomNavigationVisible(false);

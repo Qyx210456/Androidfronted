@@ -61,4 +61,13 @@ dependencies {
     
     // Fragment KTX
     implementation("androidx.fragment:fragment:1.6.1")
+    
+    // JWT解析库
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    
+    // Glide图片加载库
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

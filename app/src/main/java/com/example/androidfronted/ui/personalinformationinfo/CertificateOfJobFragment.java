@@ -98,11 +98,8 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
                             ImageUploadHelper.compressImage(getContext(), selectedImageUri, 
                                 new ImageUploadHelper.ImageUploadCallback() {
                                     @Override
-                                    public void onImageSelected(Uri imageUri) {
-                                    }
-
-                                    @Override
-                                    public void onImageCompressed(File compressedFile) {
+                                    public void onSuccess(String imagePath) {
+                                        File compressedFile = new File(imagePath);
                                         if (uploadType.contains("工作证明")) {
                                             employmentFile = compressedFile;
                                         } else if (uploadType.contains("工资")) {
@@ -260,10 +257,14 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
         if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.GONE);
         if (btnAddJob != null) btnAddJob.setVisibility(View.GONE);
 
+        if (state == null) {
+            // 状态为 null，不显示任何内容，避免闪烁
+            return;
+        }
+
         switch (state) {
             case NOT_CERTIFIED:
                 if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);
-                if (btnAddJob != null) btnAddJob.setVisibility(View.VISIBLE);
                 break;
             case UPLOADING:
                 if (containerUploading != null) containerUploading.setVisibility(View.VISIBLE);

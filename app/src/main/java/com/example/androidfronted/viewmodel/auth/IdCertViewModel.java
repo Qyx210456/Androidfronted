@@ -14,13 +14,15 @@ import com.example.androidfronted.viewmodel.base.NavigationEvent;
 public class IdCertViewModel extends BaseViewModel {
     private final AuthRepository repository;
     private final MutableLiveData<AuthSubmitResponse> submitResult = new MutableLiveData<>();
-    private final MutableLiveData<CertState> certState = new MutableLiveData<>(CertState.NOT_CERTIFIED);
+    private final MutableLiveData<CertState> certState = new MutableLiveData<>();
     private final MutableLiveData<CertInfoResponse.UserCert> certData = new MutableLiveData<>();
-    private CertState previousState = CertState.NOT_CERTIFIED;
+    private CertState previousState = null;
 
     public IdCertViewModel(@NonNull Application application) {
         super(application);
         this.repository = AuthRepository.getInstance(application);
+        // 在构造函数中加载本地认证信息
+        loadLocalCertInfo();
     }
 
     public MutableLiveData<AuthSubmitResponse> getSubmitResult() {
@@ -78,12 +80,9 @@ public class IdCertViewModel extends BaseViewModel {
                 CertState currentStateAfterRequest = certState.getValue();
                 Log.d("IdCertViewModel", "getCertInfo onError, currentStateAfterRequest: " + currentStateAfterRequest);
                 
-                if (currentStateAfterRequest != CertState.UPLOADING) {
-                    Log.d("IdCertViewModel", "getCertInfo onError, setting state to NOT_CERTIFIED");
-                    certState.postValue(CertState.NOT_CERTIFIED);
-                } else {
-                    Log.d("IdCertViewModel", "getCertInfo onError, current state is UPLOADING, not changing state");
-                }
+                // 网络请求失败时，保持当前状态，不设置为 NOT_CERTIFIED
+                // 这样可以避免覆盖本地的已认证状态，防止页面闪烁
+                Log.d("IdCertViewModel", "getCertInfo onError, keeping current state");
                 
                 if (callback != null) {
                     callback.onError(errorMsg);
@@ -131,5 +130,21 @@ public class IdCertViewModel extends BaseViewModel {
 
     public void navigateBack() {
         navigate(NavigationEvent.NAVIGATE_BACK);
+    }
+    
+    private void loadLocalCertInfo() {
+        Log.d("IdCertViewModel", "loadLocalCertInfo called");
+        repository.getLocalIdCertState(new AuthRepository.AuthCallback<CertState>() {
+            @Override
+            public void onSuccess(CertState certStateValue) {
+                Log.d("IdCertViewModel", "loadLocalCertInfo, onSuccess, certState: " + certStateValue);
+                certState.postValue(certStateValue);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.d("IdCertViewModel", "loadLocalCertInfo, onError: " + errorMessage);
+            }
+        });
     }
 }

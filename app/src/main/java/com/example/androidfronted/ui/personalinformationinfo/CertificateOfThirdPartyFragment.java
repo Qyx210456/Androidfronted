@@ -98,11 +98,8 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
                             ImageUploadHelper.compressImage(getContext(), selectedImageUri, 
                                 new ImageUploadHelper.ImageUploadCallback() {
                                     @Override
-                                    public void onImageSelected(Uri imageUri) {
-                                    }
-
-                                    @Override
-                                    public void onImageCompressed(File compressedFile) {
+                                    public void onSuccess(String imagePath) {
+                                        File compressedFile = new File(imagePath);
                                         if (uploadType.contains("社保")) {
                                             socialSecurityFile = compressedFile;
                                         } else if (uploadType.contains("征信")) {
@@ -260,10 +257,14 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
         if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.GONE);
         if (btnAddOther != null) btnAddOther.setVisibility(View.GONE);
 
+        if (state == null) {
+            // 状态为 null，不显示任何内容，避免闪烁
+            return;
+        }
+
         switch (state) {
             case NOT_CERTIFIED:
                 if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);
-                if (btnAddOther != null) btnAddOther.setVisibility(View.VISIBLE);
                 break;
             case UPLOADING:
                 if (containerUploading != null) containerUploading.setVisibility(View.VISIBLE);

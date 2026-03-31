@@ -139,6 +139,11 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
         if (btnIdUpload != null) btnIdUpload.setVisibility(View.GONE);
         if (btnModifyId != null) btnModifyId.setVisibility(View.GONE);
 
+        if (state == null) {
+            // 状态为 null，不显示任何内容，避免闪烁
+            return;
+        }
+
         switch (state) {
             case NOT_CERTIFIED:
                 if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);

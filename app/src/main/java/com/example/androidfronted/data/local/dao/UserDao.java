@@ -23,4 +23,7 @@ public interface UserDao {
     
     @Query("DELETE FROM users WHERE userId = :userId")
     void deleteUserById(int userId);
+    
+    @Query("SELECT * FROM users LIMIT 1")
+    UserEntity getUser();
 }

@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/info_upload_picture"/>
+            android:background="@android:color/transparent"/>
 
         <!-- 证明类型 -->
         <LinearLayout

@@ -24,7 +24,6 @@
                 android:layout_height="70dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="56dp"
-                android:src="@drawable/user_avatar_test"
                 android:background="@drawable/shape_circle_avatar"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
@@ -37,7 +36,7 @@
                 android:layout_height="20dp"
                 android:layout_marginStart="115dp"
                 android:layout_marginTop="56dp"
-                android:text="前端测试"
+                android:text=""
                 android:textSize="15sp"
                 android:textColor="@color/gray_dark_100"
                 android:gravity="center_vertical" />
