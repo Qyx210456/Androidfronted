@@ -78,16 +78,8 @@ public class LoanOptionAdapter extends RecyclerView.Adapter<LoanOptionAdapter.Vi
             String rate = new DecimalFormat("#.##%").format(option.getInterestRate());
             tvInterestRate.setText(rate);
 
-            // 处理贷款总时长（loanPeriod 单位：月）→ 转换为“X年Y个月”
-            int totalMonths = option.getLoanPeriod();
-            String periodText;
-            if (totalMonths % 12 == 0) {
-                periodText = (totalMonths / 12) + "年";
-            } else {
-                int years = totalMonths / 12;
-                int months = totalMonths % 12;
-                periodText = (years > 0 ? years + "年" : "") + months + "个月";
-            }
+            // 处理贷款总时长（loanPeriod 单位：年）→ 显示为"X年"
+            String periodText = option.getLoanPeriod() + "年";
             tvLoanPeriod.setText(periodText); // 仅显示值，label 在 XML 中
 
             // 还款方式

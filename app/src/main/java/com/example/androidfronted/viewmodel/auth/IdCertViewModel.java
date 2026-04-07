@@ -91,11 +91,11 @@ public class IdCertViewModel extends BaseViewModel {
         });
     }
 
-    public void submitCert(String idCard) {
-        Log.d("IdCertViewModel", "submitCert called, idCard: " + idCard);
+    public void submitCert(String idCard, String realName) {
+        Log.d("IdCertViewModel", "submitCert called, idCard: " + idCard + ", realName: " + realName);
         certState.setValue(CertState.UPLOADING);
         Log.d("IdCertViewModel", "submitCert, state changed to UPLOADING");
-        repository.submitBasicCert(idCard,
+        repository.submitBasicCert(idCard, realName,
                 new AuthRepository.AuthCallback<AuthSubmitResponse>() {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {

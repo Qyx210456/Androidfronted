@@ -4,12 +4,20 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import com.example.androidfronted.data.local.dao.ApplicationDao;
+import com.example.androidfronted.data.local.dao.ApplicationDetailDao;
 import com.example.androidfronted.data.local.dao.AuthTokenDao;
 import com.example.androidfronted.data.local.dao.CertificationDao;
+import com.example.androidfronted.data.local.dao.LoanOrderDao;
+import com.example.androidfronted.data.local.dao.LoanOrderDetailDao;
 import com.example.androidfronted.data.local.dao.LoanProductDao;
 import com.example.androidfronted.data.local.dao.UserDao;
+import com.example.androidfronted.data.local.entity.ApplicationEntity;
+import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
 import com.example.androidfronted.data.local.entity.AuthTokenEntity;
 import com.example.androidfronted.data.local.entity.CertificationEntity;
+import com.example.androidfronted.data.local.entity.LoanOrderEntity;
+import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.LoanProductEntity;
 import com.example.androidfronted.data.local.entity.UserEntity;
 
@@ -18,9 +26,13 @@ import com.example.androidfronted.data.local.entity.UserEntity;
         UserEntity.class,
         AuthTokenEntity.class,
         CertificationEntity.class,
-        LoanProductEntity.class
+        LoanProductEntity.class,
+        ApplicationEntity.class,
+        ApplicationDetailEntity.class,
+        LoanOrderEntity.class,
+        LoanOrderDetailEntity.class
     },
-    version = 2,
+    version = 6,
     exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -31,6 +43,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AuthTokenDao authTokenDao();
     public abstract CertificationDao certificationDao();
     public abstract LoanProductDao loanProductDao();
+    public abstract ApplicationDao applicationDao();
+    public abstract ApplicationDetailDao applicationDetailDao();
+    public abstract LoanOrderDao loanOrderDao();
+    public abstract LoanOrderDetailDao loanOrderDetailDao();
 
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {

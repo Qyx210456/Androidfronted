@@ -110,7 +110,7 @@ public class ProductApplyActivity extends AppCompatActivity {
 
         tvAmount.setText(String.format("¥%,.0f", selectedAmount));
         tvRate.setText(new DecimalFormat("#.##%").format(selectedOption.getInterestRate()));
-        tvPeriod.setText(selectedOption.getLoanPeriod() + "个月");
+        tvPeriod.setText(selectedOption.getLoanPeriod() + "年");
         tvRepay.setText(selectedOption.getRepaidType());
         tvTerm.setText(selectedTerm + "期");
     }

@@ -28,8 +28,8 @@ public class AuthApi {
         remoteDataSource.getCertInfo(token, callback);
     }
 
-    public void submitBasicCert(String token, String idCard, RemoteDataSource.NetworkCallback<AuthSubmitResponse> callback) {
-        remoteDataSource.submitBasicCert(token, idCard, callback);
+    public void submitBasicCert(String token, String idCard, String realName, RemoteDataSource.NetworkCallback<AuthSubmitResponse> callback) {
+        remoteDataSource.submitBasicCert(token, idCard, realName, callback);
     }
 
     public void submitOtherCert(String token, String bankCardId,

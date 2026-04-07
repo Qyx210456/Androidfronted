@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 取消申请按钮背景样式 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- 1. 底色：极淡的红色 (red-50) -->
+    <solid android:color="#FEF2F2" />
+
+    <!-- 2. 边框：默认灰色边框 (gray-200) -->
+    <stroke
+        android:width="1dp"
+        android:color="#E5E7EB" />
+
+    <!-- 3. 圆角：适配 sm 尺寸按钮 -->
+    <corners android:radius="4dp" />
+
+</shape>

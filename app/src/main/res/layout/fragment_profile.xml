@@ -20,82 +20,99 @@
             <!--用户头像-->
             <ImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="77dp"
+                android:layout_height="77dp"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="40dp"
                 android:background="@drawable/shape_circle_avatar"
                 android:clipToOutline="true"
                 android:scaleType="centerCrop"
                 android:contentDescription="@string/avatar" />
 
-            <!--用户昵称-->
-            <TextView
-                android:id="@+id/tv_username"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginStart="115dp"
-                android:layout_marginTop="56dp"
-                android:text=""
-                android:textSize="15sp"
-                android:textColor="@color/gray_dark_100"
-                android:gravity="center_vertical" />
-            <!--center_vertical垂直对齐-->
-
-            <!--用户实名认证情况-->
+            <!--用户信息容器-->            
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="115dp"
-                android:layout_marginTop="79dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                <!--horizontal水平布局-->
+                android:layout_marginTop="40dp"
+                android:orientation="vertical">
 
-                <!--实名认证图标-->
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_profile_verified"
-                    android:contentDescription="@string/text_certified" />
-
-                <!--实名认证情况text-->
+                <!--用户昵称-->
                 <TextView
+                    android:id="@+id/tv_username"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:text="@string/text_certified"
-                    android:textSize="13sp"
-                    android:textColor="@color/white"
-                    android:fontFamily="sans-serif-medium"
+                    android:layout_height="25dp"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textColor="@color/gray_dark_100"
                     android:gravity="center_vertical" />
-            </LinearLayout>
+                <!--center_vertical垂直对齐-->
 
-            <!--用户信用等级情况-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="115dp"
-                android:layout_marginTop="100dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                <!--间隙-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp" />
 
-                <!--信用等级图标-->
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_profile_credit"
-                    android:contentDescription="@string/text_credit_rating" />
+                <!--用户实名认证情况-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <!--horizontal水平布局-->
 
-                <!--信用等级text-->
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:text="@string/text_credit_rating"
-                    android:textSize="13sp"
-                    android:textColor="@color/text_primary"
-                    android:gravity="center_vertical" />
+                    <!--实名认证图标-->
+                    <ImageView
+                        android:id="@+id/iv_certification_status"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_profile_verified"
+                        android:contentDescription="@string/text_certified"
+                        android:visibility="gone"/>
+
+                    <!--实名认证情况text-->
+                    <TextView
+                        android:id="@+id/tv_certification_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center_vertical"
+                        android:text="@string/text_certified"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <!--间隙-->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp" />
+
+                <!--用户信用等级情况-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!--信用等级图标-->
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_profile_credit"
+                        android:contentDescription="@string/text_credit_rating" />
+
+                    <!--信用等级text-->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/text_credit_rating"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_primary"
+                        android:gravity="center_vertical" />
+                </LinearLayout>
             </LinearLayout>
 
         </FrameLayout>

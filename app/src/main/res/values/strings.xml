@@ -26,6 +26,7 @@
     <!-- 个人信息界面 -->
     <string name="text_username">Username</string>
     <string name="text_certified">已实名认证</string>
+    <string name="text_not_certified">未实名认证</string>
     <string name="text_credit_rating">信用等级：优</string>
 
     <!-- 功能列表 -->
@@ -203,4 +204,31 @@
     <string name="id_front_label">身份证正面：</string>
     <string name="id_back_label">身份证反面：</string>
     <string name="modify_id_info">修改实名认证</string>
+
+    <!--退出登录确认弹出框-->
+    <string name="logout_confirm">退出登录确认</string>
+    <string name="logout_confirm_message">确定要退出登录吗？</string>
+    <string name="logout">退出</string>
+    <string name="cancel">取消</string>
+
+    <!--申请记录页面-->
+    <string name="my_applications">我的申请</string>
+    <string name="filter_all">全部</string>
+    <string name="filter_pending">审核中</string>
+    <string name="filter_approved">审批通过</string>
+    <string name="filter_rejected">已拒绝</string>
+    <string name="filter_cancelled">已取消</string>
+    <string name="record_count">共有%d条申请记录</string>
+    <string name="apply_time_label">申请时间: %s</string>
+    <string name="apply_time">申请时间</string>
+    <string name="cancel_application">取消申请</string>
+    <string name="view_detail">查看详情 ></string>
+    <string name="application_amount">申请金额</string>
+
+    <!--贷款订单页面-->
+    <string name="my_loans">我的贷款</string>
+    <string name="loan_order_count">共有%d条贷款订单</string>
+    <string name="filter_normal">正常</string>
+    <string name="filter_overdue">已逾期</string>
+    <string name="filter_completed">已完成</string>
 </resources>

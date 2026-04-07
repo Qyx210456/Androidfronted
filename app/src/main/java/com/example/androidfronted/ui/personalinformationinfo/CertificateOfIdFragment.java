@@ -50,7 +50,7 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
                 TextView tvIdNumber = getView().findViewById(R.id.tv_id_number);
 
                 if (tvName != null) {
-                    tvName.setText(certData.getIdCard() != null ? certData.getIdCard().substring(0, Math.min(1, certData.getIdCard().length())) : "");
+                    tvName.setText(certData.getRealName() != null ? certData.getRealName() : "");
                 }
                 if (tvIdNumber != null) {
                     tvIdNumber.setText(certData.getIdCard() != null ? certData.getIdCard() : "");
@@ -90,8 +90,22 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
         view.findViewById(R.id.btn_confirm_id_submission).setOnClickListener(v -> {
             android.util.Log.d("CertificateOfIdFragment", "btn_confirm_id_submission clicked");
             EditText etIdNumber = view.findViewById(R.id.et_id_number);
+            EditText etName = view.findViewById(R.id.et_name);
             String idNumber = etIdNumber.getText().toString().trim();
-            android.util.Log.d("CertificateOfIdFragment", "idNumber: " + idNumber);
+            String realName = etName.getText().toString().trim();
+            android.util.Log.d("CertificateOfIdFragment", "idNumber: " + idNumber + ", realName: " + realName);
+            
+            if (realName.isEmpty()) {
+                android.util.Log.w("CertificateOfIdFragment", "realName is empty");
+                Toast.makeText(getContext(), "请输入真实姓名", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            if (!isValidRealName(realName)) {
+                android.util.Log.w("CertificateOfIdFragment", "Invalid realName format");
+                Toast.makeText(getContext(), "姓名格式不正确，请输入真实姓名", Toast.LENGTH_SHORT).show();
+                return;
+            }
             
             if (idNumber.isEmpty()) {
                 android.util.Log.w("CertificateOfIdFragment", "idNumber is empty");
@@ -107,7 +121,7 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
             }
             
             android.util.Log.d("CertificateOfIdFragment", "calling viewModel.submitCert");
-            viewModel.submitCert(idNumber);
+            viewModel.submitCert(idNumber, realName);
         });
 
         view.findViewById(R.id.btn_id_upload).setOnClickListener(v -> {
@@ -216,5 +230,17 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
             android.util.Log.d("CertificateOfIdFragment", "Calling super.navigateBack()");
             super.navigateBack();
         }
+    }
+    
+    /**
+     * 验证真实姓名格式是否符合中华人民共和国身份证上的真实姓名格式
+     * @param realName 真实姓名
+     * @return 是否符合格式
+     */
+    private boolean isValidRealName(String realName) {
+        // 姓名长度：2-6个汉字，可能包含少数特殊字符如"·"
+        // 正则表达式：匹配2-6个汉字，中间可能包含一个"·"
+        String regex = "^[\\u4e00-\\u9fa5]{2,6}$|^[\\u4e00-\\u9fa5]{1,5}[·][\\u4e00-\\u9fa5]{1,5}$";
+        return realName.matches(regex);
     }
 }

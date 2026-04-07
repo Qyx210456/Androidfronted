@@ -1,50 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/gray_lightest">
 
-    <!--顶部导航栏-->
-    <RelativeLayout
+    <!--顶部导航栏 - 使用Material Toolbar并适配状态栏-->
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_leading"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/white"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FF458FFC"
         android:elevation="4dp"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        app:titleCentered="true">
 
         <!--返回按钮-->
         <ImageView
-            android:id="@+id/apply_history_btn_back"
+            android:id="@+id/apply_btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_centerVertical="true"
+            android:layout_gravity="start|center_vertical"
             android:layout_marginStart="16dp"
-            android:src="@drawable/ic_arrow_back"/>
+            android:src="@drawable/ic_arrow_back_white"
+            android:contentDescription="@string/nav_back" />
 
-        <!--页面标题，申请记录-->
+        <!--页面标题，我的申请-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/menu_loan_records"
-            android:textColor="@color/color_262626"
+            android:layout_gravity="center"
+            android:text="@string/my_applications"
+            android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
-    </RelativeLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/apply_records"
+    <!-- 筛选部分 -->
+    <LinearLayout
+        android:id="@+id/filter_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toBottomOf="@id/top_leading">
 
-    </androidx.core.widget.NestedScrollView>
+        <!-- 1. 左侧：可横向滚动的筛选按钮列表 -->
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fadingEdge="none">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- 按钮：全部 -->
+                <Button
+                    android:id="@+id/btn_filter_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/filter_all"
+                    android:textSize="14sp"
+                    android:textColor="@color/loan_application_status_text_filter"
+                    android:background="@drawable/bg_application_status_all"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- 按钮：审核中 -->
+                <Button
+                    android:id="@+id/btn_filter_pending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/filter_pending"
+                    android:textSize="14sp"
+                    android:textColor="@color/loan_application_status_text_filter"
+                    android:background="@drawable/bg_application_status_pending"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- 按钮：审批通过 -->
+                <Button
+                    android:id="@+id/btn_filter_approved"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/filter_approved"
+                    android:textSize="14sp"
+                    android:textColor="@color/loan_application_status_text_filter"
+                    android:background="@drawable/bg_application_status_approved"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- 按钮：已拒绝 -->
+                <Button
+                    android:id="@+id/btn_filter_rejected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/filter_rejected"
+                    android:textSize="14sp"
+                    android:textColor="@color/loan_application_status_text_filter"
+                    android:background="@drawable/bg_application_status_rejected"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+                <!-- 按钮：已取消 -->
+                <Button
+                    android:id="@+id/btn_filter_cancelled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/filter_cancelled"
+                    android:textSize="14sp"
+                    android:textColor="@color/loan_application_status_text_filter"
+                    android:background="@drawable/bg_application_status_cancelled"
+                    app:backgroundTint="@null"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- 2. 右侧：固定的筛选按钮 (LinearLayout 组合实现) -->
+        <LinearLayout
+            android:id="@+id/btn_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_application_status_filter"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginStart="12dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <!-- 图标：固定大小 -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_options_filter"
+                android:scaleType="centerInside"
+                android:contentDescription="@null" />
+
+            <!-- 文字：与图标间距 8dp -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter"
+                android:textSize="14sp"
+                android:textColor="@color/number_amount"
+                android:layout_marginStart="8dp"
+                android:includeFontPadding="false" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <!-- 记录数量统计 -->
+    <TextView
+        android:id="@+id/tv_record_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/record_count"
+        android:textSize="14sp"
+        android:textColor="@color/text_tertiary"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@id/filter_container" />
+
+    <!-- 申请记录列表 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_application_records"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingVertical="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/tv_record_count"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_application_record"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

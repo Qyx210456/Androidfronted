@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.androidfronted.R;
+import com.example.androidfronted.data.model.CertState;
+import com.example.androidfronted.ui.settings.SettingsFragment;
 import com.example.androidfronted.utils.ImageLoader;
 import com.example.androidfronted.utils.ImageUrlHelper;
 import com.example.androidfronted.viewmodel.auth.PersonalInformationViewModel;
@@ -25,6 +27,8 @@ public class ProfileFragment extends Fragment {
     private PersonalInformationViewModel viewModel;
     private ImageView ivAvatar;
     private TextView tvUsername;
+    private ImageView ivCertificationStatus;
+    private TextView tvCertificationStatus;
 
     @Nullable
     @Override
@@ -39,10 +43,13 @@ public class ProfileFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(PersonalInformationViewModel.class);
         ivAvatar = view.findViewById(R.id.iv_avatar);
         tvUsername = view.findViewById(R.id.tv_username);
+        ivCertificationStatus = view.findViewById(R.id.iv_certification_status);
+        tvCertificationStatus = view.findViewById(R.id.tv_certification_status);
 
         setupObservers();
         setupClickListeners(view);
         viewModel.loadUserInfo();
+        viewModel.loadCertificationStatus();
     }
 
     private void setupObservers() {
@@ -59,6 +66,36 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+
+        viewModel.getCertificationState().observe(getViewLifecycleOwner(), certState -> {
+            updateCertificationUI(certState);
+        });
+    }
+
+    /**
+     * 更新认证状态 UI
+     * @param certState 认证状态
+     */
+    private void updateCertificationUI(CertState certState) {
+        if (certState == null) {
+            // 初始状态，不显示图标和文字
+            ivCertificationStatus.setVisibility(View.GONE);
+            tvCertificationStatus.setVisibility(View.GONE);
+        } else if (certState == CertState.CERTIFIED) {
+            // 已认证状态
+            ivCertificationStatus.setVisibility(View.VISIBLE);
+            tvCertificationStatus.setVisibility(View.VISIBLE);
+            ivCertificationStatus.setImageResource(R.drawable.ic_profile_verified);
+            tvCertificationStatus.setText(R.string.text_certified);
+            tvCertificationStatus.setTextColor(getResources().getColor(R.color.white));
+        } else {
+            // 未认证状态
+            ivCertificationStatus.setVisibility(View.VISIBLE);
+            tvCertificationStatus.setVisibility(View.VISIBLE);
+            ivCertificationStatus.setImageResource(R.drawable.ic_profile_verified_red);
+            tvCertificationStatus.setText(R.string.text_not_certified);
+            tvCertificationStatus.setTextColor(getResources().getColor(R.color.status_error));
+        }
     }
 
     private void setupClickListeners(View view) {
@@ -79,6 +116,11 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.item_bank_card).setOnClickListener(v -> {
             navigateToDetail(new MyBankCardsFragment());
         });
+
+        // 4. 设置
+        view.findViewById(R.id.item_settings).setOnClickListener(v -> {
+            navigateToDetail(new SettingsFragment());
+        });
     }
 
     @Override
@@ -92,6 +134,8 @@ public class ProfileFragment extends Fragment {
         }
         // 重新加载用户信息，确保数据同步
         viewModel.loadUserInfo();
+        // 重新加载认证状态，确保数据同步
+        viewModel.loadCertificationStatus();
     }
 
     /**

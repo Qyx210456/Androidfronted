@@ -57,8 +57,9 @@
         <LinearLayout
             android:id="@+id/ll_personal_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingVertical="8dp"
             android:clickable="true"
             android:focusable="true"
@@ -89,8 +90,9 @@
         <LinearLayout
             android:id="@+id/ll_account_password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingVertical="8dp"
             android:clickable="true"
             android:focusable="true"
@@ -120,54 +122,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingVertical="8dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="绑定手机号码"
-                    android:textSize="16sp"
-                    android:layout_weight="1"
-                    android:textColor="@color/text_secondary"/>
-
-                <!--查看详情右箭头-->
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_profile_right"
-                    android:contentDescription="@string/go_detail" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!--分隔线-->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_e7e9eb" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="个人信息与权限"
+                android:text="绑定手机号码"
                 android:textSize="16sp"
                 android:layout_weight="1"
                 android:textColor="@color/text_secondary"/>
+
 
             <!--查看详情右箭头-->
             <ImageView

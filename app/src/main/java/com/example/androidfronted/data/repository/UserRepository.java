@@ -8,6 +8,7 @@ import com.example.androidfronted.data.local.entity.UserEntity;
 import com.example.androidfronted.data.model.UserInfoResponse;
 import com.example.androidfronted.data.source.LocalDataSource;
 import com.example.androidfronted.data.source.RemoteDataSource;
+import com.example.androidfronted.util.TokenManager;
 import okhttp3.RequestBody;
 
 public class UserRepository {
@@ -15,10 +16,12 @@ public class UserRepository {
     private static UserRepository instance;
     private final LocalDataSource localDataSource;
     private final RemoteDataSource remoteDataSource;
+    private final TokenManager tokenManager;
 
     private UserRepository(Context context) {
         this.localDataSource = new LocalDataSource(context.getApplicationContext());
         this.remoteDataSource = new RemoteDataSource(context.getApplicationContext());
+        this.tokenManager = new TokenManager(context.getApplicationContext());
     }
 
     public static synchronized UserRepository getInstance(Context context) {
@@ -28,72 +31,67 @@ public class UserRepository {
         return instance;
     }
 
+    public String getToken() {
+        return tokenManager.getToken();
+    }
+
     /**
      * 获取用户信息
      * 先从本地数据库获取，然后从网络获取最新数据
      */
     public void getUserInfo(@NonNull AuthCallback<UserInfoResponse> callback) {
         Log.d(TAG, "getUserInfo called");
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                if (tokenEntity != null && tokenEntity.getToken() != null) {
-                    // 从网络获取最新用户信息
-                    remoteDataSource.getUserInfo(tokenEntity.getToken(), new RemoteDataSource.NetworkCallback<UserInfoResponse>() {
+        String token = tokenManager.getToken();
+        if (token != null && !token.isEmpty()) {
+            // 从网络获取最新用户信息
+            remoteDataSource.getUserInfo(token, new RemoteDataSource.NetworkCallback<UserInfoResponse>() {
+                @Override
+                public void onSuccess(UserInfoResponse response) {
+                    if (response != null && response.getCode() == 200 && response.getData() != null) {
+                        // 更新本地数据库
+                        UserInfoResponse.UserData userData = response.getData();
+                        UserEntity userEntity = new UserEntity(
+                                userData.getUserId(),
+                                userData.getUsername(),
+                                userData.getAvatar()
+                        );
+                        localDataSource.saveUser(userEntity);
+                    }
+                    callback.onSuccess(response);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    // 网络请求失败，从本地获取
+                    localDataSource.getUser(new LocalDataSource.DataSourceCallback<UserEntity>() {
                         @Override
-                        public void onSuccess(UserInfoResponse response) {
-                            if (response != null && response.getCode() == 200 && response.getData() != null) {
-                                // 更新本地数据库
-                                UserInfoResponse.UserData userData = response.getData();
-                                UserEntity userEntity = new UserEntity(
-                                        userData.getUserId(),
-                                        userData.getUsername(),
-                                        userData.getAvatar()
-                                );
-                                localDataSource.saveUser(userEntity);
+                        public void onSuccess(UserEntity userEntity) {
+                            if (userEntity != null) {
+                                UserInfoResponse response = new UserInfoResponse();
+                                response.setCode(200);
+                                UserInfoResponse.UserData userData = new UserInfoResponse.UserData();
+                                userData.setUserId(userEntity.getUserId());
+                                userData.setUsername(userEntity.getUserName());
+                                userData.setAvatar(userEntity.getAvatar());
+                                userData.setPhone("");
+                                response.setData(userData);
+                                response.setMessage("Success");
+                                callback.onSuccess(response);
+                            } else {
+                                callback.onError(errorMessage);
                             }
-                            callback.onSuccess(response);
                         }
 
                         @Override
-                        public void onError(String errorMessage) {
-                            // 网络请求失败，从本地获取
-                            localDataSource.getUser(new LocalDataSource.DataSourceCallback<UserEntity>() {
-                                @Override
-                                public void onSuccess(UserEntity userEntity) {
-                                    if (userEntity != null) {
-                                        UserInfoResponse response = new UserInfoResponse();
-                                        response.setCode(200);
-                                        UserInfoResponse.UserData userData = new UserInfoResponse.UserData();
-                                        userData.setUserId(userEntity.getUserId());
-                                        userData.setUsername(userEntity.getUserName());
-                                        userData.setAvatar(userEntity.getAvatar());
-                                        userData.setPhone("");
-                                        response.setData(userData);
-                                        response.setMessage("Success");
-                                        callback.onSuccess(response);
-                                    } else {
-                                        callback.onError(errorMessage);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(String localError) {
-                                    callback.onError(errorMessage);
-                                }
-                            });
+                        public void onError(String localError) {
+                            callback.onError(errorMessage);
                         }
                     });
-                } else {
-                    callback.onError("No token available");
                 }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                callback.onError(errorMessage);
-            }
-        });
+            });
+        } else {
+            callback.onError("No token available");
+        }
     }
 
     /**
@@ -101,41 +99,32 @@ public class UserRepository {
      */
     public void updateUserInfo(String username, RequestBody avatar, @NonNull AuthCallback<UserInfoResponse> callback) {
         Log.d(TAG, "updateUserInfo called, username: " + username);
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                if (tokenEntity != null && tokenEntity.getToken() != null) {
-                    remoteDataSource.updateUserInfo(tokenEntity.getToken(), username, avatar, new RemoteDataSource.NetworkCallback<UserInfoResponse>() {
-                        @Override
-                        public void onSuccess(UserInfoResponse response) {
-                            if (response != null && response.getCode() == 200 && response.getData() != null) {
-                                // 更新本地数据库
-                                UserInfoResponse.UserData userData = response.getData();
-                                UserEntity userEntity = new UserEntity(
-                                        userData.getUserId(),
-                                        userData.getUsername(),
-                                        userData.getAvatar()
-                                );
-                                localDataSource.saveUser(userEntity);
-                            }
-                            callback.onSuccess(response);
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            callback.onError(errorMessage);
-                        }
-                    });
-                } else {
-                    callback.onError("No token available");
+        String token = tokenManager.getToken();
+        if (token != null && !token.isEmpty()) {
+            remoteDataSource.updateUserInfo(token, username, avatar, new RemoteDataSource.NetworkCallback<UserInfoResponse>() {
+                @Override
+                public void onSuccess(UserInfoResponse response) {
+                    if (response != null && response.getCode() == 200 && response.getData() != null) {
+                        // 更新本地数据库
+                        UserInfoResponse.UserData userData = response.getData();
+                        UserEntity userEntity = new UserEntity(
+                                userData.getUserId(),
+                                userData.getUsername(),
+                                userData.getAvatar()
+                        );
+                        localDataSource.saveUser(userEntity);
+                    }
+                    callback.onSuccess(response);
                 }
-            }
 
-            @Override
-            public void onError(String errorMessage) {
-                callback.onError(errorMessage);
-            }
-        });
+                @Override
+                public void onError(String errorMessage) {
+                    callback.onError(errorMessage);
+                }
+            });
+        } else {
+            callback.onError("No token available");
+        }
     }
 
     /**

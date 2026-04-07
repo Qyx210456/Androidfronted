@@ -76,9 +76,6 @@ public abstract class BaseDetailFragment extends Fragment {
         }
         
         View backButton = view.findViewById(R.id.apply_btn_back);
-        if (backButton == null) {
-            backButton = view.findViewById(R.id.apply_history_btn_back);
-        }
 
         if (backButton != null) {
             Log.d("BaseDetailFragment", "backButton found, setting click listener");

@@ -5,9 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import com.example.androidfronted.data.model.ApplicationListResponse;
+import com.example.androidfronted.data.model.ApplicationDetailResponse;
 import com.example.androidfronted.data.model.AuthSubmitResponse;
 import com.example.androidfronted.data.model.AvatarUpdateResponse;
 import com.example.androidfronted.data.model.CertInfoResponse;
+import com.example.androidfronted.data.model.LoanOrderResponse;
+import com.example.androidfronted.data.model.LoanOrderDetailResponse;
 import com.example.androidfronted.data.model.LoanProductResponse;
 import com.example.androidfronted.data.model.LoginRequest;
 import com.example.androidfronted.data.model.LoginResponse;
@@ -251,14 +255,15 @@ public class RemoteDataSource {
         executeRequest(httpRequest, "Get cert info", CertInfoResponse.class, callback);
     }
 
-    public void submitBasicCert(String token, String idCard, final NetworkCallback<AuthSubmitResponse> callback) {
-        Log.d(TAG, "submitBasicCert called, idCard: " + idCard);
+    public void submitBasicCert(String token, String idCard, String realName, final NetworkCallback<AuthSubmitResponse> callback) {
+        Log.d(TAG, "submitBasicCert called, idCard: " + idCard + ", realName: " + realName);
         Log.d(TAG, "submitBasicCert, token: " + (token != null ? token.substring(0, Math.min(20, token.length())) + "..." : "null"));
         Log.d(TAG, "submitBasicCert, BASE_URL: " + BASE_URL);
         
         okhttp3.MultipartBody.Builder builder = new okhttp3.MultipartBody.Builder()
                 .setType(okhttp3.MultipartBody.FORM)
-                .addFormDataPart("idCard", idCard);
+                .addFormDataPart("idCard", idCard)
+                .addFormDataPart("realName", realName);
 
         okhttp3.RequestBody requestBody = builder.build();
         Request httpRequest = new Request.Builder()
@@ -443,6 +448,47 @@ public class RemoteDataSource {
         executeRequestWithErrorHandling(httpRequest, "Update avatar", AvatarUpdateResponse.class, callback);
     }
 
+    public void getMyApplications(String token, final NetworkCallback<ApplicationListResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/loan-applications/my")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get my applications", ApplicationListResponse.class, callback);
+    }
+
+    public void getApplicationDetail(String token, int applicationId, final NetworkCallback<ApplicationDetailResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/loan-applications/my/" + applicationId)
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get application detail", ApplicationDetailResponse.class, callback);
+    }
+
+    public void withdrawApplication(String token, int applicationId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/loan-applications/my/" + applicationId + "/withdraw")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Withdraw application", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
+    }
+
     private static class RefreshTokenRequest {
         private final String refreshToken;
 
@@ -453,6 +499,47 @@ public class RemoteDataSource {
 
     private String getFileExtension(okhttp3.RequestBody requestBody) {
         return ".jpg";
+    }
+
+    public void getLoanOrders(String token, final NetworkCallback<LoanOrderResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/my")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get loan orders", LoanOrderResponse.class, callback);
+    }
+
+    public void getLoanOrderDetail(String token, int orderId, final NetworkCallback<LoanOrderDetailResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/" + orderId)
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get loan order detail", LoanOrderDetailResponse.class, callback);
+    }
+
+    public void repayLoanOrder(String token, int orderId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/" + orderId + "/repay")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Repay loan order", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
     }
 
     public interface NetworkCallback<T> {

@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景 -->
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="8dp" />
+            <solid android:color="#4DFFFFFF" /> <!-- 进度条未完成部分的半透明白色 -->
+        </shape>
+    </item>
+    <!-- 进度 -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="8dp" />
+                <solid android:color="#FFFFFF" /> <!-- 进度条已完成部分的白色 -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>

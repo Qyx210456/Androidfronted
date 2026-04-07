@@ -38,6 +38,14 @@ public class ViewModelFactory extends ViewModelProvider.AndroidViewModelFactory 
             return (T) new com.example.androidfronted.viewmodel.loan.ProductDetailViewModel(application);
         } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.ProductApplyViewModel.class)) {
             return (T) new com.example.androidfronted.viewmodel.loan.ProductApplyViewModel(application);
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.ApplicationRecordsViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.ApplicationRecordsViewModel(application);
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.ApplicationDetailViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.ApplicationDetailViewModel(application, 
+                com.example.androidfronted.data.repository.LoanApplicationRepository.getInstance(application));
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.LoanOrderDetailViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.LoanOrderDetailViewModel(application, 
+                com.example.androidfronted.data.repository.LoanOrderRepository.getInstance(application));
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
     }

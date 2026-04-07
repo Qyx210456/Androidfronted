@@ -21,6 +21,9 @@ public interface CertificationDao {
     @Query("DELETE FROM certifications WHERE userId = :userId")
     void deleteCertificationByUserId(int userId);
     
+    @Query("DELETE FROM certifications")
+    void deleteAll();
+    
     @Query("UPDATE certifications SET idCard = :idCard WHERE userId = :userId")
     void updateIdCard(int userId, String idCard);
     

@@ -46,6 +46,7 @@ public class CertInfoResponse {
     public static class UserCert implements Serializable {
         private static final long serialVersionUID = 1L;
         private long userId;
+        private String realName;
         private String idCard;
         private int creditScore;
         private String bankCardId;
@@ -54,6 +55,7 @@ public class CertInfoResponse {
         private int immovableCertId;
 
         public long getUserId() { return userId; }
+        public String getRealName() { return realName; }
         public String getIdCard() { return idCard; }
         public int getCreditScore() { return creditScore; }
         public String getBankCardId() { return bankCardId; }

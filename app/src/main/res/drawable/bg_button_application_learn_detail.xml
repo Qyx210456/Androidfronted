@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 查看详情按钮背景样式 (含按下/悬停效果) -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. 按下/聚焦状态  -->
+    <!-- 当按钮被按下或获得焦点时，显示较亮的蓝色 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#458FFC" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <!-- 2. 默认状态  -->
+    <!-- 正常显示时的品牌蓝色 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#2D7FF9" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+</selector>

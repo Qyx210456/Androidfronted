@@ -11,6 +11,7 @@ import com.example.androidfronted.data.model.AuthSubmitResponse;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.source.LocalDataSource;
 import com.example.androidfronted.data.source.RemoteDataSource;
+import com.example.androidfronted.util.TokenManager;
 
 public class AuthRepository {
     private static final String TAG = "AuthRepository";
@@ -18,10 +19,12 @@ public class AuthRepository {
 
     private final LocalDataSource localDataSource;
     private final RemoteDataSource remoteDataSource;
+    private final TokenManager tokenManager;
 
     private AuthRepository(Context context) {
         this.localDataSource = new LocalDataSource(context);
         this.remoteDataSource = new RemoteDataSource(context);
+        this.tokenManager = new TokenManager(context);
     }
 
     public static synchronized AuthRepository getInstance(Context context) {
@@ -40,8 +43,8 @@ public class AuthRepository {
                     String token = response.getData().getToken();
                     Log.d(TAG, "Token from response: " + (token != null ? "not null" : "null"));
                     if (token != null) {
-                        Log.d(TAG, "Saving token to local database");
-                        localDataSource.saveToken(token, null);
+                        Log.d(TAG, "Saving token to SharedPreferences");
+                        tokenManager.saveToken(token);
                     }
                 }
                 callback.onSuccess(response);
@@ -76,7 +79,7 @@ public class AuthRepository {
                 if (response != null && response.getData() != null) {
                     String token = response.getData().getToken();
                     if (token != null) {
-                        localDataSource.saveToken(token, refreshToken);
+                        tokenManager.saveToken(token);
                     }
                 }
                 callback.onSuccess(response);
@@ -91,29 +94,18 @@ public class AuthRepository {
 
     public void getCertInfo(@NonNull AuthCallback<CertInfoResponse> callback) {
         Log.d(TAG, "getCertInfo called");
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                Log.d(TAG, "getToken onSuccess, tokenEntity: " + (tokenEntity != null ? "not null" : "null"));
-                if (tokenEntity == null || tokenEntity.getToken() == null || tokenEntity.getToken().isEmpty()) {
-                    Log.d(TAG, "Token is null or empty");
-                    callback.onError("未登录，请先登录");
-                    return;
-                }
-                
-                // 直接请求网络获取最新数据，本地数据已在 ViewModel 构造函数中加载
-                Integer userId = tokenEntity.getUserId();
-                Log.d(TAG, "UserId from token: " + userId);
-                Log.d(TAG, "Now fetching latest cert info from network");
-                fetchRemoteCertInfo(tokenEntity.getToken(), userId, callback);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Log.d(TAG, "getToken onError: " + errorMessage);
-                callback.onError(errorMessage);
-            }
-        });
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        if (token == null || token.isEmpty()) {
+            Log.d(TAG, "Token is null or empty");
+            callback.onError("未登录，请先登录");
+            return;
+        }
+        
+        Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+        Log.d(TAG, "UserId from token: " + userId);
+        Log.d(TAG, "Now fetching latest cert info from network");
+        fetchRemoteCertInfo(token, userId, callback);
     }
     
     private void fetchRemoteCertInfo(String token, Integer userId, @NonNull AuthCallback<CertInfoResponse> callback) {
@@ -163,53 +155,44 @@ public class AuthRepository {
         });
     }
 
-    public void submitBasicCert(String idCard, @NonNull AuthCallback<AuthSubmitResponse> callback) {
-        Log.d(TAG, "submitBasicCert called, idCard: " + idCard);
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                if (tokenEntity == null || tokenEntity.getToken() == null || tokenEntity.getToken().isEmpty()) {
-                    Log.e(TAG, "submitBasicCert, token is null or empty");
-                    callback.onError("未登录，请先登录");
-                    return;
-                }
-                Log.d(TAG, "submitBasicCert, token retrieved successfully");
-                remoteDataSource.submitBasicCert(tokenEntity.getToken(), idCard,
-                        new RemoteDataSource.NetworkCallback<AuthSubmitResponse>() {
-                            @Override
-                            public void onSuccess(AuthSubmitResponse response) {
-                                Log.d(TAG, "submitBasicCert, onSuccess");
-                                // 上传成功后，刷新本地认证信息
-                                if (tokenEntity.getUserId() != null) {
-                                    fetchRemoteCertInfo(tokenEntity.getToken(), tokenEntity.getUserId(), new AuthCallback<CertInfoResponse>() {
-                                        @Override
-                                        public void onSuccess(CertInfoResponse certResponse) {
-                                            // 本地数据已在 fetchRemoteCertInfo 中更新
-                                        }
-
-                                        @Override
-                                        public void onError(String errorMessage) {
-                                            // 刷新失败，不影响主流程
-                                        }
-                                    });
+    public void submitBasicCert(String idCard, String realName, @NonNull AuthCallback<AuthSubmitResponse> callback) {
+        Log.d(TAG, "submitBasicCert called, idCard: " + idCard + ", realName: " + realName);
+        String token = tokenManager.getToken();
+        if (token == null || token.isEmpty()) {
+            Log.e(TAG, "submitBasicCert, token is null or empty");
+            callback.onError("未登录，请先登录");
+            return;
+        }
+        Log.d(TAG, "submitBasicCert, token retrieved successfully");
+        Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+        remoteDataSource.submitBasicCert(token, idCard, realName,
+                new RemoteDataSource.NetworkCallback<AuthSubmitResponse>() {
+                    @Override
+                    public void onSuccess(AuthSubmitResponse response) {
+                        Log.d(TAG, "submitBasicCert, onSuccess");
+                        // 上传成功后，刷新本地认证信息
+                        if (userId != null) {
+                            fetchRemoteCertInfo(token, userId, new AuthCallback<CertInfoResponse>() {
+                                @Override
+                                public void onSuccess(CertInfoResponse certResponse) {
+                                    // 本地数据已在 fetchRemoteCertInfo 中更新
                                 }
-                                callback.onSuccess(response);
-                            }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                                Log.e(TAG, "submitBasicCert, onError: " + errorMessage);
-                                callback.onError(errorMessage);
-                            }
-                        });
-            }
+                                @Override
+                                public void onError(String errorMessage) {
+                                    // 刷新失败，不影响主流程
+                                }
+                            });
+                        }
+                        callback.onSuccess(response);
+                    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "submitBasicCert, getToken error: " + errorMessage);
-                callback.onError(errorMessage);
-            }
-        });
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.e(TAG, "submitBasicCert, onError: " + errorMessage);
+                        callback.onError(errorMessage);
+                    }
+                });
     }
 
     public void submitOtherCert(String bankCardId,
@@ -218,60 +201,48 @@ public class AuthRepository {
                           okhttp3.RequestBody socialSecurityFile, okhttp3.RequestBody creditReportFile,
                           @NonNull AuthCallback<AuthSubmitResponse> callback) {
         Log.d(TAG, "submitOtherCert called, bankCardId: " + bankCardId);
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                if (tokenEntity == null || tokenEntity.getToken() == null || tokenEntity.getToken().isEmpty()) {
-                    Log.e(TAG, "submitOtherCert, token is null or empty");
-                    callback.onError("未登录，请先登录");
-                    return;
-                }
-                Log.d(TAG, "submitOtherCert, token retrieved successfully");
-                remoteDataSource.submitOtherCert(tokenEntity.getToken(), bankCardId, propertyFile, carFile,
-                        employmentFile, salaryFile, socialSecurityFile, creditReportFile,
-                        new RemoteDataSource.NetworkCallback<AuthSubmitResponse>() {
-                            @Override
-                            public void onSuccess(AuthSubmitResponse response) {
-                                Log.d(TAG, "submitOtherCert, onSuccess");
-                                // 上传成功后，刷新本地认证信息
-                                if (tokenEntity.getUserId() != null) {
-                                    fetchRemoteCertInfo(tokenEntity.getToken(), tokenEntity.getUserId(), new AuthCallback<CertInfoResponse>() {
-                                        @Override
-                                        public void onSuccess(CertInfoResponse certResponse) {
-                                            // 本地数据已在 fetchRemoteCertInfo 中更新
-                                        }
-
-                                        @Override
-                                        public void onError(String errorMessage) {
-                                            // 刷新失败，不影响主流程
-                                        }
-                                    });
+        String token = tokenManager.getToken();
+        if (token == null || token.isEmpty()) {
+            Log.e(TAG, "submitOtherCert, token is null or empty");
+            callback.onError("未登录，请先登录");
+            return;
+        }
+        Log.d(TAG, "submitOtherCert, token retrieved successfully");
+        Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+        remoteDataSource.submitOtherCert(token, bankCardId, propertyFile, carFile,
+                employmentFile, salaryFile, socialSecurityFile, creditReportFile,
+                new RemoteDataSource.NetworkCallback<AuthSubmitResponse>() {
+                    @Override
+                    public void onSuccess(AuthSubmitResponse response) {
+                        Log.d(TAG, "submitOtherCert, onSuccess");
+                        // 上传成功后，刷新本地认证信息
+                        if (userId != null) {
+                            fetchRemoteCertInfo(token, userId, new AuthCallback<CertInfoResponse>() {
+                                @Override
+                                public void onSuccess(CertInfoResponse certResponse) {
+                                    // 本地数据已在 fetchRemoteCertInfo 中更新
                                 }
-                                callback.onSuccess(response);
-                            }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                                Log.e(TAG, "submitOtherCert, onError: " + errorMessage);
-                                callback.onError(errorMessage);
-                            }
-                        });
-            }
+                                @Override
+                                public void onError(String errorMessage) {
+                                    // 刷新失败，不影响主流程
+                                }
+                            });
+                        }
+                        callback.onSuccess(response);
+                    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "submitOtherCert, getToken error: " + errorMessage);
-                callback.onError(errorMessage);
-            }
-        });
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.e(TAG, "submitOtherCert, onError: " + errorMessage);
+                        callback.onError(errorMessage);
+                    }
+                });
     }
 
     public void logout() {
-        localDataSource.clearToken();
-    }
-
-    public void getToken(@NonNull LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity> callback) {
-        localDataSource.getToken(callback);
+        tokenManager.clearToken();
+        localDataSource.clearAuthData();
     }
 
     public void getLocalIdCertState(@NonNull AuthCallback<com.example.androidfronted.data.model.CertState> callback) {
@@ -317,86 +288,78 @@ public class AuthRepository {
 
     public void getLocalBankCardData(@NonNull AuthCallback<String> callback) {
         Log.d(TAG, "getLocalBankCardData called");
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                Log.d(TAG, "getLocalBankCardData, getToken onSuccess, tokenEntity: " + (tokenEntity != null ? "not null" : "null"));
-                if (tokenEntity != null && tokenEntity.getUserId() != null) {
-                    localDataSource.getCertificationByUserId(tokenEntity.getUserId(), new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
-                        @Override
-                        public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
-                            Log.d(TAG, "getLocalBankCardData, local certification found: " + (certification != null ? "not null" : "null"));
-                            if (certification != null && certification.getBankCardId() != null && !certification.getBankCardId().isEmpty()) {
-                                callback.onSuccess(certification.getBankCardId());
-                                Log.d(TAG, "getLocalBankCardData, bankCardId: " + certification.getBankCardId());
-                            } else {
-                                callback.onSuccess(null);
-                                Log.d(TAG, "getLocalBankCardData, no bankCardId found");
-                            }
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            Log.d(TAG, "getLocalBankCardData, getCertificationByUserId error: " + errorMessage);
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getLocalBankCardData, getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        if (token != null) {
+            Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+            if (userId != null) {
+                localDataSource.getCertificationByUserId(userId, new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
+                    @Override
+                    public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
+                        Log.d(TAG, "getLocalBankCardData, local certification found: " + (certification != null ? "not null" : "null"));
+                        if (certification != null && certification.getBankCardId() != null && !certification.getBankCardId().isEmpty()) {
+                            callback.onSuccess(certification.getBankCardId());
+                            Log.d(TAG, "getLocalBankCardData, bankCardId: " + certification.getBankCardId());
+                        } else {
                             callback.onSuccess(null);
+                            Log.d(TAG, "getLocalBankCardData, no bankCardId found");
                         }
-                    });
-                } else {
-                    Log.d(TAG, "getLocalBankCardData, no token or userId found");
-                    callback.onSuccess(null);
-                }
-            }
+                    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.d(TAG, "getLocalBankCardData, getToken error: " + errorMessage);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, "getLocalBankCardData, getCertificationByUserId error: " + errorMessage);
+                        callback.onSuccess(null);
+                    }
+                });
+            } else {
+                Log.d(TAG, "getLocalBankCardData, userId is null");
                 callback.onSuccess(null);
             }
-        });
+        } else {
+            Log.d(TAG, "getLocalBankCardData, token is null");
+            callback.onSuccess(null);
+        }
     }
 
     public void getLocalJobCertData(@NonNull AuthCallback<com.example.androidfronted.data.model.CertInfoResponse.WorkCert> callback) {
         Log.d(TAG, "getLocalJobCertData called");
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                Log.d(TAG, "getLocalJobCertData, getToken onSuccess, tokenEntity: " + (tokenEntity != null ? "not null" : "null"));
-                if (tokenEntity != null && tokenEntity.getUserId() != null) {
-                    localDataSource.getCertificationByUserId(tokenEntity.getUserId(), new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
-                        @Override
-                        public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
-                            Log.d(TAG, "getLocalJobCertData, local certification found: " + (certification != null ? "not null" : "null"));
-                            if (certification != null) {
-                                com.example.androidfronted.data.model.CertInfoResponse.WorkCert workCert = new com.example.androidfronted.data.model.CertInfoResponse.WorkCert();
-                                workCert.setWorkCertId(certification.getWorkCertId());
-                                workCert.setEmploymentCertPath(certification.getEmploymentCertPath());
-                                workCert.setSalaryCertPath(certification.getSalaryCertPath());
-                                callback.onSuccess(workCert);
-                                Log.d(TAG, "getLocalJobCertData, workCert: " + workCert);
-                            } else {
-                                callback.onSuccess(null);
-                                Log.d(TAG, "getLocalJobCertData, no workCert found");
-                            }
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            Log.d(TAG, "getLocalJobCertData, getCertificationByUserId error: " + errorMessage);
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getLocalJobCertData, getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        if (token != null) {
+            Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+            if (userId != null) {
+                localDataSource.getCertificationByUserId(userId, new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
+                    @Override
+                    public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
+                        Log.d(TAG, "getLocalJobCertData, local certification found: " + (certification != null ? "not null" : "null"));
+                        if (certification != null) {
+                            com.example.androidfronted.data.model.CertInfoResponse.WorkCert workCert = new com.example.androidfronted.data.model.CertInfoResponse.WorkCert();
+                            workCert.setWorkCertId(certification.getWorkCertId());
+                            workCert.setEmploymentCertPath(certification.getEmploymentCertPath());
+                            workCert.setSalaryCertPath(certification.getSalaryCertPath());
+                            callback.onSuccess(workCert);
+                            Log.d(TAG, "getLocalJobCertData, workCert: " + workCert);
+                        } else {
                             callback.onSuccess(null);
+                            Log.d(TAG, "getLocalJobCertData, no workCert found");
                         }
-                    });
-                } else {
-                    Log.d(TAG, "getLocalJobCertData, no token or userId found");
-                    callback.onSuccess(null);
-                }
-            }
+                    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.d(TAG, "getLocalJobCertData, getToken error: " + errorMessage);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, "getLocalJobCertData, getCertificationByUserId error: " + errorMessage);
+                        callback.onSuccess(null);
+                    }
+                });
+            } else {
+                Log.d(TAG, "getLocalJobCertData, userId is null");
                 callback.onSuccess(null);
             }
-        });
+        } else {
+            Log.d(TAG, "getLocalJobCertData, token is null");
+            callback.onSuccess(null);
+        }
     }
 
     public void getLocalCertState(@NonNull AuthCallback<com.example.androidfronted.data.model.CertState> callback) {
@@ -420,76 +383,68 @@ public class AuthRepository {
 
     private void getLocalCertStateByType(@NonNull AuthCallback<com.example.androidfronted.data.model.CertState> callback, 
                                         java.util.function.Function<com.example.androidfronted.data.local.entity.CertificationEntity, Boolean> isCertified) {
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                Log.d(TAG, "getLocalCertStateByType, getToken onSuccess, tokenEntity: " + (tokenEntity != null ? "not null" : "null"));
-                if (tokenEntity != null && tokenEntity.getUserId() != null) {
-                    localDataSource.getCertificationByUserId(tokenEntity.getUserId(), new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
-                        @Override
-                        public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
-                            Log.d(TAG, "getLocalCertStateByType, local certification found: " + (certification != null ? "not null" : "null"));
-                            if (isCertified.apply(certification)) {
-                                callback.onSuccess(com.example.androidfronted.data.model.CertState.CERTIFIED);
-                                Log.d(TAG, "getLocalCertStateByType, setting state to CERTIFIED");
-                            } else {
-                                callback.onSuccess(com.example.androidfronted.data.model.CertState.NOT_CERTIFIED);
-                                Log.d(TAG, "getLocalCertStateByType, setting state to NOT_CERTIFIED");
-                            }
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            Log.d(TAG, "getLocalCertStateByType, getCertificationByUserId error: " + errorMessage);
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getLocalCertStateByType, getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        if (token != null) {
+            Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+            if (userId != null) {
+                localDataSource.getCertificationByUserId(userId, new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
+                    @Override
+                    public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
+                        Log.d(TAG, "getLocalCertStateByType, local certification found: " + (certification != null ? "not null" : "null"));
+                        if (isCertified.apply(certification)) {
+                            callback.onSuccess(com.example.androidfronted.data.model.CertState.CERTIFIED);
+                            Log.d(TAG, "getLocalCertStateByType, setting state to CERTIFIED");
+                        } else {
                             callback.onSuccess(com.example.androidfronted.data.model.CertState.NOT_CERTIFIED);
+                            Log.d(TAG, "getLocalCertStateByType, setting state to NOT_CERTIFIED");
                         }
-                    });
-                } else {
-                    Log.d(TAG, "getLocalCertStateByType, no token or userId found, setting state to NOT_CERTIFIED");
-                    callback.onSuccess(com.example.androidfronted.data.model.CertState.NOT_CERTIFIED);
-                }
-            }
+                    }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.d(TAG, "getLocalCertStateByType, getToken error: " + errorMessage);
-                callback.onSuccess(com.example.androidfronted.data.model.CertState.NOT_CERTIFIED);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, "getLocalCertStateByType, getCertificationByUserId error: " + errorMessage);
+                        callback.onError(errorMessage);
+                    }
+                });
+            } else {
+                Log.d(TAG, "getLocalCertStateByType, userId is null");
+                callback.onError("无法获取用户ID");
             }
-        });
+        } else {
+            Log.d(TAG, "getLocalCertStateByType, token is null");
+            callback.onError("未登录，请先登录");
+        }
     }
 
     public void getLocalCertInfo(@NonNull AuthCallback<com.example.androidfronted.data.local.entity.CertificationEntity> callback) {
         Log.d(TAG, "getLocalCertInfo called");
-        localDataSource.getToken(new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.AuthTokenEntity>() {
-            @Override
-            public void onSuccess(com.example.androidfronted.data.local.entity.AuthTokenEntity tokenEntity) {
-                Log.d(TAG, "getLocalCertInfo, getToken onSuccess, tokenEntity: " + (tokenEntity != null ? "not null" : "null"));
-                if (tokenEntity != null && tokenEntity.getUserId() != null) {
-                    localDataSource.getCertificationByUserId(tokenEntity.getUserId(), new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
-                        @Override
-                        public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
-                            Log.d(TAG, "getLocalCertInfo, local certification found: " + (certification != null ? "not null" : "null"));
-                            callback.onSuccess(certification);
-                        }
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getLocalCertInfo, getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        if (token != null) {
+            Integer userId = com.example.androidfronted.util.JWTUtils.getUserIdFromToken(token);
+            if (userId != null) {
+                localDataSource.getCertificationByUserId(userId, new LocalDataSource.DataSourceCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
+                    @Override
+                    public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
+                        Log.d(TAG, "getLocalCertInfo, local certification found: " + (certification != null ? "not null" : "null"));
+                        callback.onSuccess(certification);
+                    }
 
-                        @Override
-                        public void onError(String errorMessage) {
-                            Log.d(TAG, "getLocalCertInfo, getCertificationByUserId error: " + errorMessage);
-                            callback.onSuccess(null);
-                        }
-                    });
-                } else {
-                    Log.d(TAG, "getLocalCertInfo, no token or userId found");
-                    callback.onSuccess(null);
-                }
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Log.d(TAG, "getLocalCertInfo, getToken error: " + errorMessage);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Log.d(TAG, "getLocalCertInfo, getCertificationByUserId error: " + errorMessage);
+                        callback.onSuccess(null);
+                    }
+                });
+            } else {
+                Log.d(TAG, "getLocalCertInfo, userId is null");
                 callback.onSuccess(null);
             }
-        });
+        } else {
+            Log.d(TAG, "getLocalCertInfo, token is null");
+            callback.onSuccess(null);
+        }
     }
 
     public interface AuthCallback<T> {

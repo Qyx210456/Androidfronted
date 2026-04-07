@@ -206,7 +206,7 @@
                         android:background="@null"
                         android:textSize="15sp"
                         android:hint="@string/enter_your_name"
-                        android:inputType="textPersonName"
+                        android:inputType="text|textCapSentences"
                         android:maxLength="20"/>
                 </LinearLayout>
 

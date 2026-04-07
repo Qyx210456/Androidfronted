@@ -132,4 +132,32 @@
     <!--认证界面认证状态颜色切换-->
     <color name="no_info">#CCF44336</color>
     <color name="al_info">#FF00A987</color>
+
+    <!--申请表单界面item竖线颜色-->
+    <color name="application_status_pending">#FF2D7FF9</color>
+    <color name="application_status_approved">#FF22BC51</color>
+    <color name="application_status_rejected">#FFF44336</color>
+    <color name="application_status_cancelled">#FFBFBFBF</color>
+
+    <!--单个申请详情中随数据状态切换的背景颜色-->
+    <color name="application_detail_status_corner_pending">#3B82F6</color>
+    <color name="application_detail_status_corner_approved">#22C55E</color>
+    <color name="application_detail_status_corner_rejected">#EF4444</color>
+    <color name="application_detail_status_corner_cancelled">#6B7280</color>
+
+    <!--贷款订单列表状态角标背景边框及字体颜色-->
+    <!-- 状态：正常 (蓝色) -->
+    <color name="order_status_normal_text">#1F6FEB</color>
+    <color name="order_status_normal_bg">#EFF6FF</color>
+    <color name="order_status_normal_border">#1F6FEB</color>
+
+    <!-- 状态：已逾期 (红色) -->
+    <color name="order_status_overdue_text">#DC2626</color>
+    <color name="order_status_overdue_bg">#FEF2F2</color>
+    <color name="order_status_overdue_border">#DC2626</color>
+
+    <!-- 状态：已完成 (绿色) -->
+    <color name="order_status_completed_text">#16A34A</color>
+    <color name="order_status_completed_bg">#F0FDF4</color>
+    <color name="order_status_completed_border">#16A34A</color>
 </resources>

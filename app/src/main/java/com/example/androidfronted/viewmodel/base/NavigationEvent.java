@@ -16,6 +16,7 @@ public class NavigationEvent {
     public static final int NAVIGATE_TO_THIRD_PARTY_CERT_UPLOAD = 13;
     public static final int NAVIGATE_BACK = 14;
     public static final int NAVIGATE_TO_REGISTER_STEP_2 = 15;
+    public static final int NAVIGATE_TO_SETTINGS = 16;
 
     private final int navigationType;
     private final Object data;

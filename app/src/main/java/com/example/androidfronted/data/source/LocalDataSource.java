@@ -4,12 +4,20 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import com.example.androidfronted.data.local.database.AppDatabase;
+import com.example.androidfronted.data.local.dao.ApplicationDao;
+import com.example.androidfronted.data.local.dao.ApplicationDetailDao;
 import com.example.androidfronted.data.local.dao.AuthTokenDao;
 import com.example.androidfronted.data.local.dao.CertificationDao;
+import com.example.androidfronted.data.local.dao.LoanOrderDao;
+import com.example.androidfronted.data.local.dao.LoanOrderDetailDao;
 import com.example.androidfronted.data.local.dao.LoanProductDao;
 import com.example.androidfronted.data.local.dao.UserDao;
+import com.example.androidfronted.data.local.entity.ApplicationEntity;
+import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
 import com.example.androidfronted.data.local.entity.AuthTokenEntity;
 import com.example.androidfronted.data.local.entity.CertificationEntity;
+import com.example.androidfronted.data.local.entity.LoanOrderEntity;
+import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.LoanProductEntity;
 import com.example.androidfronted.data.local.entity.UserEntity;
 import java.util.List;
@@ -21,6 +29,10 @@ public class LocalDataSource {
     private final AuthTokenDao authTokenDao;
     private final CertificationDao certificationDao;
     private final LoanProductDao loanProductDao;
+    private final ApplicationDao applicationDao;
+    private final ApplicationDetailDao applicationDetailDao;
+    private final LoanOrderDao loanOrderDao;
+    private final LoanOrderDetailDao loanOrderDetailDao;
     private final ExecutorService executor;
     private final Handler mainHandler;
 
@@ -30,6 +42,10 @@ public class LocalDataSource {
         this.authTokenDao = database.authTokenDao();
         this.certificationDao = database.certificationDao();
         this.loanProductDao = database.loanProductDao();
+        this.applicationDao = database.applicationDao();
+        this.applicationDetailDao = database.applicationDetailDao();
+        this.loanOrderDao = database.loanOrderDao();
+        this.loanOrderDetailDao = database.loanOrderDetailDao();
         this.executor = Executors.newSingleThreadExecutor();
         this.mainHandler = new Handler(Looper.getMainLooper());
     }
@@ -89,6 +105,14 @@ public class LocalDataSource {
         executor.execute(() -> authTokenDao.deleteToken());
     }
 
+    public void clearAuthData() {
+        executor.execute(() -> {
+            authTokenDao.deleteToken();
+            userDao.deleteAll();
+            certificationDao.deleteAll();
+        });
+    }
+
     public void saveCertification(CertificationEntity certification) {
         executor.execute(() -> certificationDao.insert(certification));
     }
@@ -140,6 +164,120 @@ public class LocalDataSource {
                 mainHandler.post(() -> callback.onError(e.getMessage()));
             }
         });
+    }
+
+    public void saveApplications(List<ApplicationEntity> applications) {
+        executor.execute(() -> {
+            applicationDao.deleteAll();
+            applicationDao.insertAll(applications);
+        });
+    }
+
+    public void getAllApplications(DataSourceCallback<List<ApplicationEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<ApplicationEntity> result = applicationDao.getAllApplications();
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void getApplicationsByStatus(String status, DataSourceCallback<List<ApplicationEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<ApplicationEntity> result = applicationDao.getApplicationsByStatus(status);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void clearApplications() {
+        executor.execute(() -> applicationDao.deleteAll());
+    }
+
+    public void saveApplicationDetail(ApplicationDetailEntity detail) {
+        executor.execute(() -> applicationDetailDao.insert(detail));
+    }
+
+    public void getApplicationDetail(int id, DataSourceCallback<ApplicationDetailEntity> callback) {
+        executor.execute(() -> {
+            try {
+                ApplicationDetailEntity result = applicationDetailDao.getById(id);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void deleteApplicationDetail(int id) {
+        executor.execute(() -> applicationDetailDao.deleteById(id));
+    }
+
+    public void clearApplicationDetails() {
+        executor.execute(() -> applicationDetailDao.clearAll());
+    }
+
+    public void saveLoanOrders(List<LoanOrderEntity> orders) {
+        executor.execute(() -> {
+            loanOrderDao.deleteAll();
+            loanOrderDao.insertAll(orders);
+        });
+    }
+
+    public void getAllLoanOrders(DataSourceCallback<List<LoanOrderEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<LoanOrderEntity> result = loanOrderDao.getAllLoanOrders();
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void getLoanOrdersByStatus(String status, DataSourceCallback<List<LoanOrderEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<LoanOrderEntity> result = loanOrderDao.getLoanOrdersByStatus(status);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void clearLoanOrders() {
+        executor.execute(() -> loanOrderDao.deleteAll());
+    }
+
+    public void saveLoanOrderDetail(LoanOrderDetailEntity detail) {
+        executor.execute(() -> loanOrderDetailDao.insert(detail));
+    }
+
+    public void getLoanOrderDetail(int id, DataSourceCallback<LoanOrderDetailEntity> callback) {
+        executor.execute(() -> {
+            try {
+                LoanOrderDetailEntity result = loanOrderDetailDao.getById(id);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void clearLoanOrderDetails() {
+        executor.execute(() -> loanOrderDetailDao.deleteAll());
     }
 
     public interface DataSourceCallback<T> {
