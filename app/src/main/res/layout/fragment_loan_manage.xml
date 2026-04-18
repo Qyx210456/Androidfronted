@@ -148,13 +148,11 @@
                     android:layout_height="48dp"
                     android:layout_marginRight="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:text="📋"
-                        android:textSize="20sp"
-                        android:textColor="@color/func_purple" />
+                        android:src="@drawable/ic_loan_manage_application_records" />
 
                 </FrameLayout>
 
@@ -193,17 +191,15 @@
 
                 <!-- 图标容器 -->
                 <FrameLayout
-                    android:layout_width="50dp"
-                    android:layout_height="55dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginRight="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:text="💰"
-                        android:textSize="20sp"
-                        android:textColor="@color/func_green" />
+                        android:src="@drawable/ic_loan_manage_order_records" />
 
                 </FrameLayout>
 
@@ -245,13 +241,11 @@
                     android:layout_height="48dp"
                     android:layout_marginRight="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_gravity="center"
-                        android:text="📊"
-                        android:textSize="20sp"
-                        android:textColor="@color/func_teal" />
+                        android:src="@drawable/ic_loan_manage_repayment_records" />
 
                 </FrameLayout>
 

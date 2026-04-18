@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightest_blue">
+
+    <!-- 顶部导航栏 -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/top_leading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF458FFC"
+        android:elevation="4dp"
+        android:fitsSystemWindows="true"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        app:titleCentered="true">
+
+        <!-- 返回按钮 -->
+        <ImageView
+            android:id="@+id/apply_btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_arrow_back_white"
+            android:contentDescription="@string/nav_back" />
+
+        <!-- 页面标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/notification_center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <!-- 右侧操作按钮区域 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:orientation="horizontal" 
+            android:gravity="center_vertical">
+            
+            <!-- 一键已读按钮 -->
+            <LinearLayout
+                android:id="@+id/ll_one_click_read"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginEnd="16dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_profile_menu_notification_one_click_read"
+                    android:contentDescription="@string/one_click_read" />
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/one_click_read"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
+                    
+            </LinearLayout>
+            
+            <!-- 消息设置按钮 -->
+            <LinearLayout
+                android:id="@+id/ll_notification_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless">
+                
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_profile_menu_notification_setting"
+                    android:contentDescription="@string/notification_setting" />
+                    
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/notification_setting"
+                    android:textColor="@color/white"
+                    android:textSize="11sp" />
+                    
+            </LinearLayout>
+            
+        </LinearLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- 消息分类列表 -->
+    <LinearLayout
+        android:id="@+id/notification_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_product_info_card"
+        android:clipToPadding="false"
+        android:elevation="2dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/top_leading">
+
+        <!-- 服务通知 -->
+        <LinearLayout
+            android:id="@+id/ll_business_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            
+            <!-- 图标容器 -->
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_profile_menu_notification_loan_service"
+                android:contentDescription="@string/service_notification" />
+                
+            <!-- 文本内容区域 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+                
+                <!-- 标题行 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/service_notification"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
+                    
+                <!-- 内容预览 -->
+                <TextView
+                    android:id="@+id/tv_business_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="" 
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+                    
+            </LinearLayout>
+            
+            <!-- 时间和红点区域 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                
+                <!-- 时间 -->
+                <TextView
+                    android:id="@+id/tv_business_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+                
+                <!-- 未读消息数量红点 -->
+                <FrameLayout
+                    android:id="@+id/fl_business_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+                    
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_profile_menu_notification_red_dot"
+                        android:contentDescription="未读数量" />
+                        
+                    <TextView
+                        android:id="@+id/tv_business_badge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+                        
+                </FrameLayout>
+                    
+            </LinearLayout>
+                
+        </LinearLayout>
+        
+        <!-- 分隔线 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="68dp"
+            android:background="@color/color_e7e9eb" />
+            
+        <!-- 系统通知 -->
+        <LinearLayout
+            android:id="@+id/ll_system_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            
+            <!-- 图标容器 -->
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_profile_menu_notification_app_system"
+                android:contentDescription="@string/system_notification" />
+                
+            <!-- 文本内容区域 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+                
+                <!-- 标题行 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/system_notification"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
+                    
+                <!-- 内容预览 -->
+                <TextView
+                    android:id="@+id/tv_system_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="" 
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+                    
+            </LinearLayout>
+            
+            <!-- 时间和红点区域 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                
+                <!-- 时间 -->
+                <TextView
+                    android:id="@+id/tv_system_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+                
+                <!-- 未读消息数量红点 -->
+                <FrameLayout
+                    android:id="@+id/fl_system_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+                    
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_profile_menu_notification_red_dot"
+                        android:contentDescription="未读数量" />
+                        
+                    <TextView
+                        android:id="@+id/tv_system_badge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+                        
+                </FrameLayout>
+                    
+            </LinearLayout>
+                
+        </LinearLayout>
+        
+        <!-- 分隔线 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="68dp"
+            android:background="@color/color_e7e9eb" />
+            
+        <!-- 活动福利 -->
+        <LinearLayout
+            android:id="@+id/ll_marketing_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            
+            <!-- 图标容器 -->
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_profile_menu_notification_marketing"
+                android:contentDescription="@string/marketing_notification" />
+                
+            <!-- 文本内容区域 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+                
+                <!-- 标题行 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/marketing_notification"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
+                    
+                <!-- 内容预览 -->
+                <TextView
+                    android:id="@+id/tv_marketing_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="" 
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+                    
+            </LinearLayout>
+            
+            <!-- 时间和红点区域 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                
+                <!-- 时间 -->
+                <TextView
+                    android:id="@+id/tv_marketing_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp" />
+                
+                <!-- 未读消息数量红点 -->
+                <FrameLayout
+                    android:id="@+id/fl_marketing_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+                    
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_profile_menu_notification_red_dot"
+                        android:contentDescription="未读数量" />
+                        
+                    <TextView
+                        android:id="@+id/tv_marketing_badge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+                        
+                </FrameLayout>
+                    
+            </LinearLayout>
+                
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

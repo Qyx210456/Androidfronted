@@ -187,6 +187,7 @@
         android:textColor="@color/text_tertiary"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/filter_container" />
 
     <!-- 申请记录列表 -->
@@ -197,9 +198,40 @@
         android:layout_weight="1"
         android:paddingVertical="8dp"
         android:scrollbars="vertical"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_record_count"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_application_record"
         />
+
+    <!-- 空状态提示 -->
+    <LinearLayout
+        android:id="@+id/container_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tv_record_count"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="170dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/ic_loan_manage_application_order_null"
+            tools:src="@drawable/ic_loan_manage_application_order_null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_application_records"
+            android:textColor="@color/text_secondary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ public class ImageUrlHelper {
      * @return 完整的图片 URL，例如：http://10.0.2.2:8080/uploads/work/employment/employment_10_20260311_cz77r0.png
      */
     public static String getFullImageUrl(String relativePath) {
-        if (relativePath == null || relativePath.isEmpty()) {
+        if (relativePath == null || relativePath.isEmpty() || "null".equals(relativePath)) {
             return null;
         }
         

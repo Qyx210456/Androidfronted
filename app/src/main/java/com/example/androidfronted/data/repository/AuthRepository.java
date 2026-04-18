@@ -243,6 +243,7 @@ public class AuthRepository {
     public void logout() {
         tokenManager.clearToken();
         localDataSource.clearAuthData();
+        localDataSource.clearNotifications();
     }
 
     public void getLocalIdCertState(@NonNull AuthCallback<com.example.androidfronted.data.model.CertState> callback) {

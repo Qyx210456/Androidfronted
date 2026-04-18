@@ -17,7 +17,18 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" android:minSdkVersion="33" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" android:minSdkVersion="33" />
 
+    <!-- 前台服务权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!-- 通知权限 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- 振动权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,6 +50,20 @@
             </intent-filter>
         </activity>
 
+        <!-- 消息中心 Activity -->
+        <activity
+            android:name=".ui.NotificationCenterActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.MainActivity"
+            android:launchMode="singleTop" />
+
+        <!-- 消息详情 Activity -->
+        <activity
+            android:name=".ui.NotificationDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.NotificationCenterActivity"
+            android:launchMode="singleTop" />
+
         <!-- LoginActivity 作为登录页，不导出 -->
         <activity
             android:name=".ui.LoginActivity"
@@ -59,6 +84,13 @@
         <activity android:name=".ui.ProductApplyActivity" />
         <activity android:name=".ui.ProductAllActivity" />
         <activity android:name=".ui.ProductApplySuccessActivity" />
+
+        <!-- 前台服务 - SSE消息推送 -->
+        <service
+            android:name=".service.SseNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
     </application>
 

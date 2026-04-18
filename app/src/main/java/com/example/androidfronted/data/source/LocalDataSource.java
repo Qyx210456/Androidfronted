@@ -11,6 +11,7 @@ import com.example.androidfronted.data.local.dao.CertificationDao;
 import com.example.androidfronted.data.local.dao.LoanOrderDao;
 import com.example.androidfronted.data.local.dao.LoanOrderDetailDao;
 import com.example.androidfronted.data.local.dao.LoanProductDao;
+import com.example.androidfronted.data.local.dao.NotificationDao;
 import com.example.androidfronted.data.local.dao.UserDao;
 import com.example.androidfronted.data.local.entity.ApplicationEntity;
 import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
@@ -19,6 +20,7 @@ import com.example.androidfronted.data.local.entity.CertificationEntity;
 import com.example.androidfronted.data.local.entity.LoanOrderEntity;
 import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.LoanProductEntity;
+import com.example.androidfronted.data.local.entity.NotificationEntity;
 import com.example.androidfronted.data.local.entity.UserEntity;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +35,7 @@ public class LocalDataSource {
     private final ApplicationDetailDao applicationDetailDao;
     private final LoanOrderDao loanOrderDao;
     private final LoanOrderDetailDao loanOrderDetailDao;
+    private final NotificationDao notificationDao;
     private final ExecutorService executor;
     private final Handler mainHandler;
 
@@ -46,6 +49,7 @@ public class LocalDataSource {
         this.applicationDetailDao = database.applicationDetailDao();
         this.loanOrderDao = database.loanOrderDao();
         this.loanOrderDetailDao = database.loanOrderDetailDao();
+        this.notificationDao = database.notificationDao();
         this.executor = Executors.newSingleThreadExecutor();
         this.mainHandler = new Handler(Looper.getMainLooper());
     }
@@ -278,6 +282,94 @@ public class LocalDataSource {
 
     public void clearLoanOrderDetails() {
         executor.execute(() -> loanOrderDetailDao.deleteAll());
+    }
+
+    public void saveNotifications(List<NotificationEntity> notifications, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.insertAll(notifications);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void getAllNotifications(DataSourceCallback<List<NotificationEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<NotificationEntity> result = notificationDao.getAllNotifications();
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void getUnreadCount(DataSourceCallback<Integer> callback) {
+        executor.execute(() -> {
+            try {
+                int count = notificationDao.getUnreadCount();
+                mainHandler.post(() -> callback.onSuccess(count));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void getUnreadNotifications(DataSourceCallback<List<NotificationEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<NotificationEntity> result = notificationDao.getUnreadNotifications();
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void markNotificationAsRead(int notificationId, String readAt, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.markAsRead(notificationId, readAt);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void markAllNotificationsAsRead(String readAt, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.markAllAsRead(readAt);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void clearNotifications() {
+        executor.execute(() -> notificationDao.deleteAll());
+    }
+    
+    public void clearNotifications(DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.deleteAll();
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
     }
 
     public interface DataSourceCallback<T> {

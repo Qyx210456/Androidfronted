@@ -78,9 +78,12 @@ public class AvatarEditFragment extends BaseDetailFragment {
 
     private void setupObservers() {
         viewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
-            if (userInfo != null && userInfo.getAvatar() != null && !userInfo.getAvatar().isEmpty()) {
-                String imageUrl = ImageUrlHelper.getFullImageUrl(userInfo.getAvatar());
-                ImageLoader.loadCircleImage(requireContext(), imageUrl, ivAvatar);
+            if (userInfo != null) {
+                String avatar = userInfo.getAvatar();
+                if (avatar != null && !avatar.isEmpty() && !"null".equals(avatar)) {
+                    String imageUrl = ImageUrlHelper.getFullImageUrl(avatar);
+                    ImageLoader.loadCircleImage(requireContext(), imageUrl, ivAvatar);
+                }
             }
         });
 

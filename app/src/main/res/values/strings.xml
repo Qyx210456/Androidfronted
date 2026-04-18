@@ -219,6 +219,7 @@
     <string name="filter_rejected">已拒绝</string>
     <string name="filter_cancelled">已取消</string>
     <string name="record_count">共有%d条申请记录</string>
+    <string name="no_application_records">暂无贷款申请记录</string>
     <string name="apply_time_label">申请时间: %s</string>
     <string name="apply_time">申请时间</string>
     <string name="cancel_application">取消申请</string>
@@ -228,7 +229,24 @@
     <!--贷款订单页面-->
     <string name="my_loans">我的贷款</string>
     <string name="loan_order_count">共有%d条贷款订单</string>
+    <string name="no_loan_orders">暂无贷款订单记录</string>
     <string name="filter_normal">正常</string>
     <string name="filter_overdue">已逾期</string>
     <string name="filter_completed">已完成</string>
+
+    <!--消息通知相关-->
+    <string name="notification_center">消息中心</string>
+    <string name="one_click_read">一键已读</string>
+    <string name="notification_setting">消息设置</string>
+    <string name="service_notification">服务通知</string>
+    <string name="system_notification">系统通知</string>
+    <string name="marketing_notification">活动福利</string>
+    <string name="no_notification">暂无通知内容</string>
+    <string name="mark_all_read_success">已标记所有通知为已读</string>
+    <string name="mark_read_success">已标记为已读</string>
+    <string name="notification_load_error">加载通知失败</string>
+    <string name="notification_mark_error">标记已读失败</string>
+    <string name="foreground_service_running">消息服务正在运行</string>
+    <string name="foreground_service_description">正在监听新消息</string>
+
 </resources>

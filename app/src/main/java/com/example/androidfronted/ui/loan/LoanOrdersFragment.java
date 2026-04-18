@@ -25,6 +25,7 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
 
     private RecyclerView recyclerView;
     private TextView tvOrderCount;
+    private View containerEmpty;
     private Button btnFilterAll;
     private Button btnFilterNormal;
     private Button btnFilterOverdue;
@@ -69,6 +70,7 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
     private void initViews(View view) {
         recyclerView = view.findViewById(R.id.recycler_loan_orders);
         tvOrderCount = view.findViewById(R.id.tv_order_count);
+        containerEmpty = view.findViewById(R.id.container_empty);
         btnFilterAll = view.findViewById(R.id.btn_filter_all);
         btnFilterNormal = view.findViewById(R.id.btn_filter_normal);
         btnFilterOverdue = view.findViewById(R.id.btn_filter_overdue);
@@ -93,7 +95,7 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
         viewModel.getLoanOrders().observe(getViewLifecycleOwner(), orders -> {
             if (orders != null) {
                 adapter.setOrderList(orders);
-                // 更新订单数量
+                updateEmptyState(orders.isEmpty());
                 if (getContext() != null) {
                     String text = getString(R.string.loan_order_count, orders.size());
                     tvOrderCount.setText(text);
@@ -151,5 +153,17 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
                 .replace(R.id.container, detailFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void updateEmptyState(boolean isEmpty) {
+        if (isEmpty) {
+            recyclerView.setVisibility(View.GONE);
+            containerEmpty.setVisibility(View.VISIBLE);
+            tvOrderCount.setVisibility(View.GONE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            containerEmpty.setVisibility(View.GONE);
+            tvOrderCount.setVisibility(View.VISIBLE);
+        }
     }
 }

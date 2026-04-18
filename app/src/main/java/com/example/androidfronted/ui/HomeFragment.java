@@ -333,6 +333,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisible(true);
+        }
         if (isAdded() && hotProductAdapter.getProducts() != null && hotProductAdapter.getProducts().size() > 1) {
             startAutoScroll();
         }

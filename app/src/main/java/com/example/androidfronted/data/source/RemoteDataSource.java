@@ -15,6 +15,7 @@ import com.example.androidfronted.data.model.LoanOrderDetailResponse;
 import com.example.androidfronted.data.model.LoanProductResponse;
 import com.example.androidfronted.data.model.LoginRequest;
 import com.example.androidfronted.data.model.LoginResponse;
+import com.example.androidfronted.data.model.NotificationResponse;
 import com.example.androidfronted.data.model.ProductApplyRequest;
 import com.example.androidfronted.data.model.ProductApplyResponse;
 import com.example.androidfronted.data.model.RegisterRequest;
@@ -529,6 +530,37 @@ public class RemoteDataSource {
                 .build();
 
         executeRequestWithDataExtraction(httpRequest, "Repay loan order", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
+    }
+
+    public void getMyNotifications(String token, final NetworkCallback<NotificationResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/notifications/my?limit=100")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get my notifications", NotificationResponse.class, callback);
+    }
+
+    public void markNotificationAsRead(String token, int notificationId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/notifications/" + notificationId + "/read")
+                .addHeader("Authorization", "Bearer " + token)
+                .patch(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Mark notification as read", ProductApplyResponse.class,
                 new DataExtractor<ProductApplyResponse, String>() {
                     @Override
                     public String extract(ProductApplyResponse response) {

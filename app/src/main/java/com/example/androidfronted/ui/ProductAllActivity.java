@@ -6,32 +6,34 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.androidfronted.R;
+import com.example.androidfronted.data.local.entity.NotificationEntity;
 import com.example.androidfronted.data.model.LoanProduct;
+import com.example.androidfronted.event.NotificationEvent;
 import com.example.androidfronted.ui.adapter.LoanProductAdapter;
-import com.example.androidfronted.viewmodel.loan.ProductAllViewModel;
+import com.example.androidfronted.util.InAppNotificationManager;
+import com.example.androidfronted.util.NotificationStateManager;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
+import com.example.androidfronted.viewmodel.loan.ProductAllViewModel;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-/**
- * 全部贷款产品页面
- * - 支持按利率（最低）、额度（最高）、期限（最短 term）排序
- * - 排序通过点击顶部图标切换方向（↑↓）
- * - item 不显示贷款用途，改为显示最低利率
- */
 public class ProductAllActivity extends AppCompatActivity {
 
     private ProductAllViewModel viewModel;
     private LoanProductAdapter adapter;
     private RecyclerView rvProducts;
 
-    // 排序控件
     private ImageView ivSortRateAsc, ivSortRateDesc;
     private ImageView ivSortAmountAsc, ivSortAmountDesc;
     private ImageView ivSortTermAsc, ivSortTermDesc;
@@ -49,9 +51,46 @@ public class ProductAllActivity extends AppCompatActivity {
         loadProducts();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InAppNotificationManager.getInstance().onActivityResumed(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        InAppNotificationManager.getInstance().onActivityDestroyed(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNewNotification(NotificationEvent.NewNotification event) {
+        if (NotificationStateManager.getInstance().isAppInForeground()) {
+            InAppNotificationManager.getInstance().showNotification(event.getNotification());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onOfflineNotificationSummary(NotificationEvent.OfflineNotificationSummary event) {
+        if (event.getCount() > 0 && event.getLatestNotification() != null) {
+            InAppNotificationManager.getInstance().showOfflineNotificationSummary(event.getCount(), event.getLatestNotification());
+        }
+    }
+
     private void setupObservers() {
         viewModel.getIsLoading().observe(this, isLoading -> {
-            // 可以显示加载状态
         });
 
         viewModel.getErrorMessage().observe(this, errorMessage -> {
@@ -125,7 +164,6 @@ public class ProductAllActivity extends AppCompatActivity {
         int defaultColor = getResources().getColor(R.color.text_quaternary, getTheme());
         int activeColor = getResources().getColor(R.color.main_blue, getTheme());
 
-        // 重置所有图标
         ivSortRateAsc.setColorFilter(defaultColor);
         ivSortRateDesc.setColorFilter(defaultColor);
         ivSortAmountAsc.setColorFilter(defaultColor);
@@ -133,7 +171,6 @@ public class ProductAllActivity extends AppCompatActivity {
         ivSortTermAsc.setColorFilter(defaultColor);
         ivSortTermDesc.setColorFilter(defaultColor);
 
-        // 高亮当前排序
         switch (currentSortField) {
             case "rate":
                 (isAscending ? ivSortRateAsc : ivSortRateDesc).setColorFilter(activeColor);
@@ -168,9 +205,6 @@ public class ProductAllActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 启动本页面（可携带来源）
-     */
     public static void startFrom(Context context, String from) {
         Intent intent = new Intent(context, ProductAllActivity.class);
         intent.putExtra("from", from);

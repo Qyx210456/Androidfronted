@@ -45,6 +45,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.squareup.okhttp3:okhttp-sse:5.3.2")
     implementation("com.google.code.gson:gson:2.10.1")
     
     // Room Database
@@ -70,4 +71,7 @@ dependencies {
     // Glide图片加载库
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    
+    // EventBus
+    implementation("org.greenrobot:eventbus:3.3.1")
 }

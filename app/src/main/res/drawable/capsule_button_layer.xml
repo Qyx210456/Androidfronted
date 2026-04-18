@@ -1,0 +1,20 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 第1层：胶囊背景 (底层) -->
+    <!-- 使用 shape 绘制圆角矩形，模拟胶囊形状 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0" /> <!-- 灰色背景 -->
+            <corners android:radius="50dp" /> <!-- 关键：大圆角形成胶囊状 -->
+        </shape>
+    </item>
+
+    <!-- 第2层：矢量图标 (顶层) -->
+    <!-- 使用 inset 属性控制图标在胶囊内的位置（如居中或偏右） -->
+    <item
+        android:drawable="@drawable/ic_notification_vector"
+        android:gravity="center"
+        android:width="24dp"
+        android:height="24dp" />
+
+</layer-list>

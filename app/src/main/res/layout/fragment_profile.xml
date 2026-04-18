@@ -256,12 +256,19 @@
                 android:clickable="true"
                 android:focusable="true">
 
-                <!--消息中心图标-->
-                <ImageView
+                <!--消息中心图标容器-->
+                <FrameLayout
                     android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_profile_messages"
-                    android:contentDescription="@string/menu_message_center" />
+                    android:layout_height="25dp">
+                    
+                    <!--消息中心图标-->
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_profile_messages"
+                        android:contentDescription="@string/menu_message_center" />
+                        
+                </FrameLayout>
 
                 <!--消息中心text-->
                 <TextView
@@ -272,6 +279,31 @@
                     android:text="@string/menu_message_center"
                     android:textSize="13sp"
                     android:textColor="@color/gray_dark_100" />
+
+                <!--未读消息数量红点-->
+                <FrameLayout
+                    android:id="@+id/fl_message_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone">
+                    
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_profile_menu_notification_red_dot"
+                        android:contentDescription="未读数量" />
+                        
+                    <TextView
+                        android:id="@+id/tv_message_badge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+                        
+                </FrameLayout>
 
                 <!--查看详情右箭头-->
                 <ImageView

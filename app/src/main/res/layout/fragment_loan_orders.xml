@@ -172,6 +172,7 @@
         android:textColor="@color/text_tertiary"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/filter_container" />
 
     <!-- 贷款订单列表 -->
@@ -182,9 +183,40 @@
         android:layout_weight="1"
         android:paddingVertical="8dp"
         android:scrollbars="vertical"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_order_count"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_loan_order"
         />
+
+    <!-- 空状态提示 -->
+    <LinearLayout
+        android:id="@+id/container_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tv_order_count"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="170dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="24dp"
+            android:src="@drawable/ic_loan_manage_application_order_null"
+            tools:src="@drawable/ic_loan_manage_application_order_null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_loan_orders"
+            android:textColor="@color/text_secondary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

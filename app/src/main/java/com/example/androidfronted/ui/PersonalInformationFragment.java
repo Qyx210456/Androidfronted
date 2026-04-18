@@ -45,8 +45,9 @@ public class PersonalInformationFragment extends BaseDetailFragment {
         viewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
             if (userInfo != null) {
                 tvUsername.setText(userInfo.getUsername());
-                if (userInfo.getAvatar() != null && !userInfo.getAvatar().isEmpty()) {
-                    String imageUrl = ImageUrlHelper.getFullImageUrl(userInfo.getAvatar());
+                String avatar = userInfo.getAvatar();
+                if (avatar != null && !avatar.isEmpty() && !"null".equals(avatar)) {
+                    String imageUrl = ImageUrlHelper.getFullImageUrl(avatar);
                     ImageLoader.loadCircleImage(requireContext(), imageUrl, ivAvatar);
                 } else {
                     ivAvatar.setImageResource(R.drawable.ic_profile_avatar);

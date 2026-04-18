@@ -5,27 +5,33 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.util.Log;
-import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.data.local.entity.NotificationEntity;
 import com.example.androidfronted.data.model.LoginRequest;
 import com.example.androidfronted.data.model.LoginResponse;
 import com.example.androidfronted.data.repository.AuthRepository;
+import com.example.androidfronted.data.repository.NotificationRepository;
+import com.example.androidfronted.event.NotificationEvent;
+import com.example.androidfronted.service.SseNotificationService;
 import com.example.androidfronted.util.TokenManager;
+import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * 密码登录 Fragment
@@ -42,7 +48,8 @@ public class PasswordLoginFragment extends Fragment {
     private LinearLayout registerLink;
     private CheckBox cbAgreement;
     private AuthRepository authRepository;
-    private boolean isPasswordVisible = false; // 控制密码是否可见
+    private NotificationRepository notificationRepository;
+    private boolean isPasswordVisible = false;
 
     // 密码输入规则：8-20位，含大小写字母、数字、特殊字符
     private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$";
@@ -54,6 +61,7 @@ public class PasswordLoginFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         authRepository = AuthRepository.getInstance(requireContext());
+        notificationRepository = NotificationRepository.getInstance(requireContext());
     }
 
     @Nullable
@@ -74,9 +82,9 @@ public class PasswordLoginFragment extends Fragment {
     private void initViews(View view) {
         etPhone = view.findViewById(R.id.etPhone);
         etPassword = view.findViewById(R.id.etPassword);
-        ivTogglePassword = view.findViewById(R.id.ivTogglePassword); // 绑定图标
+        ivTogglePassword = view.findViewById(R.id.ivTogglePassword);
         btnLogin = view.findViewById(R.id.btnLogin);
-        cbAgreement = view.findViewById(R.id.cbAgreement);// 存在于 fragment_password_login.xml
+        cbAgreement = view.findViewById(R.id.cbAgreement);
         registerLink = view.findViewById(R.id.bottomLinks);
     }
 
@@ -158,6 +166,12 @@ public class PasswordLoginFragment extends Fragment {
                 String savedToken = tokenManager.getToken();
                 Log.d("PasswordLogin", "Token saved: " + (savedToken != null && !savedToken.isEmpty()));
 
+                Intent serviceIntent = new Intent(requireContext(), SseNotificationService.class);
+                requireContext().startService(serviceIntent);
+                Log.d("PasswordLogin", "SSE service started");
+
+                fetchOfflineNotifications();
+
                 Toast.makeText(getContext(), "登录成功！", Toast.LENGTH_SHORT).show();
 
                 // 跳转到主页面
@@ -169,6 +183,28 @@ public class PasswordLoginFragment extends Fragment {
             @Override
             public void onError(String errorMessage) {
                 Toast.makeText(getContext(), "登录失败: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchOfflineNotifications() {
+        Log.d("PasswordLogin", "Fetching offline notifications...");
+        notificationRepository.fetchOfflineNotifications(new NotificationRepository.OfflineNotificationCallback() {
+            @Override
+            public void onSuccess(int unreadCount, NotificationEntity latestUnread) {
+                Log.d("PasswordLogin", "Offline notifications fetched: unreadCount=" + unreadCount);
+                
+                EventBus.getDefault().post(new NotificationEvent.UnreadCountUpdated(unreadCount));
+                
+                if (unreadCount > 0 && latestUnread != null) {
+                    EventBus.getDefault().post(new NotificationEvent.OfflineNotificationSummary(unreadCount, latestUnread));
+                    Log.d("PasswordLogin", "OfflineNotificationSummary event posted");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("PasswordLogin", "Failed to fetch offline notifications: " + errorMessage);
             }
         });
     }

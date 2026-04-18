@@ -28,6 +28,7 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
 
     private RecyclerView recyclerView;
     private TextView tvRecordCount;
+    private View containerEmpty;
     private Button btnFilterAll;
     private Button btnFilterPending;
     private Button btnFilterApproved;
@@ -61,6 +62,7 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
     private void initViews(View view) {
         recyclerView = view.findViewById(R.id.recycler_application_records);
         tvRecordCount = view.findViewById(R.id.tv_record_count);
+        containerEmpty = view.findViewById(R.id.container_empty);
         btnFilterAll = view.findViewById(R.id.btn_filter_all);
         btnFilterPending = view.findViewById(R.id.btn_filter_pending);
         btnFilterApproved = view.findViewById(R.id.btn_filter_approved);
@@ -94,6 +96,7 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
         viewModel.getFilteredApplications().observe(getViewLifecycleOwner(), applications -> {
             if (applications != null) {
                 adapter.setApplications(applications);
+                updateEmptyState(applications.isEmpty());
             }
         });
 
@@ -211,6 +214,18 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
     private void handleNavigation(NavigationEvent event) {
         if (event.getNavigationType() == NavigationEvent.NAVIGATE_BACK && getActivity() != null) {
             getActivity().getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    private void updateEmptyState(boolean isEmpty) {
+        if (isEmpty) {
+            recyclerView.setVisibility(View.GONE);
+            containerEmpty.setVisibility(View.VISIBLE);
+            tvRecordCount.setVisibility(View.GONE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            containerEmpty.setVisibility(View.GONE);
+            tvRecordCount.setVisibility(View.VISIBLE);
         }
     }
 }
