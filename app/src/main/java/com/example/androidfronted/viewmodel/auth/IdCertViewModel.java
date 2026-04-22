@@ -93,6 +93,9 @@ public class IdCertViewModel extends BaseViewModel {
 
     public void submitCert(String idCard, String realName) {
         Log.d("IdCertViewModel", "submitCert called, idCard: " + idCard + ", realName: " + realName);
+        if (previousState == null) {
+            previousState = certState.getValue();
+        }
         certState.setValue(CertState.UPLOADING);
         Log.d("IdCertViewModel", "submitCert, state changed to UPLOADING");
         repository.submitBasicCert(idCard, realName,
@@ -100,6 +103,7 @@ public class IdCertViewModel extends BaseViewModel {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {
                         Log.d("IdCertViewModel", "submitCert, onSuccess");
+                        previousState = null;
                         submitResult.postValue(response);
                         certState.postValue(CertState.CERTIFIED);
                         Log.d("IdCertViewModel", "submitCert, state changed to CERTIFIED");
@@ -108,8 +112,8 @@ public class IdCertViewModel extends BaseViewModel {
                     @Override
                     public void onError(String errorMsg) {
                         Log.e("IdCertViewModel", "submitCert, onError: " + errorMsg);
-                        certState.postValue(CertState.NOT_CERTIFIED);
-                        Log.d("IdCertViewModel", "submitCert, state changed to NOT_CERTIFIED");
+                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
+                        previousState = null;
                         showError(errorMsg);
                     }
                 });
@@ -122,6 +126,7 @@ public class IdCertViewModel extends BaseViewModel {
 
     public void cancelUpload() {
         certState.postValue(previousState);
+        previousState = null;
     }
 
     public void navigateToUpload() {

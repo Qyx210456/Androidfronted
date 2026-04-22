@@ -86,18 +86,23 @@ public class PropertyCertViewModel extends BaseViewModel {
     }
 
     public void submitCert(okhttp3.RequestBody propertyFile, okhttp3.RequestBody carFile) {
+        if (previousState == null) {
+            previousState = certState.getValue();
+        }
         certState.setValue(CertState.UPLOADING);
         repository.submitOtherCert("", propertyFile, carFile, null, null, null, null,
                 new AuthRepository.AuthCallback<AuthSubmitResponse>() {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {
+                        previousState = null;
                         submitResult.postValue(response);
                         getCertInfo(null);
                     }
 
                     @Override
                     public void onError(String errorMsg) {
-                        certState.postValue(CertState.NOT_CERTIFIED);
+                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
+                        previousState = null;
                         showError(errorMsg);
                     }
                 });
@@ -110,6 +115,7 @@ public class PropertyCertViewModel extends BaseViewModel {
 
     public void cancelUpload() {
         certState.postValue(previousState);
+        previousState = null;
     }
 
     public void navigateToUpload() {

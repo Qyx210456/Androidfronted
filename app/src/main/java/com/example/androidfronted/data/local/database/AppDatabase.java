@@ -12,6 +12,7 @@ import com.example.androidfronted.data.local.dao.LoanOrderDao;
 import com.example.androidfronted.data.local.dao.LoanOrderDetailDao;
 import com.example.androidfronted.data.local.dao.LoanProductDao;
 import com.example.androidfronted.data.local.dao.NotificationDao;
+import com.example.androidfronted.data.local.dao.RepaymentPlanDao;
 import com.example.androidfronted.data.local.dao.UserDao;
 import com.example.androidfronted.data.local.entity.ApplicationEntity;
 import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
@@ -21,6 +22,7 @@ import com.example.androidfronted.data.local.entity.LoanOrderEntity;
 import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.LoanProductEntity;
 import com.example.androidfronted.data.local.entity.NotificationEntity;
+import com.example.androidfronted.data.local.entity.RepaymentPlanEntity;
 import com.example.androidfronted.data.local.entity.UserEntity;
 
 @Database(
@@ -33,9 +35,10 @@ import com.example.androidfronted.data.local.entity.UserEntity;
         ApplicationDetailEntity.class,
         LoanOrderEntity.class,
         LoanOrderDetailEntity.class,
-        NotificationEntity.class
+        NotificationEntity.class,
+        RepaymentPlanEntity.class
     },
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -51,6 +54,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract LoanOrderDao loanOrderDao();
     public abstract LoanOrderDetailDao loanOrderDetailDao();
     public abstract NotificationDao notificationDao();
+    public abstract RepaymentPlanDao repaymentPlanDao();
 
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {

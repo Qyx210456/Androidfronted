@@ -90,6 +90,9 @@ public class JobCertViewModel extends BaseViewModel {
         Log.d("JobCertViewModel", "submitCert called");
         Log.d("JobCertViewModel", "submitCert, employmentFile: " + (employmentFile != null ? "present" : "null"));
         Log.d("JobCertViewModel", "submitCert, salaryFile: " + (salaryFile != null ? "present" : "null"));
+        if (previousState == null) {
+            previousState = certState.getValue();
+        }
         certState.setValue(CertState.UPLOADING);
         Log.d("JobCertViewModel", "submitCert, state changed to UPLOADING");
         repository.submitOtherCert("", null, null, employmentFile, salaryFile, null, null,
@@ -97,6 +100,7 @@ public class JobCertViewModel extends BaseViewModel {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {
                         Log.d("JobCertViewModel", "submitCert, onSuccess");
+                        previousState = null;
                         submitResult.postValue(response);
                         getCertInfo(null);
                     }
@@ -104,7 +108,8 @@ public class JobCertViewModel extends BaseViewModel {
                     @Override
                     public void onError(String errorMsg) {
                         Log.e("JobCertViewModel", "submitCert, onError: " + errorMsg);
-                        certState.postValue(CertState.NOT_CERTIFIED);
+                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
+                        previousState = null;
                         showError(errorMsg);
                     }
                 });
@@ -117,6 +122,7 @@ public class JobCertViewModel extends BaseViewModel {
 
     public void cancelUpload() {
         certState.postValue(previousState);
+        previousState = null;
     }
 
     public void navigateToUpload() {

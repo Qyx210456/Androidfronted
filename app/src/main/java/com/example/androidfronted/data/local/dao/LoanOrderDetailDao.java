@@ -18,4 +18,7 @@ public interface LoanOrderDetailDao {
 
     @Query("DELETE FROM loan_order_details WHERE id = :id")
     void deleteById(int id);
+
+    @Query("UPDATE loan_order_details SET currentTerm = :newCurrentTerm WHERE id = :orderId")
+    void updateCurrentTerm(int orderId, int newCurrentTerm);
 }

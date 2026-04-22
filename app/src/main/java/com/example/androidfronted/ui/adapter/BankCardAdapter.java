@@ -34,20 +34,12 @@ public class BankCardAdapter extends RecyclerView.Adapter<BankCardAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MyBankCardsViewModel.BankCardItem item = items.get(position);
         holder.tvBankName.setText(item.getBankName());
-        holder.tvCardNumber.setText(maskCardNumber(item.getCardNumber()));
+        holder.tvCardNumber.setText(item.getCardNumber());
     }
 
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    private String maskCardNumber(String cardNumber) {
-        if (cardNumber == null || cardNumber.length() < 8) {
-            return cardNumber;
-        }
-        int length = cardNumber.length();
-        return cardNumber.substring(0, 4) + " **** **** " + cardNumber.substring(length - 4);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -170,7 +170,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@drawable/bg_gradient_blue_horizontal"
         app:backgroundTint="@null"
-        android:text="关闭该页面"
+        android:text="完成"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold" />

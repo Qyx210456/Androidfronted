@@ -46,6 +46,15 @@ public class ViewModelFactory extends ViewModelProvider.AndroidViewModelFactory 
         } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.LoanOrderDetailViewModel.class)) {
             return (T) new com.example.androidfronted.viewmodel.loan.LoanOrderDetailViewModel(application, 
                 com.example.androidfronted.data.repository.LoanOrderRepository.getInstance(application));
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.RepaymentPlanViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.RepaymentPlanViewModel(application, 
+                com.example.androidfronted.data.repository.LoanOrderRepository.getInstance(application));
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.PaymentViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.PaymentViewModel(application, 
+                com.example.androidfronted.data.repository.LoanOrderRepository.getInstance(application));
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.loan.LoanManageViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.loan.LoanManageViewModel(application, 
+                com.example.androidfronted.data.repository.LoanOrderRepository.getInstance(application));
         } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.notification.NotificationViewModel.class)) {
             return (T) new com.example.androidfronted.viewmodel.notification.NotificationViewModel(application, 
                 com.example.androidfronted.data.repository.NotificationRepository.getInstance(application));

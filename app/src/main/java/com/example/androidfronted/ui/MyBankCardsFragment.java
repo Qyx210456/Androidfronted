@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -77,8 +76,7 @@ public class MyBankCardsFragment extends BaseDetailFragment {
 
         viewModel.getSubmitResult().observe(getViewLifecycleOwner(), response -> {
             if (response != null && response.getCode() == 200) {
-                Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
-                viewModel.getCertInfo();
+                navigateToSuccessPage();
             }
         });
 
@@ -93,6 +91,13 @@ public class MyBankCardsFragment extends BaseDetailFragment {
                 handleNavigation(event);
             }
         });
+    }
+
+    private void navigateToSuccessPage() {
+        InfoConfirmBankCardsSuccessFragment successFragment = new InfoConfirmBankCardsSuccessFragment();
+        getParentFragmentManager().beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
+                .commit();
     }
 
     private void setupClickListeners(View view) {

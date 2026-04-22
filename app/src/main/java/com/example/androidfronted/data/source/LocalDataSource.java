@@ -12,6 +12,7 @@ import com.example.androidfronted.data.local.dao.LoanOrderDao;
 import com.example.androidfronted.data.local.dao.LoanOrderDetailDao;
 import com.example.androidfronted.data.local.dao.LoanProductDao;
 import com.example.androidfronted.data.local.dao.NotificationDao;
+import com.example.androidfronted.data.local.dao.RepaymentPlanDao;
 import com.example.androidfronted.data.local.dao.UserDao;
 import com.example.androidfronted.data.local.entity.ApplicationEntity;
 import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
@@ -21,6 +22,7 @@ import com.example.androidfronted.data.local.entity.LoanOrderEntity;
 import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.LoanProductEntity;
 import com.example.androidfronted.data.local.entity.NotificationEntity;
+import com.example.androidfronted.data.local.entity.RepaymentPlanEntity;
 import com.example.androidfronted.data.local.entity.UserEntity;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +38,7 @@ public class LocalDataSource {
     private final LoanOrderDao loanOrderDao;
     private final LoanOrderDetailDao loanOrderDetailDao;
     private final NotificationDao notificationDao;
+    private final RepaymentPlanDao repaymentPlanDao;
     private final ExecutorService executor;
     private final Handler mainHandler;
 
@@ -50,6 +53,7 @@ public class LocalDataSource {
         this.loanOrderDao = database.loanOrderDao();
         this.loanOrderDetailDao = database.loanOrderDetailDao();
         this.notificationDao = database.notificationDao();
+        this.repaymentPlanDao = database.repaymentPlanDao();
         this.executor = Executors.newSingleThreadExecutor();
         this.mainHandler = new Handler(Looper.getMainLooper());
     }
@@ -284,6 +288,19 @@ public class LocalDataSource {
         executor.execute(() -> loanOrderDetailDao.deleteAll());
     }
 
+    public void updateLoanOrderCurrentTerm(int orderId, int newCurrentTerm, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                loanOrderDetailDao.updateCurrentTerm(orderId, newCurrentTerm);
+                loanOrderDao.updateCurrentTerm(orderId, newCurrentTerm);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
     public void saveNotifications(List<NotificationEntity> notifications, DataSourceCallback<Void> callback) {
         executor.execute(() -> {
             try {
@@ -364,6 +381,66 @@ public class LocalDataSource {
         executor.execute(() -> {
             try {
                 notificationDao.deleteAll();
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    /**
+     * 保存还款计划列表
+     */
+    public void saveRepaymentPlans(List<RepaymentPlanEntity> plans, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                repaymentPlanDao.insertAll(plans);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    /**
+     * 根据订单ID获取还款计划
+     */
+    public void getRepaymentPlansByOrderId(int orderId, DataSourceCallback<List<RepaymentPlanEntity>> callback) {
+        executor.execute(() -> {
+            try {
+                List<RepaymentPlanEntity> result = repaymentPlanDao.getByOrderId(orderId);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    /**
+     * 更新还款计划状态
+     */
+    public void updateRepaymentPlanStatus(int orderId, int term, String status, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                repaymentPlanDao.updateStatus(orderId, term, status);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    /**
+     * 删除指定订单的还款计划
+     */
+    public void deleteRepaymentPlansByOrderId(int orderId, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                repaymentPlanDao.deleteByOrderId(orderId);
                 mainHandler.post(() -> callback.onSuccess(null));
             } catch (Exception e) {
                 e.printStackTrace();

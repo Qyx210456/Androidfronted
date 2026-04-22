@@ -20,6 +20,7 @@ import com.example.androidfronted.data.model.ProductApplyRequest;
 import com.example.androidfronted.data.model.ProductApplyResponse;
 import com.example.androidfronted.data.model.RegisterRequest;
 import com.example.androidfronted.data.model.RegisterResponse;
+import com.example.androidfronted.data.model.RepaymentPlanResponse;
 import com.example.androidfronted.data.model.UserInfoResponse;
 import com.example.androidfronted.network.NetworkClient;
 import com.google.gson.Gson;
@@ -220,6 +221,9 @@ public class RemoteDataSource {
         } else if (response instanceof UserInfoResponse) {
             UserInfoResponse res = (UserInfoResponse) response;
             return (res != null && res.getMessage() != null) ? res.getMessage() : "请求失败 (" + statusCode + ")";
+        } else if (response instanceof AuthSubmitResponse) {
+            AuthSubmitResponse res = (AuthSubmitResponse) response;
+            return (res != null && res.getMessage() != null) ? res.getMessage() : "提交失败 (" + statusCode + ")";
         }
         return "请求失败 (" + statusCode + ")";
     }
@@ -572,6 +576,22 @@ public class RemoteDataSource {
                         return response != null && response.getCode() == 200;
                     }
                 }, callback);
+    }
+
+    /**
+     * 获取还款计划
+     * @param token 用户token
+     * @param orderId 订单ID
+     * @param callback 网络回调
+     */
+    public void getRepaymentPlan(String token, int orderId, final NetworkCallback<RepaymentPlanResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/" + orderId + "/repayment-plan")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get repayment plan", RepaymentPlanResponse.class, callback);
     }
 
     public interface NetworkCallback<T> {

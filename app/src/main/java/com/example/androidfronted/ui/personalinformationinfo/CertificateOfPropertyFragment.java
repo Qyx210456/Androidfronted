@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
+import com.example.androidfronted.ui.InfoConfirmSuccessFragment;
 import com.example.androidfronted.ui.adapter.UploadedCertificateAdapter;
 import com.example.androidfronted.ui.base.BaseDetailFragment;
 import com.example.androidfronted.utils.ImageUploadHelper;
@@ -161,8 +162,7 @@ public class CertificateOfPropertyFragment extends BaseDetailFragment {
 
         viewModel.getSubmitResult().observe(getViewLifecycleOwner(), response -> {
             if (response != null && response.getCode() == 200) {
-                Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
-                loadCertInfo();
+                navigateToSuccessPage();
             }
         });
 
@@ -228,6 +228,17 @@ public class CertificateOfPropertyFragment extends BaseDetailFragment {
         view.findViewById(R.id.btn_delete).setOnClickListener(v -> {
             Toast.makeText(getContext(), "管理", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void navigateToSuccessPage() {
+        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
+        Bundle args = new Bundle();
+        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, InfoConfirmSuccessFragment.TYPE_PROPERTY);
+        successFragment.setArguments(args);
+        
+        getParentFragmentManager().beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
+                .commit();
     }
 
     private void loadCertInfo() {

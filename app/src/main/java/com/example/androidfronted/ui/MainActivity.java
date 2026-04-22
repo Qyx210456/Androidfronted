@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.local.entity.NotificationEntity;
+import com.example.androidfronted.data.repository.AuthRepository;
 import com.example.androidfronted.data.repository.NotificationRepository;
 import com.example.androidfronted.event.NotificationEvent;
 import com.example.androidfronted.util.InAppNotificationManager;
@@ -52,14 +53,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.d(TAG, "=== MainActivity 启动 ===");
+        Log.d(TAG, "onCreate: 开始检查Token状态");
 
         TokenManager tokenManager = new TokenManager(getApplicationContext());
         String token = tokenManager.getToken();
+        String refreshToken = tokenManager.getRefreshToken();
 
         Log.d(TAG, "Token检查: " + (token != null ? "存在(" + token.length() + "字符)" : "不存在"));
+        Log.d(TAG, "RefreshToken检查: " + (refreshToken != null ? "存在(" + refreshToken.length() + "字符)" : "不存在"));
+        Log.d(TAG, "isTokenValid: " + tokenManager.isTokenValid());
+        Log.d(TAG, "isRefreshTokenValid: " + tokenManager.isRefreshTokenValid());
 
-        if (!tokenManager.isTokenValid()) {
-            Log.d(TAG, "Token 无效或已过期，跳转到 LoginActivity");
+        boolean tokenValid = tokenManager.isTokenValid();
+        boolean refreshTokenValid = tokenManager.isRefreshTokenValid();
+
+        if (!tokenValid && refreshTokenValid) {
+            Log.d(TAG, "Token已过期但RefreshToken有效，尝试刷新Token...");
+            boolean refreshed = attemptRefreshToken(refreshToken);
+            if (refreshed) {
+                Log.d(TAG, "Token刷新成功，继续加载主界面");
+                tokenValid = true;
+            } else {
+                Log.d(TAG, "Token刷新失败，跳转到登录页面");
+            }
+        }
+
+        if (!tokenValid) {
+            Log.d(TAG, "Token 无效且无法刷新，跳转到 LoginActivity");
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -77,6 +97,50 @@ public class MainActivity extends AppCompatActivity {
         startSseNotificationService();
         fetchOfflineNotifications();
         initializeMainUI();
+    }
+
+    private boolean attemptRefreshToken(String refreshToken) {
+        Log.d(TAG, "attemptRefreshToken: refreshToken = " + (refreshToken != null ? "exists" : "null"));
+        
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            Log.d(TAG, "attemptRefreshToken: No refresh token available");
+            return false;
+        }
+
+        final boolean[] result = {false};
+        final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+
+        AuthRepository authRepository = AuthRepository.getInstance(getApplicationContext());
+        authRepository.refreshToken(refreshToken, new AuthRepository.AuthCallback<com.example.androidfronted.data.model.LoginResponse>() {
+            @Override
+            public void onSuccess(com.example.androidfronted.data.model.LoginResponse response) {
+                Log.d(TAG, "attemptRefreshToken: onSuccess, response = " + (response != null ? "not null" : "null"));
+                if (response != null && response.getData() != null) {
+                    String newToken = response.getData().getToken();
+                    String newRefreshToken = response.getData().getRefreshToken();
+                    Log.d(TAG, "attemptRefreshToken: New token = " + (newToken != null ? "exists" : "null"));
+                    Log.d(TAG, "attemptRefreshToken: New refreshToken = " + (newRefreshToken != null ? "exists" : "null"));
+                    result[0] = newToken != null;
+                }
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "attemptRefreshToken: onError: " + errorMessage);
+                latch.countDown();
+            }
+        });
+
+        Log.d(TAG, "attemptRefreshToken: Waiting for response (timeout: 30s)...");
+        try {
+            latch.await(30, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "attemptRefreshToken: Interrupted while waiting for refresh: " + e.getMessage());
+        }
+
+        Log.d(TAG, "attemptRefreshToken: Result = " + result[0]);
+        return result[0];
     }
 
     @Override

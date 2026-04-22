@@ -137,12 +137,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="贷款总额"
+                            android:text="已还总额"
                             android:textColor="#B3E0FF"
                             android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/tv_loan_amount_value"
+                            android:id="@+id/tv_repaid_amount_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
@@ -161,12 +161,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="已还本金"
+                            android:text="应还总额"
                             android:textColor="#B3E0FF"
                             android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/tv_repaid_amount_value"
+                            android:id="@+id/tv_loan_amount_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
@@ -175,6 +175,7 @@
                             android:textSize="26sp"
                             android:textStyle="bold" />
                     </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -196,19 +197,21 @@
                     android:orientation="horizontal">
 
                     <ProgressBar
+                        android:id="@+id/progress_bar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="0dp"
                         android:layout_height="6dp"
                         android:layout_weight="1"
                         android:max="100"
-                        android:progress="41"
-                        android:progressDrawable="@drawable/bg_loan_order_progress_bar" /> <!-- 需自定义进度条样式 -->
+                        android:progress="0"
+                        android:progressDrawable="@drawable/bg_loan_order_progress_bar" />
 
                     <TextView
+                        android:id="@+id/tv_progress_percent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="41.7%"
+                        android:text="0.00%"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -219,7 +222,105 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#4DFFFFFF" /> <!-- 半透明白色分割线 -->
+                    android:background="#4DFFFFFF" />
+
+                <!-- 待还数据行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="待还总额"
+                            android:textColor="#B3E0FF"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_unpaid_total"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text=""
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#4DFFFFFF" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="待还本金"
+                            android:textColor="#B3E0FF"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_unpaid_principal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text=""
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#4DFFFFFF" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="待还利息"
+                            android:textColor="#B3E0FF"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tv_unpaid_interest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text=""
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 分割线 -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#4DFFFFFF" />
 
                 <!-- 底部参数：期数与逾期 -->
                 <LinearLayout

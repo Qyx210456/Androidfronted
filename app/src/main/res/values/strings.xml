@@ -249,4 +249,38 @@
     <string name="foreground_service_running">消息服务正在运行</string>
     <string name="foreground_service_description">正在监听新消息</string>
 
+    <!-- 还款计划筛选相关文字 -->
+    <string name="repayment_plan_filter_all">全部</string>
+    <string name="repayment_plan_filter_repaid">已还</string>
+    <string name="repayment_plan_filter_unpaid">未还</string>
+    <string name="repayment_plan_filter_overdue">逾期</string>
+    <string name="repayment_plan_filter">筛选</string>
+    <string name="repayment_plan_sort_term">期数正序</string>
+
+    <!-- 贷款管理页面还款卡片 -->
+    <string name="loan_manage_monthly_repayment">近30日待还(元)</string>
+    <string name="loan_manage_principal">待还本金</string>
+    <string name="loan_manage_interest">待还利息</string>
+    <string name="loan_manage_total">待还总额</string>
+
+    <!-- 还款支付页面 -->
+    <string name="payment_title">支付</string>
+    <string name="payment_select_method">请选择付款方式</string>
+    <string name="payment_alipay">支付宝</string>
+    <string name="payment_wechat">微信</string>
+    <string name="payment_cloud_quickpass">云闪付</string>
+    <string name="payment_more_methods">更多支付方式</string>
+    <string name="payment_contact_service">支付遇到问题？联系客服</string>
+    <string name="payment_pay_now">立即支付</string>
+    <string name="payment_term_format">第%d期还款</string>
+    <string name="payment_success_title">还款成功</string>
+    <string name="payment_success_term_format">您的第%d期还款已提交成功</string>
+    <string name="payment_success_reminder_title">还款提醒</string>
+    <string name="payment_success_reminder_1">扣款指令已发送，资金预计 2 小时内到账</string>
+    <string name="payment_success_reminder_2">本期账单已结清，请留意还款计划</string>
+    <string name="payment_success_reminder_3">保持良好还款记录，有助于积累您的信用分</string>
+    <string name="payment_success_done">完成</string>
+    <string name="payment_select_method_hint">请选择支付方式</string>
+    <string name="payment_get_detail_failed">获取订单详情失败</string>
+
 </resources>

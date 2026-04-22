@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightest_blue">
+
+    <!--顶部导航栏 - 使用Material Toolbar并适配状态栏-->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/top_leading"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FF458FFC"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        app:titleCentered="true">
+
+        <!--返回按钮-->
+        <ImageView
+            android:id="@+id/apply_btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_arrow_back_white"
+            android:contentDescription="@string/nav_back" />
+
+        <!--页面标题，支付-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/payment_title"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/top_leading">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/tv_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:text=""
+                android:textColor="@color/text_primary"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tv_loan_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/text_secondary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_term"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text=""
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_product_info_card"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/payment_select_method"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:background="#E0E0E0" />
+
+                    <LinearLayout
+                        android:id="@+id/item_alipay"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_repayment_style_alipay"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/payment_alipay"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/iv_alipay_check"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/bg_payment_method_selector"
+                            android:contentDescription="@null" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0" />
+
+                    <LinearLayout
+                        android:id="@+id/item_wechat"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_repayment_style_wechat"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="@string/payment_wechat"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/iv_wechat_check"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/bg_payment_method_selector"
+                            android:contentDescription="@null" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0" />
+
+                    <LinearLayout
+                        android:id="@+id/item_cloud_quickpass"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_repayment_style_cloud_quickpass"
+                            android:contentDescription="@null" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/payment_cloud_quickpass"
+                                android:textColor="@color/text_primary"
+                                android:textSize="16sp" />
+
+                            <ImageView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_repayment_style_union_pay"
+                                android:contentDescription="@null" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/iv_cloud_check"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/bg_payment_method_selector"
+                            android:contentDescription="@null" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_more_methods"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:drawableEnd="@drawable/ic_arrow_down_gray"
+                        android:drawablePadding="4dp"
+                        android:text="@string/payment_more_methods"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackground" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="@string/payment_contact_service"
+                android:textColor="@color/text_tertiary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_pay_now"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_gradient_blue_horizontal"
+        app:backgroundTint="@null"
+        android:text="@string/payment_pay_now"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

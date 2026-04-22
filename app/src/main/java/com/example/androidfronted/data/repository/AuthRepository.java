@@ -41,10 +41,12 @@ public class AuthRepository {
                 Log.d(TAG, "Login onSuccess, response: " + (response != null ? "not null" : "null"));
                 if (response != null && response.getData() != null) {
                     String token = response.getData().getToken();
+                    String refreshToken = response.getData().getRefreshToken();
                     Log.d(TAG, "Token from response: " + (token != null ? "not null" : "null"));
+                    Log.d(TAG, "RefreshToken from response: " + (refreshToken != null ? "not null" : "null"));
                     if (token != null) {
-                        Log.d(TAG, "Saving token to SharedPreferences");
-                        tokenManager.saveToken(token);
+                        Log.d(TAG, "Saving token and refreshToken to SharedPreferences");
+                        tokenManager.saveTokens(token, refreshToken);
                     }
                 }
                 callback.onSuccess(response);
@@ -78,8 +80,9 @@ public class AuthRepository {
             public void onSuccess(LoginResponse response) {
                 if (response != null && response.getData() != null) {
                     String token = response.getData().getToken();
+                    String newRefreshToken = response.getData().getRefreshToken();
                     if (token != null) {
-                        tokenManager.saveToken(token);
+                        tokenManager.saveTokens(token, newRefreshToken != null ? newRefreshToken : refreshToken);
                     }
                 }
                 callback.onSuccess(response);
@@ -241,7 +244,7 @@ public class AuthRepository {
     }
 
     public void logout() {
-        tokenManager.clearToken();
+        tokenManager.clearTokens();
         localDataSource.clearAuthData();
         localDataSource.clearNotifications();
     }

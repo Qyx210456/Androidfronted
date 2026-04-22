@@ -98,7 +98,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void bind(NotificationEntity notification, OnNotificationClickListener listener) {
             tvTitle.setText(notification.getTitle());
             tvContent.setText(notification.getContent());
-            tvTime.setText(DateUtils.formatTime(notification.getCreatedAt()));
+            tvTime.setText(DateUtils.formatDateTime(notification.getCreatedAt()));
             
             if (notification.isReadFlag()) {
                 ivUnreadDot.setVisibility(View.GONE);

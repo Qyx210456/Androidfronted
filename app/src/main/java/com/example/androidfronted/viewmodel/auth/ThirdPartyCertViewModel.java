@@ -86,18 +86,23 @@ public class ThirdPartyCertViewModel extends BaseViewModel {
     }
 
     public void submitCert(okhttp3.RequestBody socialSecurityFile, okhttp3.RequestBody creditReportFile) {
+        if (previousState == null) {
+            previousState = certState.getValue();
+        }
         certState.setValue(CertState.UPLOADING);
         repository.submitOtherCert("", null, null, null, null, socialSecurityFile, creditReportFile,
                 new AuthRepository.AuthCallback<AuthSubmitResponse>() {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {
+                        previousState = null;
                         submitResult.postValue(response);
                         getCertInfo(null);
                     }
 
                     @Override
                     public void onError(String errorMsg) {
-                        certState.postValue(CertState.NOT_CERTIFIED);
+                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
+                        previousState = null;
                         showError(errorMsg);
                     }
                 });
@@ -110,6 +115,7 @@ public class ThirdPartyCertViewModel extends BaseViewModel {
 
     public void cancelUpload() {
         certState.postValue(previousState);
+        previousState = null;
     }
 
     public void navigateToUpload() {

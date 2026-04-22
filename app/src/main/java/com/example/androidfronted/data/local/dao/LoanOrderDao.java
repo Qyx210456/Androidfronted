@@ -25,4 +25,7 @@ public interface LoanOrderDao {
 
     @Query("SELECT * FROM loan_orders WHERE id = :id")
     LoanOrderEntity getLoanOrderById(int id);
+
+    @Query("UPDATE loan_orders SET currentTerm = :newCurrentTerm WHERE id = :id")
+    void updateCurrentTerm(int id, int newCurrentTerm);
 }

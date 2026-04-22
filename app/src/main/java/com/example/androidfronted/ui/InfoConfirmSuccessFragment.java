@@ -77,10 +77,8 @@ public class InfoConfirmSuccessFragment extends BaseDetailFragment {
         if (targetFragment != null) {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.container, targetFragment)
-                    .addToBackStack(null)
                     .commit();
         } else {
-            // 默认返回上一级
             getParentFragmentManager().popBackStack();
         }
     }

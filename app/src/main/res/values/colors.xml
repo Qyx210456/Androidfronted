@@ -160,4 +160,26 @@
     <color name="order_status_completed_text">#16A34A</color>
     <color name="order_status_completed_bg">#F0FDF4</color>
     <color name="order_status_completed_border">#16A34A</color>
+
+    <!-- 还款计划角标文字颜色 -->
+    <color name="repayment_plan_text_repaid">#2E7D32</color>  <!-- 深绿色 -->
+    <color name="repayment_plan_text_unpaid">#EF6C00</color>  <!-- 深橙色 -->
+    <color name="repayment_plan_text_overdue">#C62828</color> <!-- 深红色 -->
+
+    <!--还款计划时间范围筛选背景及文字颜色-->
+    <!-- 按钮文字颜色 -->
+    <color name="button_date_range_text">#374151</color>
+
+    <!-- 背景颜色 -->
+    <color name="button_date_range_bg_normal">#F9FAFB</color>
+    <color name="button_date_range_bg_pressed">#F3F4F6</color>
+
+    <!-- 边框颜色 -->
+    <color name="button_date_range_border">#E5E7EB</color>
+
+    <!--贷款管理中还款信息卡片部分文字颜色-->
+    <color name="loan_manage_principal">#FF6D00</color>
+    <color name="loan_manage_total">#46CE7D</color>
+    <color name="loan_manage_interest">#1A358D</color>
+
 </resources>

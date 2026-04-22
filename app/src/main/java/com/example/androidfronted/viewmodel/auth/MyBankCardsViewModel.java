@@ -101,21 +101,27 @@ public class MyBankCardsViewModel extends BaseViewModel {
 
     public void cancelUpload() {
         certState.postValue(previousState);
+        previousState = null;
     }
 
     public void submitBankCard(String bankCardNumber, String bankName) {
+        if (previousState == null) {
+            previousState = certState.getValue();
+        }
         certState.setValue(CertState.UPLOADING);
         repository.submitOtherCert(bankCardNumber, null, null, null, null, null, null,
                 new AuthRepository.AuthCallback<AuthSubmitResponse>() {
                     @Override
                     public void onSuccess(AuthSubmitResponse response) {
+                        previousState = null;
                         submitResult.postValue(response);
                         getCertInfo();
                     }
 
                     @Override
                     public void onError(String errorMsg) {
-                        certState.postValue(CertState.NOT_CERTIFIED);
+                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
+                        previousState = null;
                         showError(errorMsg);
                     }
                 });

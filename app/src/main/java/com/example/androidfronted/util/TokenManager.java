@@ -3,16 +3,18 @@ package com.example.androidfronted.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
+import android.util.Log;
 import org.json.JSONObject;
 
 /**
  * Token 管理工具类
  * <p>
- * 负责安全地存储、读取和清除用户登录后返回的 JWT token。
+ * 负责安全地存储、读取和清除用户登录后返回的 JWT token 和 refreshToken。
  * 使用 SharedPreferences 实现本地持久化，避免每次启动都重新登录。
  * </p>
  */
 public class TokenManager {
+    private static final String TAG = "TokenManager";
 
     /**
      * SharedPreferences 文件名
@@ -23,6 +25,7 @@ public class TokenManager {
      * 存储 token 的键名
      */
     private static final String KEY_TOKEN = "auth_token";
+    private static final String KEY_REFRESH_TOKEN = "refresh_token";
 
     /**
      * 应用上下文中的 SharedPreferences 实例
@@ -39,88 +42,141 @@ public class TokenManager {
                 .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    /**
-     * 将 JWT token 保存到本地存储
-     *
-     * @param token 登录接口返回的有效 token 字符串
-     */
     public void saveToken(String token) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_TOKEN, token);
-        editor.apply(); // 使用apply，异步保存
+        editor.apply();
     }
 
-    /**
-     * 从本地存储中获取已保存的 token
-     *
-     * @return 若存在则返回 token 字符串；否则返回 null
-     */
     public String getToken() {
         return prefs.getString(KEY_TOKEN, null);
     }
 
-    /**
-     * 清除本地存储的 token（用于退出登录）
-     */
+    public void saveRefreshToken(String refreshToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.apply();
+    }
+
+    public String getRefreshToken() {
+        return prefs.getString(KEY_REFRESH_TOKEN, null);
+    }
+
+    public void saveTokens(String token, String refreshToken) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_REFRESH_TOKEN, refreshToken);
+        editor.apply();
+    }
+
+    public void clearTokens() {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(KEY_TOKEN);
+        editor.remove(KEY_REFRESH_TOKEN);
+        editor.apply();
+    }
+
     public void clearToken() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(KEY_TOKEN);
         editor.apply();
     }
 
-    // 调试方法
     public boolean hasToken() {
         String token = getToken();
         return token != null && !token.trim().isEmpty();
     }
 
-    /**
-     * 判断 Token 是否已过期（基于 JWT 的 exp 字段）
-     * JWT 的 exp 是秒级时间戳
-     *
-     * @return true 表示已过期或无效；false 表示未过期
-     */
+    public boolean hasRefreshToken() {
+        String refreshToken = getRefreshToken();
+        return refreshToken != null && !refreshToken.trim().isEmpty();
+    }
+
     public boolean isTokenExpired() {
         String token = getToken();
+        Log.d(TAG, "isTokenExpired() called, token: " + (token != null ? "exists" : "null"));
+        
         if (token == null || token.trim().isEmpty() || "null".equalsIgnoreCase(token)) {
+            Log.d(TAG, "Token is null or empty, considering as expired");
             return true;
         }
 
         try {
             String[] parts = token.split("\\.");
             if (parts.length < 2) {
-                return true; // 不是合法的 JWT
+                Log.d(TAG, "Token format invalid (parts < 2), considering as expired");
+                return true;
             }
 
-            // 解码 payload（第二部分）
             String payload = new String(Base64.decode(parts[1], Base64.URL_SAFE | Base64.NO_PADDING));
             JSONObject json = new JSONObject(payload);
 
             long exp = json.optLong("exp", 0);
             if (exp <= 0) {
-                return true; // 没有 exp 字段或无效
+                Log.d(TAG, "Token exp field invalid (exp <= 0), considering as expired");
+                return true;
             }
 
-            // 获取当前 UTC 时间（毫秒 -> 秒）
             long currentTimeSec = System.currentTimeMillis() / 1000;
-            return currentTimeSec > exp;
+            boolean expired = currentTimeSec > exp;
+            Log.d(TAG, "Token exp: " + exp + ", current: " + currentTimeSec + ", expired: " + expired);
+            return expired;
 
         } catch (Exception e) {
-            // 解析失败（如不是 JWT、格式错误等），视为已过期/无效
+            Log.e(TAG, "Error parsing token, considering as expired: " + e.getMessage());
             return true;
         }
     }
 
-    /**
-     * 判断 Token 是否有效：
-     * - 存在
-     * - 非空
-     * - 不是 "null" 字符串
-     * - 未过期（基于 exp）
-     *
-     * @return true 表示有效；false 表示无效或已过期
-     */
+    public boolean isRefreshTokenExpired() {
+        String refreshToken = getRefreshToken();
+        Log.d(TAG, "isRefreshTokenExpired() called, refreshToken: " + (refreshToken != null ? "exists" : "null"));
+        
+        if (refreshToken == null || refreshToken.trim().isEmpty() || "null".equalsIgnoreCase(refreshToken)) {
+            Log.d(TAG, "RefreshToken is null or empty, considering as expired");
+            return true;
+        }
+
+        try {
+            String[] parts = refreshToken.split("\\.");
+            if (parts.length < 2) {
+                Log.d(TAG, "RefreshToken format invalid (parts < 2), considering as expired");
+                return true;
+            }
+
+            String payload = new String(Base64.decode(parts[1], Base64.URL_SAFE | Base64.NO_PADDING));
+            JSONObject json = new JSONObject(payload);
+
+            long exp = json.optLong("exp", 0);
+            if (exp <= 0) {
+                Log.d(TAG, "RefreshToken exp field invalid (exp <= 0), considering as expired");
+                return true;
+            }
+
+            long currentTimeSec = System.currentTimeMillis() / 1000;
+            boolean expired = currentTimeSec > exp;
+            Log.d(TAG, "RefreshToken exp: " + exp + ", current: " + currentTimeSec + ", expired: " + expired);
+            return expired;
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error parsing refreshToken, considering as expired: " + e.getMessage());
+            return true;
+        }
+    }
+
     public boolean isTokenValid() {
-        return hasToken() && !isTokenExpired();
+        boolean hasToken = hasToken();
+        boolean expired = isTokenExpired();
+        boolean valid = hasToken && !expired;
+        Log.d(TAG, "isTokenValid: hasToken=" + hasToken + ", expired=" + expired + ", valid=" + valid);
+        return valid;
+    }
+
+    public boolean isRefreshTokenValid() {
+        boolean hasRefreshToken = hasRefreshToken();
+        boolean expired = isRefreshTokenExpired();
+        boolean valid = hasRefreshToken && !expired;
+        Log.d(TAG, "isRefreshTokenValid: hasRefreshToken=" + hasRefreshToken + ", expired=" + expired + ", valid=" + valid);
+        return valid;
     }
 }

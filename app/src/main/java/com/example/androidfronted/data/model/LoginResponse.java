@@ -28,9 +28,14 @@ public class LoginResponse {
 
     public static class LoginData {
         private String token;
+        private String refreshToken;
 
         public String getToken() {
             return token;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
         }
     }
 }

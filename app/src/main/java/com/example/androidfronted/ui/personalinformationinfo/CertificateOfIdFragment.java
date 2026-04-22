@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
+import com.example.androidfronted.ui.InfoConfirmSuccessFragment;
 import com.example.androidfronted.ui.base.BaseDetailFragment;
 import com.example.androidfronted.utils.IdCardValidator;
 import com.example.androidfronted.viewmodel.auth.IdCertViewModel;
@@ -60,8 +61,7 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
 
         viewModel.getSubmitResult().observe(getViewLifecycleOwner(), response -> {
             if (response != null && response.getCode() == 200) {
-                Toast.makeText(getContext(), "提交成功", Toast.LENGTH_SHORT).show();
-                loadCertInfo();
+                navigateToSuccessPage();
             }
         });
 
@@ -131,6 +131,17 @@ public class CertificateOfIdFragment extends BaseDetailFragment {
         view.findViewById(R.id.btn_modify_id).setOnClickListener(v -> {
             viewModel.startUpload();
         });
+    }
+
+    private void navigateToSuccessPage() {
+        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
+        Bundle args = new Bundle();
+        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, InfoConfirmSuccessFragment.TYPE_ID);
+        successFragment.setArguments(args);
+        
+        getParentFragmentManager().beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
+                .commit();
     }
 
     private void loadCertInfo() {
