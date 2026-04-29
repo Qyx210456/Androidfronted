@@ -1,135 +1,135 @@
 package com.example.androidfronted.ui;
 
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 import com.example.androidfronted.R;
+import com.example.androidfronted.ui.adapter.ImagePreviewAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * 图片预览Activity
- * 支持图片的放大缩小功能
- */
 public class ImagePreviewActivity extends AppCompatActivity {
-    private ImageView imageView;
-    private GestureDetector gestureDetector;
-    private float currentScale = 1.0f;
-    private float maxScale = 3.0f;
-    private float minScale = 0.5f;
-    private float lastTouchX;
-    private float lastTouchY;
+
+    public static final String EXTRA_IMAGE_URLS = "image_urls";
+    public static final String EXTRA_CURRENT_POSITION = "current_position";
+    public static final String EXTRA_SINGLE_IMAGE_URL = "single_image_url";
+
+    private ViewPager2 viewPager;
+    private ImagePreviewAdapter adapter;
+    private TextView tvPageIndicator;
+    private ImageButton btnRotateLeft;
+    private ImageButton btnRotateRight;
+    private List<String> imageUrls;
+    private int currentRotation = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
 
-        imageView = findViewById(R.id.iv_preview_image);
-
-        // 获取传递过来的图片URI
-        String imageUriString = getIntent().getStringExtra("image_uri");
-        if (imageUriString != null) {
-            // TODO: 加载图片到ImageView
-        }
-
-        // 设置手势检测
-        setupGestures();
-
-        // 设置返回按钮
-        findViewById(R.id.btn_close).setOnClickListener(v -> finish());
+        setupFullScreenMode();
+        initViews();
+        loadImageUrls();
+        setupViewPager();
+        setupClickListeners();
     }
 
-    /**
-     * 设置手势检测
-     */
-    private void setupGestures() {
-        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                // 双击放大到最大或恢复到原始大小
-                if (currentScale == 1.0f) {
-                    zoomTo(maxScale, e.getX(), e.getY());
-                } else {
-                    zoomTo(1.0f, imageView.getWidth() / 2f, imageView.getHeight() / 2f);
-                }
-                return true;
-            }
-
-            @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                // 处理拖动
-                if (currentScale > 1.0f) {
-                    imageView.scrollBy((int) distanceX, (int) distanceY);
-                }
-                return true;
-            }
-        });
-
-        imageView.setOnTouchListener((v, event) -> {
-            gestureDetector.onTouchEvent(event);
-
-            // 处理缩放手势
-            if (event.getPointerCount() == 2) {
-                handlePinchZoom(event);
-            }
-
-            return true;
-        });
-    }
-
-    /**
-     * 处理双指缩放
-     */
-    private void handlePinchZoom(MotionEvent event) {
-        float x0 = event.getX(0);
-        float y0 = event.getY(0);
-        float x1 = event.getX(1);
-        float y1 = event.getY(1);
-
-        float distance = (float) Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
-
-        if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
-            lastTouchX = distance;
-        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            float scale = distance / lastTouchX;
-            float newScale = currentScale * scale;
-
-            // 限制缩放范围
-            if (newScale >= minScale && newScale <= maxScale) {
-                currentScale = newScale;
-                applyScale();
-            }
-
-            lastTouchX = distance;
+    private void setupFullScreenMode() {
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
         }
     }
 
-    /**
-     * 缩放到指定比例
-     */
-    private void zoomTo(float scale, float centerX, float centerY) {
-        currentScale = scale;
-        applyScale();
+    private void initViews() {
+        viewPager = findViewById(R.id.view_pager);
+        tvPageIndicator = findViewById(R.id.tv_page_indicator);
+        btnRotateLeft = findViewById(R.id.btn_rotate_left);
+        btnRotateRight = findViewById(R.id.btn_rotate_right);
+        adapter = new ImagePreviewAdapter();
     }
 
-    /**
-     * 应用缩放
-     */
-    private void applyScale() {
-        imageView.setScaleX(currentScale);
-        imageView.setScaleY(currentScale);
+    private void loadImageUrls() {
+        imageUrls = new ArrayList<>();
+        
+        String singleImageUrl = getIntent().getStringExtra(EXTRA_SINGLE_IMAGE_URL);
+        if (singleImageUrl != null && !singleImageUrl.isEmpty()) {
+            imageUrls.add(singleImageUrl);
+        } else {
+            ArrayList<String> urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
+            if (urls != null) {
+                imageUrls.addAll(urls);
+            }
+        }
     }
 
-    /**
-     * 重置缩放
-     */
-    private void resetZoom() {
-        currentScale = 1.0f;
-        applyScale();
-        imageView.scrollTo(0, 0);
+    private void setupViewPager() {
+        viewPager.setAdapter(adapter);
+        adapter.setImageUrls(imageUrls);
+        
+        int currentPosition = getIntent().getIntExtra(EXTRA_CURRENT_POSITION, 0);
+        if (currentPosition >= 0 && currentPosition < imageUrls.size()) {
+            viewPager.setCurrentItem(currentPosition, false);
+        }
+        
+        updatePageIndicator(currentPosition);
+        
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                updatePageIndicator(position);
+                currentRotation = 0;
+            }
+        });
+    }
+
+    private void updatePageIndicator(int position) {
+        if (imageUrls.size() > 1) {
+            tvPageIndicator.setVisibility(View.VISIBLE);
+            tvPageIndicator.setText(String.format("%d/%d", position + 1, imageUrls.size()));
+        } else {
+            tvPageIndicator.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupClickListeners() {
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        
+        btnRotateLeft.setOnClickListener(v -> rotateCurrentImage(-90));
+        btnRotateRight.setOnClickListener(v -> rotateCurrentImage(90));
+    }
+
+    private void rotateCurrentImage(int degrees) {
+        currentRotation = (currentRotation + degrees) % 360;
+        
+        View currentItem = viewPager.getChildAt(0);
+        if (currentItem != null) {
+            View photoView = currentItem.findViewById(R.id.photo_view);
+            if (photoView != null) {
+                photoView.setRotation(currentRotation);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

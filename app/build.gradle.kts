@@ -74,4 +74,10 @@ dependencies {
     
     // EventBus
     implementation("org.greenrobot:eventbus:3.3.1")
+    
+    // 图片裁剪
+    implementation("com.github.CanHub:Android-Image-Cropper:4.5.0")
+    
+    // 图片查看（手势缩放）
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }

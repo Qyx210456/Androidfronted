@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -17,8 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.androidfronted.R;
 import com.example.androidfronted.ui.base.BaseDetailFragment;
+import com.example.androidfronted.utils.ImageCropHelper;
 import com.example.androidfronted.utils.ImageLoader;
-import com.example.androidfronted.utils.ImageUploadHelper;
 import com.example.androidfronted.utils.ImageUrlHelper;
 import com.example.androidfronted.viewmodel.auth.PersonalInformationViewModel;
 import java.io.File;
@@ -26,9 +27,13 @@ import java.io.File;
 public class AvatarEditFragment extends BaseDetailFragment {
     private PersonalInformationViewModel viewModel;
     private ImageView ivAvatar;
+    private TextView tvAvatarHint;
     private Button btnSave;
     private File selectedImageFile;
+    private String currentAvatarUrl;
+    
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<Intent> imageEditLauncher;
 
     @Nullable
     @Override
@@ -42,9 +47,11 @@ public class AvatarEditFragment extends BaseDetailFragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(PersonalInformationViewModel.class);
         ivAvatar = view.findViewById(R.id.iv_avatar);
+        tvAvatarHint = view.findViewById(R.id.tv_avatar_hint);
         btnSave = view.findViewById(R.id.btn_save);
 
         setupImagePicker();
+        setupImageEditLauncher();
         setupObservers();
         setupClickListeners(view);
         loadUserInfo();
@@ -57,13 +64,27 @@ public class AvatarEditFragment extends BaseDetailFragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
                         if (selectedImageUri != null) {
-                            ivAvatar.setImageURI(selectedImageUri);
-                            ImageUploadHelper.compressImage(getContext(), selectedImageUri, 
-                                new ImageUploadHelper.ImageUploadCallback() {
+                            openImageEdit(selectedImageUri);
+                        }
+                    }
+                });
+    }
+
+    private void setupImageEditLauncher() {
+        imageEditLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri resultUri = result.getData().getParcelableExtra(ImageEditActivity.EXTRA_RESULT_URI);
+                        if (resultUri != null) {
+                            ivAvatar.setImageURI(resultUri);
+                            
+                            ImageCropHelper.compressCroppedImage(getContext(), resultUri,
+                                new ImageCropHelper.CropCallback() {
                                     @Override
-                                    public void onSuccess(String imagePath) {
-                                        selectedImageFile = new File(imagePath);
-                                        Toast.makeText(getContext(), "图片选择成功", Toast.LENGTH_SHORT).show();
+                                    public void onSuccess(Uri compressedUri) {
+                                        selectedImageFile = new File(compressedUri.getPath());
+                                        uploadAvatar();
                                     }
 
                                     @Override
@@ -76,13 +97,27 @@ public class AvatarEditFragment extends BaseDetailFragment {
                 });
     }
 
+    private void openImageEdit(Uri imageUri) {
+        Intent intent = new Intent(getContext(), ImageEditActivity.class);
+        intent.putExtra(ImageEditActivity.EXTRA_IMAGE_URI, imageUri);
+        intent.putExtra(ImageEditActivity.EXTRA_CROP_SHAPE, ImageEditActivity.CROP_SHAPE_OVAL);
+        imageEditLauncher.launch(intent);
+    }
+
     private void setupObservers() {
         viewModel.getUserInfo().observe(getViewLifecycleOwner(), userInfo -> {
             if (userInfo != null) {
                 String avatar = userInfo.getAvatar();
                 if (avatar != null && !avatar.isEmpty() && !"null".equals(avatar)) {
-                    String imageUrl = ImageUrlHelper.getFullImageUrl(avatar);
-                    ImageLoader.loadCircleImage(requireContext(), imageUrl, ivAvatar);
+                    currentAvatarUrl = ImageUrlHelper.getFullImageUrl(avatar);
+                    ImageLoader.loadCircleImage(requireContext(), currentAvatarUrl, ivAvatar);
+                    if (tvAvatarHint != null) {
+                        tvAvatarHint.setText("点击图片查看现用头像");
+                    }
+                } else {
+                    if (tvAvatarHint != null) {
+                        tvAvatarHint.setText("暂无头像，点击下方按钮设置");
+                    }
                 }
             }
         });
@@ -96,7 +131,7 @@ public class AvatarEditFragment extends BaseDetailFragment {
         viewModel.getUpdateResult().observe(getViewLifecycleOwner(), response -> {
             if (response != null && response.getCode() == 200) {
                 Toast.makeText(getContext(), "头像更新成功", Toast.LENGTH_SHORT).show();
-                navigateBack();
+                loadUserInfo();
             }
         });
     }
@@ -105,19 +140,35 @@ public class AvatarEditFragment extends BaseDetailFragment {
         view.findViewById(R.id.apply_btn_back).setOnClickListener(v -> navigateBack());
 
         ivAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            imagePickerLauncher.launch(intent);
+            if (currentAvatarUrl != null && !currentAvatarUrl.isEmpty()) {
+                openImagePreview(currentAvatarUrl);
+            } else {
+                Toast.makeText(getContext(), "暂无头像", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnSave.setOnClickListener(v -> {
-            if (selectedImageFile != null) {
-                viewModel.updateUserInfo("", selectedImageFile);
-            } else {
-                Toast.makeText(getContext(), "请选择头像", Toast.LENGTH_SHORT).show();
-            }
+            pickImage();
         });
+    }
+
+    private void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        imagePickerLauncher.launch(intent);
+    }
+
+    private void openImagePreview(String imageUrl) {
+        Intent intent = new Intent(getContext(), ImagePreviewActivity.class);
+        intent.putExtra(ImagePreviewActivity.EXTRA_SINGLE_IMAGE_URL, imageUrl);
+        startActivity(intent);
+    }
+
+    private void uploadAvatar() {
+        if (selectedImageFile != null) {
+            viewModel.updateUserInfo("", selectedImageFile);
+        }
     }
 
     private void loadUserInfo() {

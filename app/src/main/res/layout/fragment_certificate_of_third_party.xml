@@ -136,36 +136,71 @@
             </LinearLayout>
 
             <!-- 上传图标 -->
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/ll_upload_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_product_info_card"
+                android:background="@drawable/bg_info_upload_picture"
                 android:clipToPadding="false"
                 android:elevation="2dp"
-                android:orientation="vertical"
-                android:gravity="center_horizontal"
                 android:padding="16dp">
 
                 <ImageView
-                    android:id="@+id/iv_upload_icon"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:src="@drawable/info_upload_picture"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                    android:id="@+id/iv_corner_left_up"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="top|start"
+                    android:src="@drawable/ic_profile_menu_info_upload_picture_left_up_arrow" />
 
-                <TextView
-                    android:id="@+id/tv_upload_hint"
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/iv_corner_right_up"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="top|end"
+                    android:src="@drawable/ic_profile_menu_info_upload_picture_right_up_arrow" />
+
+                <ImageView
+                    android:id="@+id/iv_corner_left_down"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="bottom|start"
+                    android:src="@drawable/ic_profile_menu_info_upload_picture_left_down_arrow" />
+
+                <ImageView
+                    android:id="@+id/iv_corner_right_down"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="bottom|end"
+                    android:src="@drawable/ic_profile_menu_info_upload_picture_right_down_arrow" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/click_upload_image"
-                    android:textColor="@color/number_amount"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:layout_marginTop="8dp"/>
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="20dp">
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/iv_upload_icon"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:src="@drawable/ic_profile_menu_info_upload_picture"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/tv_upload_hint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/click_upload_image"
+                        android:textColor="@color/number_amount"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+
+            </FrameLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -149,6 +149,64 @@ public class LoanApplicationRepository {
     public void getApplicationDetail(int applicationId, @NonNull ApplicationDetailCallback callback) {
         String token = tokenManager.getToken();
         Log.d(TAG, "getApplicationDetail, getToken from TokenManager: " + (token != null ? "not null" : "null"));
+        
+        localDataSource.getApplicationById(applicationId, new LocalDataSource.DataSourceCallback<ApplicationEntity>() {
+            @Override
+            public void onSuccess(ApplicationEntity localApp) {
+                if (localApp != null && localApp.getProductName() != null && !localApp.getProductName().isEmpty()) {
+                    fetchApplicationDetailFromRemote(token, applicationId, localApp.getProductName(), callback);
+                } else {
+                    fetchApplicationsAndThenDetail(token, applicationId, callback);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                fetchApplicationsAndThenDetail(token, applicationId, callback);
+            }
+        });
+    }
+    
+    private void fetchApplicationsAndThenDetail(String token, int applicationId, @NonNull ApplicationDetailCallback callback) {
+        remoteDataSource.getMyApplications(token, new RemoteDataSource.NetworkCallback<ApplicationListResponse>() {
+            @Override
+            public void onSuccess(ApplicationListResponse response) {
+                if (response != null && response.getData() != null) {
+                    List<ApplicationEntity> entities = new ArrayList<>();
+                    String productName = "";
+                    
+                    for (ApplicationListResponse.ApplicationRecord record : response.getData()) {
+                        ApplicationEntity entity = new ApplicationEntity(
+                            record.getApplicationId(),
+                            record.getProductName(),
+                            record.getLoanAmount(),
+                            record.getStatus(),
+                            record.getApplyTime(),
+                            record.getRejectReason()
+                        );
+                        entities.add(entity);
+                        
+                        if (record.getApplicationId() == applicationId) {
+                            productName = record.getProductName();
+                        }
+                    }
+                    
+                    localDataSource.saveApplications(entities);
+                    
+                    fetchApplicationDetailFromRemote(token, applicationId, productName, callback);
+                } else {
+                    fetchApplicationDetailFromRemote(token, applicationId, "", callback);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                fetchApplicationDetailFromRemote(token, applicationId, "", callback);
+            }
+        });
+    }
+    
+    private void fetchApplicationDetailFromRemote(String token, int applicationId, String productName, @NonNull ApplicationDetailCallback callback) {
         remoteDataSource.getApplicationDetail(token, applicationId, new RemoteDataSource.NetworkCallback<ApplicationDetailResponse>() {
             @Override
             public void onSuccess(ApplicationDetailResponse response) {
@@ -169,7 +227,7 @@ public class LoanApplicationRepository {
                         apiDetail.getRejectReason(),
                         apiDetail.getApplyTime(),
                         apiDetail.getReviewTime(),
-                        ""
+                        productName
                     );
                     
                     localDataSource.saveApplicationDetail(entity);
@@ -187,6 +245,9 @@ public class LoanApplicationRepository {
                     @Override
                     public void onSuccess(ApplicationDetailEntity data) {
                         if (data != null) {
+                            if ((data.getProductName() == null || data.getProductName().isEmpty()) && !productName.isEmpty()) {
+                                data.setProductName(productName);
+                            }
                             callback.onSuccess(data);
                         } else {
                             callback.onError(errorMessage);

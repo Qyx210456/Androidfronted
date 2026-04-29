@@ -11,7 +11,7 @@ public class RegisterStep1ViewModel extends BaseViewModel {
     private final MutableLiveData<String> confirmPassword = new MutableLiveData<>();
     private final MutableLiveData<String> validationError = new MutableLiveData<>();
 
-    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$";
+    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,20}$";
 
     public RegisterStep1ViewModel(@NonNull Application application) {
         super(application);
@@ -61,7 +61,7 @@ public class RegisterStep1ViewModel extends BaseViewModel {
         }
 
         if (!passwordValue.matches(PASSWORD_PATTERN)) {
-            validationError.setValue("密码需包含大小写字母、数字和特殊字符（如!@#$%），长度8-20位");
+            validationError.setValue("密码需包含大小写字母、数字和特殊字符（如!@#$%&*?），长度8-20位");
             return false;
         }
 

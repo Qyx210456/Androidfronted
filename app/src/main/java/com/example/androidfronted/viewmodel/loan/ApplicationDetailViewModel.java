@@ -4,21 +4,27 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import com.example.androidfronted.data.local.entity.ApplicationDetailEntity;
+import com.example.androidfronted.data.repository.AuthRepository;
 import com.example.androidfronted.data.repository.LoanApplicationRepository;
+import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.viewmodel.base.BaseViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationDetailViewModel extends BaseViewModel {
     private final LoanApplicationRepository loanApplicationRepository;
+    private final AuthRepository authRepository;
     private final MutableLiveData<ApplicationDetailEntity> applicationDetail = new MutableLiveData<>();
     private final MutableLiveData<List<TimelineStep>> timelineSteps = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private final MutableLiveData<String> realName = new MutableLiveData<>();
+    private final MutableLiveData<String> bankCardNumber = new MutableLiveData<>();
 
     public ApplicationDetailViewModel(@NonNull Application application, LoanApplicationRepository loanApplicationRepository) {
         super(application);
         this.loanApplicationRepository = loanApplicationRepository;
+        this.authRepository = AuthRepository.getInstance(application);
     }
 
     public MutableLiveData<ApplicationDetailEntity> getApplicationDetail() {
@@ -37,8 +43,17 @@ public class ApplicationDetailViewModel extends BaseViewModel {
         return errorMessage;
     }
 
+    public MutableLiveData<String> getRealName() {
+        return realName;
+    }
+
+    public MutableLiveData<String> getBankCardNumber() {
+        return bankCardNumber;
+    }
+
     public void loadApplicationDetail(int applicationId) {
         showLoading();
+        loadCertInfo();
         loanApplicationRepository.getApplicationDetail(applicationId, new LoanApplicationRepository.ApplicationDetailCallback() {
             @Override
             public void onSuccess(ApplicationDetailEntity detail) {
@@ -53,6 +68,47 @@ public class ApplicationDetailViewModel extends BaseViewModel {
                 showError(errorMsg);
             }
         });
+    }
+
+    private void loadCertInfo() {
+        authRepository.getCertInfo(new AuthRepository.AuthCallback<CertInfoResponse>() {
+            @Override
+            public void onSuccess(CertInfoResponse response) {
+                if (response != null && response.getData() != null) {
+                    CertInfoResponse.CertInfoData data = response.getData();
+                    if (data.getUserCert() != null) {
+                        CertInfoResponse.UserCert userCert = data.getUserCert();
+                        realName.postValue(userCert.getRealName());
+                        String cardNumber = userCert.getBankCardId();
+                        if (cardNumber != null && cardNumber.length() >= 16) {
+                            cardNumber = cardNumber.replaceAll("\\s", "");
+                            String formattedNumber = formatBankCardNumber(cardNumber);
+                            bankCardNumber.postValue(formattedNumber);
+                        } else if (cardNumber != null) {
+                            bankCardNumber.postValue(cardNumber);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+            }
+        });
+    }
+
+    private String formatBankCardNumber(String cardNumber) {
+        if (cardNumber == null || cardNumber.length() < 16) {
+            return cardNumber;
+        }
+        StringBuilder formatted = new StringBuilder();
+        for (int i = 0; i < cardNumber.length(); i++) {
+            if (i > 0 && i % 4 == 0) {
+                formatted.append("    ");
+            }
+            formatted.append(cardNumber.charAt(i));
+        }
+        return formatted.toString();
     }
 
     private void generateTimelineSteps(String status) {

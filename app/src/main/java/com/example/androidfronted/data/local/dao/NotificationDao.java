@@ -40,4 +40,7 @@ public interface NotificationDao {
 
     @Query("DELETE FROM notifications WHERE id = :id")
     void deleteById(int id);
+
+    @Query("DELETE FROM notifications WHERE id IN (:ids)")
+    void deleteByIds(List<Integer> ids);
 }

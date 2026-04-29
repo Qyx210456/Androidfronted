@@ -36,6 +36,8 @@ public class ApplicationRecordDetailFragment extends BaseDetailFragment {
     private TextView tvInterestRate;
     private TextView tvRepaidType;
     private TextView tvApplyTime;
+    private TextView tvApplicantValue;
+    private TextView tvBankValue;
     private RecyclerView recyclerViewTimeline;
     private ImageView btnBack;
 
@@ -76,6 +78,8 @@ public class ApplicationRecordDetailFragment extends BaseDetailFragment {
         tvInterestRate = view.findViewById(R.id.tv_interest_rate);
         tvRepaidType = view.findViewById(R.id.tv_repaid_type);
         tvApplyTime = view.findViewById(R.id.tv_apply_time);
+        tvApplicantValue = view.findViewById(R.id.tv_applicant_value);
+        tvBankValue = view.findViewById(R.id.tv_bank_value);
         recyclerViewTimeline = view.findViewById(R.id.recycler_timeline);
         btnBack = view.findViewById(R.id.apply_btn_back);
 
@@ -116,6 +120,22 @@ public class ApplicationRecordDetailFragment extends BaseDetailFragment {
                 requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
+
+        viewModel.getRealName().observe(getViewLifecycleOwner(), name -> {
+            if (name != null && !name.isEmpty()) {
+                tvApplicantValue.setText(name);
+            } else {
+                tvApplicantValue.setText("未认证");
+            }
+        });
+
+        viewModel.getBankCardNumber().observe(getViewLifecycleOwner(), cardNumber -> {
+            if (cardNumber != null && !cardNumber.isEmpty()) {
+                tvBankValue.setText(cardNumber);
+            } else {
+                tvBankValue.setText("未绑定");
+            }
+        });
     }
 
     private void loadData() {
@@ -126,11 +146,13 @@ public class ApplicationRecordDetailFragment extends BaseDetailFragment {
     }
 
     private void updateUI(com.example.androidfronted.data.local.entity.ApplicationDetailEntity detail) {
-        // 设置贷款名称
-        if (getArguments() != null) {
-            String productName = getArguments().getString(ARG_PRODUCT_NAME, "");
-            tvLoanName.setText(productName);
+        String productName = detail.getProductName();
+        if (productName == null || productName.isEmpty()) {
+            if (getArguments() != null) {
+                productName = getArguments().getString(ARG_PRODUCT_NAME, "");
+            }
         }
+        tvLoanName.setText(productName != null ? productName : "");
 
         // 设置状态
         String status = detail.getStatus();

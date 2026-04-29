@@ -27,12 +27,11 @@
             android:src="@drawable/ic_arrow_back_white"
             android:contentDescription="@string/nav_back" />
 
-        <!--页面标题，修改头像-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="修改头像"
+            android:text="头像"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -68,26 +67,29 @@
                 android:src="@drawable/ic_profile_avatar"
                 android:background="@drawable/shape_circle_avatar"
                 android:clipToOutline="true"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                android:clickable="true"
+                android:focusable="true"/>
 
             <TextView
+                android:id="@+id/tv_avatar_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="点击头像更换图片"
+                android:text="点击图片查看现用头像"
                 android:textSize="14sp"
                 android:textColor="@color/text_secondary"/>
 
         </LinearLayout>
 
-        <!--保存按钮-->
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="32dp"
             android:background="@drawable/bg_gradient_blue_horizontal"
-            android:text="保存"
+            app:backgroundTint="@null"
+            android:text="修改头像"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"/>

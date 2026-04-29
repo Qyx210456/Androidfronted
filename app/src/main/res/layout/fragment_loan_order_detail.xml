@@ -243,7 +243,7 @@
                             android:layout_height="wrap_content"
                             android:text="待还总额"
                             android:textColor="#B3E0FF"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_unpaid_total"
@@ -272,7 +272,7 @@
                             android:layout_height="wrap_content"
                             android:text="待还本金"
                             android:textColor="#B3E0FF"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_unpaid_principal"
@@ -301,7 +301,7 @@
                             android:layout_height="wrap_content"
                             android:text="待还利息"
                             android:textColor="#B3E0FF"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_unpaid_interest"
@@ -340,7 +340,7 @@
                             android:layout_height="wrap_content"
                             android:text="当前期数"
                             android:textColor="#B3E0FF"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_current_term"
@@ -364,7 +364,7 @@
                             android:layout_height="wrap_content"
                             android:text="逾期天数"
                             android:textColor="#B3E0FF"
-                            android:textSize="12sp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/tv_overdue_days"
@@ -414,7 +414,7 @@
                         android:layout_marginStart="8dp"
                         android:text="还款计划"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <!-- 分隔竖线 -->
@@ -447,7 +447,7 @@
                         android:layout_marginStart="8dp"
                         android:text="提前还款"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
 

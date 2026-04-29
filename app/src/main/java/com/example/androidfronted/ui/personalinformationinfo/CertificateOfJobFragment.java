@@ -1,9 +1,9 @@
 package com.example.androidfronted.ui.personalinformationinfo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
+import com.example.androidfronted.ui.ImageEditActivity;
 import com.example.androidfronted.ui.InfoConfirmSuccessFragment;
 import com.example.androidfronted.ui.adapter.UploadedCertificateAdapter;
 import com.example.androidfronted.ui.base.BaseDetailFragment;
+import com.example.androidfronted.utils.ImageCropHelper;
 import com.example.androidfronted.utils.ImageUploadHelper;
 import com.example.androidfronted.viewmodel.auth.JobCertViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +41,13 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
     private UploadedCertificateAdapter adapter;
     private JobCertViewModel viewModel;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<Intent> imageEditLauncher;
     private ImageView ivUploadIcon;
     private TextView tvUploadHint;
     private File employmentFile;
     private File salaryFile;
+    private Uri pendingImageUri;
+    private String pendingUploadType;
 
     private String getMimeType(String filePath) {
         String type = null;
@@ -72,6 +76,7 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
         tvUploadHint = view.findViewById(R.id.tv_upload_hint);
 
         setupImagePicker();
+        setupImageEditLauncher();
         setupSpinner();
         setupUploadSpinner();
         setupRecyclerView();
@@ -84,26 +89,38 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
-                        if (selectedImageUri != null && ivUploadIcon != null) {
-                            ivUploadIcon.setImageURI(selectedImageUri);
+                        if (selectedImageUri != null) {
+                            pendingUploadType = spinnerUploadType.getSelectedItem() != null ? 
+                                spinnerUploadType.getSelectedItem().toString() : "";
+                            openImageEdit(selectedImageUri);
+                        }
+                    }
+                });
+    }
+
+    private void setupImageEditLauncher() {
+        imageEditLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri resultUri = result.getData().getParcelableExtra(ImageEditActivity.EXTRA_RESULT_URI);
+                        if (resultUri != null && ivUploadIcon != null) {
+                            ivUploadIcon.setImageURI(resultUri);
                             if (tvUploadHint != null) {
                                 tvUploadHint.setVisibility(View.GONE);
                             }
-                            Toast.makeText(getContext(), "已选择图片", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "图片已选择", Toast.LENGTH_SHORT).show();
                             
-                            String uploadType = spinnerUploadType.getSelectedItem() != null ? 
-                                spinnerUploadType.getSelectedItem().toString() : "";
-                            
-                            ImageUploadHelper.compressImage(getContext(), selectedImageUri, 
-                                new ImageUploadHelper.ImageUploadCallback() {
+                            ImageCropHelper.compressCroppedImage(getContext(), resultUri,
+                                new ImageCropHelper.CropCallback() {
                                     @Override
-                                    public void onSuccess(String imagePath) {
-                                        File compressedFile = new File(imagePath);
-                                        if (uploadType.contains("工作证明")) {
+                                    public void onSuccess(Uri compressedUri) {
+                                        File compressedFile = new File(compressedUri.getPath());
+                                        if (pendingUploadType.contains("工作证明")) {
                                             employmentFile = compressedFile;
-                                        } else if (uploadType.contains("工资")) {
+                                        } else if (pendingUploadType.contains("工资")) {
                                             salaryFile = compressedFile;
                                         }
                                     }
@@ -116,6 +133,13 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
                         }
                     }
                 });
+    }
+
+    private void openImageEdit(Uri imageUri) {
+        Intent intent = new Intent(getContext(), ImageEditActivity.class);
+        intent.putExtra(ImageEditActivity.EXTRA_IMAGE_URI, imageUri);
+        intent.putExtra(ImageEditActivity.EXTRA_CROP_SHAPE, ImageEditActivity.CROP_SHAPE_RECTANGLE);
+        imageEditLauncher.launch(intent);
     }
 
     private void setupRecyclerView() {
@@ -190,6 +214,11 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
 
         view.findViewById(R.id.btn_confirm_employment_upload).setOnClickListener(v -> {
             android.util.Log.d("CertificateOfJobFragment", "btn_confirm_employment_upload clicked");
+            
+            if (employmentFile == null && salaryFile == null) {
+                Toast.makeText(getContext(), "请先选择要上传的图片", Toast.LENGTH_SHORT).show();
+                return;
+            }
             
             okhttp3.RequestBody employmentRequestBody = null;
             okhttp3.RequestBody salaryRequestBody = null;
@@ -269,7 +298,6 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
         if (btnAddJob != null) btnAddJob.setVisibility(View.GONE);
 
         if (state == null) {
-            // 状态为 null，不显示任何内容，避免闪烁
             return;
         }
 

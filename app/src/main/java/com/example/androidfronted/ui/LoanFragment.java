@@ -38,7 +38,7 @@ public class LoanFragment extends Fragment {
         initViews(view);
         observeData();
         
-        view.findViewById(R.id.item_application).setOnClickListener(v -> {
+        view.findViewById(R.id.card_my_application).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, new com.example.androidfronted.ui.loan.ApplicationRecordsFragment())
@@ -47,7 +47,7 @@ public class LoanFragment extends Fragment {
             }
         });
         
-        view.findViewById(R.id.item_loans).setOnClickListener(v -> {
+        view.findViewById(R.id.card_my_orders).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, new com.example.androidfronted.ui.loan.LoanOrdersFragment())
@@ -56,7 +56,7 @@ public class LoanFragment extends Fragment {
             }
         });
         
-        view.findViewById(R.id.item_repayment_history).setOnClickListener(v -> {
+        view.findViewById(R.id.card_repayment_record).setOnClickListener(v -> {
             android.widget.Toast.makeText(getContext(), "还款记录功能待实现", android.widget.Toast.LENGTH_SHORT).show();
         });
     }

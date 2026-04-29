@@ -339,6 +339,60 @@ public class NotificationRepository {
         });
     }
 
+    public void deleteNotification(int notificationId, DeleteCallback callback) {
+        String token = tokenManager.getToken();
+        
+        remoteDataSource.deleteNotification(token, notificationId, new RemoteDataSource.NetworkCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                localDataSource.deleteNotification(notificationId, new LocalDataSource.DataSourceCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void data) {
+                        callback.onSuccess("删除成功");
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        callback.onSuccess("删除成功");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to delete notification: " + errorMessage);
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    public void deleteNotifications(List<Integer> notificationIds, DeleteCallback callback) {
+        String token = tokenManager.getToken();
+        
+        remoteDataSource.deleteNotifications(token, notificationIds, new RemoteDataSource.NetworkCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                localDataSource.deleteNotifications(notificationIds, new LocalDataSource.DataSourceCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void data) {
+                        callback.onSuccess("批量删除成功");
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        callback.onSuccess("批量删除成功");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to delete notifications: " + errorMessage);
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
     public interface NotificationCallback {
         void onSuccess(List<NotificationEntity> notifications);
         void onError(String errorMessage);
@@ -356,6 +410,11 @@ public class NotificationRepository {
 
     public interface OfflineNotificationCallback {
         void onSuccess(int unreadCount, NotificationEntity latestUnread);
+        void onError(String errorMessage);
+    }
+
+    public interface DeleteCallback {
+        void onSuccess(String message);
         void onError(String errorMessage);
     }
 }

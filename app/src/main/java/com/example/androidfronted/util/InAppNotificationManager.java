@@ -109,8 +109,16 @@ public class InAppNotificationManager {
     private void navigateToNotificationDetail(Context context, String businessType) {
         String normalizedType = normalizeType(businessType);
         String title = getTitleForType(context, normalizedType);
-        Intent intent = NotificationDetailActivity.newIntent(context, normalizedType, title);
-        context.startActivity(intent);
+        
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity instanceof NotificationDetailActivity) {
+            Intent intent = NotificationDetailActivity.newIntent(context, normalizedType, title);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(intent);
+        } else {
+            Intent intent = NotificationDetailActivity.newIntent(context, normalizedType, title);
+            context.startActivity(intent);
+        }
     }
 
     private String normalizeType(String type) {

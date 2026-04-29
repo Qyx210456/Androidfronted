@@ -23,3 +23,5 @@ captures/
 .DS_Store
 
 # Avoid double-ignoring
+hs_err_pid7744.log
+replay_pid7744.log

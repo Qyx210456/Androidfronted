@@ -11,12 +11,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.local.entity.NotificationEntity;
 import com.example.androidfronted.data.repository.NotificationRepository;
 import com.example.androidfronted.event.NotificationEvent;
+import com.example.androidfronted.ui.notification.NotificationBusinessDetailFragment;
 import com.example.androidfronted.util.DateUtils;
 import com.example.androidfronted.util.NotificationStateManager;
 import com.example.androidfronted.viewmodel.base.ViewModelFactory;
@@ -30,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class NotificationCenterActivity extends AppCompatActivity {
+public class NotificationCenterActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
     private static final String EXTRA_SHOW_PROFILE = "show_profile";
     
     private NotificationViewModel viewModel;
@@ -52,6 +56,9 @@ public class NotificationCenterActivity extends AppCompatActivity {
     private LinearLayout llSystemNotification;
     private LinearLayout llMarketingNotification;
     private LinearLayout llOneClickRead;
+    
+    private ConstraintLayout mainContent;
+    private FrameLayout fragmentContainer;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, NotificationCenterActivity.class);
@@ -68,6 +75,8 @@ public class NotificationCenterActivity extends AppCompatActivity {
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         );
         
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        
         viewModel = new ViewModelProvider(this, new ViewModelFactory(getApplication()))
                 .get(NotificationViewModel.class);
         notificationRepository = NotificationRepository.getInstance(this);
@@ -82,6 +91,7 @@ public class NotificationCenterActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        getSupportFragmentManager().removeOnBackStackChangedListener(this);
         EventBus.getDefault().unregister(this);
     }
 
@@ -117,6 +127,8 @@ public class NotificationCenterActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        mainContent = findViewById(R.id.main_content);
+        fragmentContainer = findViewById(R.id.container);
         flBusinessBadge = findViewById(R.id.fl_business_badge);
         flSystemBadge = findViewById(R.id.fl_system_badge);
         flMarketingBadge = findViewById(R.id.fl_marketing_badge);
@@ -136,7 +148,13 @@ public class NotificationCenterActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        findViewById(R.id.apply_btn_back).setOnClickListener(v -> navigateBackToProfile());
+        findViewById(R.id.apply_btn_back).setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            } else {
+                navigateBackToProfile();
+            }
+        });
         
         llBusinessNotification.setOnClickListener(v -> {
             navigateToDetail("business", getString(R.string.service_notification));
@@ -255,6 +273,29 @@ public class NotificationCenterActivity extends AppCompatActivity {
         startActivity(intent);
     }
     
+    private void showFragment(Fragment fragment) {
+        mainContent.setVisibility(View.GONE);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit();
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        
+        if (backStackCount == 0) {
+            mainContent.setVisibility(View.VISIBLE);
+            fragmentContainer.setVisibility(View.GONE);
+        } else {
+            mainContent.setVisibility(View.GONE);
+            fragmentContainer.setVisibility(View.VISIBLE);
+        }
+    }
+    
     private void navigateBackToProfile() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(EXTRA_SHOW_PROFILE, true);
@@ -278,7 +319,11 @@ public class NotificationCenterActivity extends AppCompatActivity {
     
     @Override
     public void onBackPressed() {
-        navigateBackToProfile();
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            navigateBackToProfile();
+        }
     }
     
     private void cancelAllActiveNotifications() {

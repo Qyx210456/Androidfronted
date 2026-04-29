@@ -178,8 +178,13 @@
     <color name="button_date_range_border">#E5E7EB</color>
 
     <!--贷款管理中还款信息卡片部分文字颜色-->
-    <color name="loan_manage_principal">#FF6D00</color>
-    <color name="loan_manage_total">#46CE7D</color>
-    <color name="loan_manage_interest">#1A358D</color>
+    <color name="loan_manage_principal">#FF9E06</color>
+    <color name="loan_manage_total">#4B94FF</color>
+    <color name="loan_manage_interest">#48BD93</color>
+    
+    <!--贷款管理页面瓷片功能区字体颜色-->
+    <color name="loan_manage_my_applications">#FF8D1A</color>
+    <color name="loan_manage_my_orders">#2A82E4</color>
+    <color name="loan_manage_repayment_record">#00BAAD</color>
 
 </resources>

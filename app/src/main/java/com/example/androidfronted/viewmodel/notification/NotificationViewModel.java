@@ -199,6 +199,44 @@ public class NotificationViewModel extends BaseViewModel {
         });
     }
 
+    public void deleteNotification(int notificationId) {
+        showLoading();
+        notificationRepository.deleteNotification(notificationId, new NotificationRepository.DeleteCallback() {
+            @Override
+            public void onSuccess(String message) {
+                hideLoading();
+                successMessage.postValue(message);
+                loadNotificationsFromLocal();
+                loadUnreadCountAndNotify();
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+                hideLoading();
+                errorMessage.postValue(errorMsg);
+            }
+        });
+    }
+
+    public void deleteNotifications(List<Integer> notificationIds) {
+        showLoading();
+        notificationRepository.deleteNotifications(notificationIds, new NotificationRepository.DeleteCallback() {
+            @Override
+            public void onSuccess(String message) {
+                hideLoading();
+                successMessage.postValue(message);
+                loadNotificationsFromLocal();
+                loadUnreadCountAndNotify();
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+                hideLoading();
+                errorMessage.postValue(errorMsg);
+            }
+        });
+    }
+
     protected void showLoading() {
         isLoading.postValue(true);
     }

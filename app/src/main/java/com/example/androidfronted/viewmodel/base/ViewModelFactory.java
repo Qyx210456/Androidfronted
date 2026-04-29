@@ -58,6 +58,8 @@ public class ViewModelFactory extends ViewModelProvider.AndroidViewModelFactory 
         } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.notification.NotificationViewModel.class)) {
             return (T) new com.example.androidfronted.viewmodel.notification.NotificationViewModel(application, 
                 com.example.androidfronted.data.repository.NotificationRepository.getInstance(application));
+        } else if (modelClass.isAssignableFrom(com.example.androidfronted.viewmodel.notification.NotificationDetailViewModel.class)) {
+            return (T) new com.example.androidfronted.viewmodel.notification.NotificationDetailViewModel(application);
         }
         throw new IllegalArgumentException("Unknown ViewModel class: " + modelClass.getName());
     }

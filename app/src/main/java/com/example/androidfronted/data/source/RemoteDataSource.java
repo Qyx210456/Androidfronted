@@ -33,6 +33,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import java.util.List;
+
 public class RemoteDataSource {
     private static final String TAG = "RemoteDataSource";
     private static final String BASE_URL = "http://10.0.2.2:8080/api";
@@ -565,6 +567,51 @@ public class RemoteDataSource {
                 .build();
 
         executeRequestWithDataExtraction(httpRequest, "Mark notification as read", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
+    }
+
+    public void deleteNotification(String token, int notificationId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/notifications/" + notificationId)
+                .addHeader("Authorization", "Bearer " + token)
+                .delete()
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Delete notification", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
+    }
+
+    public void deleteNotifications(String token, List<Integer> notificationIds, final NetworkCallback<String> callback) {
+        Gson gson = new Gson();
+        String jsonBody = gson.toJson(notificationIds);
+        
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/notifications/batch")
+                .addHeader("Authorization", "Bearer " + token)
+                .delete(RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Delete notifications batch", ProductApplyResponse.class,
                 new DataExtractor<ProductApplyResponse, String>() {
                     @Override
                     public String extract(ProductApplyResponse response) {

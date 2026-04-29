@@ -1,5 +1,7 @@
 package com.example.androidfronted.ui.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.androidfronted.R;
+import com.example.androidfronted.ui.ImagePreviewActivity;
 import com.example.androidfronted.utils.ImageLoader;
 import com.example.androidfronted.utils.ImageUrlHelper;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * 已上传证明列表适配器
- * 使用Glide加载图片，避免闪烁问题
- */
 public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCertificateAdapter.ViewHolder> {
     
     public static class CertificateItem {
@@ -36,15 +37,25 @@ public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCer
         }
     }
 
-    private java.util.List<CertificateItem> items;
+    private List<CertificateItem> items;
 
     public UploadedCertificateAdapter() {
-        this.items = new java.util.ArrayList<>();
+        this.items = new ArrayList<>();
     }
 
-    public void setItems(java.util.List<CertificateItem> items) {
-        this.items = items != null ? items : new java.util.ArrayList<>();
+    public void setItems(List<CertificateItem> items) {
+        this.items = items != null ? items : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public List<String> getAllImageUrls() {
+        List<String> urls = new ArrayList<>();
+        for (CertificateItem item : items) {
+            if (item.getImagePath() != null && !item.getImagePath().isEmpty()) {
+                urls.add(ImageUrlHelper.getFullImageUrl(item.getImagePath()));
+            }
+        }
+        return urls;
     }
 
     @NonNull
@@ -64,9 +75,21 @@ public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCer
             String imageUrl = ImageUrlHelper.getFullImageUrl(item.getImagePath());
             android.util.Log.d("UploadedCertificateAdapter", "Loading image: " + imageUrl);
             ImageLoader.loadImage(holder.itemView.getContext(), imageUrl, holder.ivImage);
+            
+            holder.ivImage.setOnClickListener(v -> {
+                Context context = holder.itemView.getContext();
+                List<String> allUrls = getAllImageUrls();
+                int currentPosition = allUrls.indexOf(imageUrl);
+                if (currentPosition < 0) currentPosition = 0;
+                
+                Intent intent = new Intent(context, ImagePreviewActivity.class);
+                intent.putStringArrayListExtra(ImagePreviewActivity.EXTRA_IMAGE_URLS, new ArrayList<>(allUrls));
+                intent.putExtra(ImagePreviewActivity.EXTRA_CURRENT_POSITION, currentPosition);
+                context.startActivity(intent);
+            });
         } else {
             android.util.Log.d("UploadedCertificateAdapter", "No image path available");
-            holder.ivImage.setImageResource(R.drawable.info_upload_picture);
+            holder.ivImage.setImageResource(R.drawable.ic_profile_menu_info_upload_picture);
             holder.ivImage.setAlpha(0.3f);
         }
     }

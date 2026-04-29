@@ -205,6 +205,18 @@ public class LocalDataSource {
         });
     }
 
+    public void getApplicationById(int applicationId, DataSourceCallback<ApplicationEntity> callback) {
+        executor.execute(() -> {
+            try {
+                ApplicationEntity result = applicationDao.getApplicationById(applicationId);
+                mainHandler.post(() -> callback.onSuccess(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
     public void clearApplications() {
         executor.execute(() -> applicationDao.deleteAll());
     }
@@ -381,6 +393,30 @@ public class LocalDataSource {
         executor.execute(() -> {
             try {
                 notificationDao.deleteAll();
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void deleteNotification(int notificationId, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.deleteById(notificationId);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void deleteNotifications(List<Integer> notificationIds, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                notificationDao.deleteByIds(notificationIds);
                 mainHandler.post(() -> callback.onSuccess(null));
             } catch (Exception e) {
                 e.printStackTrace();

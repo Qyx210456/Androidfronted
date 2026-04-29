@@ -52,7 +52,7 @@ public class PasswordLoginFragment extends Fragment {
     private boolean isPasswordVisible = false;
 
     // 密码输入规则：8-20位，含大小写字母、数字、特殊字符
-    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$";
+    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,20}$";
    //手机号输入规则：中国大陆
     private static final String PHONE_PATTERN = "^1[3-9]\\d{9}$";
 
@@ -138,7 +138,7 @@ public class PasswordLoginFragment extends Fragment {
         }
 
         if (!password.matches(PASSWORD_PATTERN)) {
-            Toast.makeText(getContext(), "密码需包含大小写字母、数字和特殊字符（如!@#$%），长度8-20位", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "密码需包含大小写字母、数字和特殊字符（如!@#$%&*?），长度8-20位", Toast.LENGTH_LONG).show();
             return;
         }
 
