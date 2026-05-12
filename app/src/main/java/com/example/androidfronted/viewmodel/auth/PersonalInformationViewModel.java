@@ -20,6 +20,7 @@ public class PersonalInformationViewModel extends BaseViewModel {
     private final MutableLiveData<UserInfoResponse.UserData> userInfo = new MutableLiveData<>();
     private final MutableLiveData<UserInfoResponse> updateResult = new MutableLiveData<>();
     private final MutableLiveData<CertState> certificationState = new MutableLiveData<>();
+    private final MutableLiveData<Integer> creditScore = new MutableLiveData<>();
 
     public PersonalInformationViewModel(@NonNull Application application) {
         super(application);
@@ -37,6 +38,10 @@ public class PersonalInformationViewModel extends BaseViewModel {
 
     public MutableLiveData<CertState> getCertificationState() {
         return certificationState;
+    }
+
+    public MutableLiveData<Integer> getCreditScore() {
+        return creditScore;
     }
 
     public void loadUserInfo() {
@@ -58,16 +63,17 @@ public class PersonalInformationViewModel extends BaseViewModel {
 
     public void loadCertificationStatus() {
         Log.d("PersonalInformationViewModel", "loadCertificationStatus called");
-        // 先从本地加载认证状态
         authRepository.getLocalIdCertState(new AuthRepository.AuthCallback<CertState>() {
             @Override
             public void onSuccess(CertState certState) {
                 certificationState.postValue(certState);
-                // 然后通过网络请求更新本地数据
                 authRepository.getCertInfo(new AuthRepository.AuthCallback<com.example.androidfronted.data.model.CertInfoResponse>() {
                     @Override
                     public void onSuccess(com.example.androidfronted.data.model.CertInfoResponse response) {
-                        // 网络请求成功后，再次加载本地数据以更新 UI
+                        if (response != null && response.getData() != null && response.getData().getUserCert() != null) {
+                            int score = response.getData().getUserCert().getCreditScore();
+                            creditScore.postValue(score);
+                        }
                         authRepository.getLocalIdCertState(new AuthRepository.AuthCallback<CertState>() {
                             @Override
                             public void onSuccess(CertState updatedCertState) {
@@ -76,21 +82,18 @@ public class PersonalInformationViewModel extends BaseViewModel {
 
                             @Override
                             public void onError(String errorMessage) {
-                                // 本地数据加载失败，保持当前状态
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errorMessage) {
-                        // 网络请求失败，保持本地数据状态
                     }
                 });
             }
 
             @Override
             public void onError(String errorMessage) {
-                // 本地数据加载失败，设置为 null
                 certificationState.postValue(null);
             }
         });

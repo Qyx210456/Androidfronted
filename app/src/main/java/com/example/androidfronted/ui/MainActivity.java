@@ -132,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "attemptRefreshToken: Waiting for response (timeout: 30s)...");
+        Log.d(TAG, "attemptRefreshToken: Waiting for response (timeout: 10s)...");
         try {
-            latch.await(30, java.util.concurrent.TimeUnit.SECONDS);
+            latch.await(10, java.util.concurrent.TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Log.e(TAG, "attemptRefreshToken: Interrupted while waiting for refresh: " + e.getMessage());
         }

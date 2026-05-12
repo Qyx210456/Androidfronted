@@ -38,7 +38,7 @@ import com.example.androidfronted.data.local.entity.UserEntity;
         NotificationEntity.class,
         RepaymentPlanEntity.class
     },
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

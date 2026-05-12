@@ -25,3 +25,8 @@ captures/
 # Avoid double-ignoring
 hs_err_pid7744.log
 replay_pid7744.log
+.kotlin/errors/errors-1778164109412.log
+.kotlin/errors/errors-1778164148265.log
+.kotlin/errors/errors-1778164262571.log
+.kotlin/errors/errors-1778164559116.log
+*.log

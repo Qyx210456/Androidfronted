@@ -14,9 +14,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 还款计划列表适配器
- */
 public class RepaymentPlanAdapter extends RecyclerView.Adapter<RepaymentPlanAdapter.ViewHolder> {
     private List<RepaymentPlanEntity> planList;
     private final Context context;
@@ -45,14 +42,26 @@ public class RepaymentPlanAdapter extends RecyclerView.Adapter<RepaymentPlanAdap
         holder.tvPeriod.setText("第" + plan.getTerm() + "期");
         
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        holder.tvAmount.setText("¥ " + df.format(plan.getTotal()));
+        holder.tvAmount.setText("¥ " + df.format(plan.getTotalAmount()));
         holder.tvPrincipalDue.setText(df.format(plan.getPrincipal()));
         holder.tvInterestDue.setText(df.format(plan.getInterest()));
         
-        double principalRemaining = calculateRemainingPrincipal(plan.getTerm());
-        double interestRemaining = calculateRemainingInterest(plan.getTerm());
-        holder.tvPrincipalRemaining.setText(formatAmount(principalRemaining));
-        holder.tvInterestRemaining.setText(formatAmount(interestRemaining));
+        holder.tvPrincipalRemaining.setText(df.format(plan.getRemainingPrincipal()));
+        holder.tvInterestRemaining.setText(df.format(plan.getRemainingInterest()));
+        
+        if (plan.getDueDate() != null && !plan.getDueDate().isEmpty()) {
+            holder.tvRepayDate.setText(plan.getDueDate());
+        } else {
+            holder.tvRepayDate.setText("--");
+        }
+        
+        if (plan.getActualPayDate() != null && !plan.getActualPayDate().isEmpty() 
+                && !"null".equalsIgnoreCase(plan.getActualPayDate())) {
+            holder.llActualPayDate.setVisibility(View.VISIBLE);
+            holder.tvActualPayDate.setText(plan.getActualPayDate());
+        } else {
+            holder.llActualPayDate.setVisibility(View.GONE);
+        }
         
         bindStatusStyle(holder, plan.getStatus());
     }
@@ -62,9 +71,6 @@ public class RepaymentPlanAdapter extends RecyclerView.Adapter<RepaymentPlanAdap
         return planList.size();
     }
 
-    /**
-     * 根据状态设置样式
-     */
     private void bindStatusStyle(ViewHolder holder, String status) {
         if (status == null) {
             status = "未还";
@@ -94,46 +100,14 @@ public class RepaymentPlanAdapter extends RecyclerView.Adapter<RepaymentPlanAdap
         holder.tvStatus.setText(status);
     }
 
-    /**
-     * 计算剩余本金（期数大于该期的principal之和）
-     */
-    private double calculateRemainingPrincipal(int currentTerm) {
-        double total = 0;
-        for (RepaymentPlanEntity plan : planList) {
-            if (plan.getTerm() > currentTerm) {
-                total += plan.getPrincipal();
-            }
-        }
-        return total;
-    }
-
-    /**
-     * 计算剩余利息（期数大于该期的interest之和）
-     */
-    private double calculateRemainingInterest(int currentTerm) {
-        double total = 0;
-        for (RepaymentPlanEntity plan : planList) {
-            if (plan.getTerm() > currentTerm) {
-                total += plan.getInterest();
-            }
-        }
-        return total;
-    }
-
-    /**
-     * 格式化金额显示（剩余金额，以元为单位）
-     */
-    private String formatAmount(double amount) {
-        DecimalFormat df = new DecimalFormat("#,##0.00");
-        return df.format(amount);
-    }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout cardContainer;
         TextView tvPeriod;
         TextView tvStatus;
         TextView tvAmount;
         TextView tvRepayDate;
+        LinearLayout llActualPayDate;
+        TextView tvActualPayDate;
         TextView tvPrincipalDue;
         TextView tvInterestDue;
         TextView tvPrincipalRemaining;
@@ -146,6 +120,8 @@ public class RepaymentPlanAdapter extends RecyclerView.Adapter<RepaymentPlanAdap
             tvStatus = itemView.findViewById(R.id.tv_status);
             tvAmount = itemView.findViewById(R.id.tv_amount);
             tvRepayDate = itemView.findViewById(R.id.tv_repay_date);
+            llActualPayDate = itemView.findViewById(R.id.ll_actual_pay_date);
+            tvActualPayDate = itemView.findViewById(R.id.tv_actual_pay_date);
             tvPrincipalDue = itemView.findViewById(R.id.tv_principal_due);
             tvInterestDue = itemView.findViewById(R.id.tv_interest_due);
             tvPrincipalRemaining = itemView.findViewById(R.id.tv_principal_remaining);

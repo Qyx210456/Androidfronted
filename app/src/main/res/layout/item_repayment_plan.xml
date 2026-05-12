@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="26sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 android:textColor="@color/repayment_plan_text_unpaid"
                 android:fontFamily="sans-serif-medium" />
@@ -60,22 +60,55 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="vertical"
+                android:gravity="end">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="还款时间："
-                    android:textSize="14sp"
-                    android:textColor="@color/text_secondary" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tv_repay_date"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="本期应还日期："
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:id="@+id/tv_repay_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_actual_pay_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_secondary" />
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="实际还款日期："
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary" />
+
+                    <TextView
+                        android:id="@+id/tv_actual_pay_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -109,14 +142,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="应还本金："
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_principal_due"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/text_primary"
                         android:textStyle="bold" />
 
@@ -132,14 +165,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="剩余本金："
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textColor="@color/text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_principal_remaining"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textColor="@color/text_secondary" />
 
                 </LinearLayout>
@@ -161,14 +194,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="应还利息："
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/text_secondary" />
 
                     <TextView
                         android:id="@+id/tv_interest_due"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/text_primary"
                         android:textStyle="bold" />
 
@@ -184,14 +217,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="剩余利息："
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textColor="@color/text_tertiary" />
 
                     <TextView
                         android:id="@+id/tv_interest_remaining"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
+                        android:textSize="14sp"
                         android:textColor="@color/text_secondary" />
 
                 </LinearLayout>

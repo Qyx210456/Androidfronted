@@ -161,10 +161,10 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                     double unpaidInterestSum = 0;
                     
                     for (RepaymentPlanEntity plan : plans) {
-                        total += plan.getTotal();
+                        total += plan.getTotalAmount();
                         
                         if ("未还".equals(plan.getStatus())) {
-                            unpaidTotalSum += plan.getTotal();
+                            unpaidTotalSum += plan.getTotalAmount();
                             unpaidPrincipalSum += plan.getPrincipal();
                             unpaidInterestSum += plan.getInterest();
                         }

@@ -24,12 +24,12 @@ public class NotificationEntity implements Serializable {
         this.id = id;
         this.userId = userId;
         this.businessId = businessId;
-        this.businessType = businessType;
-        this.title = title;
-        this.content = content;
+        this.businessType = businessType != null ? businessType : "";
+        this.title = title != null ? title : "";
+        this.content = content != null ? content : "";
         this.readFlag = readFlag;
-        this.createdAt = createdAt;
-        this.readAt = readAt;
+        this.createdAt = createdAt != null ? createdAt : "";
+        this.readAt = readAt != null ? readAt : "";
     }
 
     public int getId() {
@@ -61,7 +61,7 @@ public class NotificationEntity implements Serializable {
     }
 
     public void setBusinessType(String businessType) {
-        this.businessType = businessType;
+        this.businessType = businessType != null ? businessType : "";
     }
 
     public String getTitle() {
@@ -69,7 +69,7 @@ public class NotificationEntity implements Serializable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = title != null ? title : "";
     }
 
     public String getContent() {
@@ -77,7 +77,7 @@ public class NotificationEntity implements Serializable {
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content = content != null ? content : "";
     }
 
     public boolean isReadFlag() {
@@ -93,7 +93,7 @@ public class NotificationEntity implements Serializable {
     }
 
     public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = createdAt != null ? createdAt : "";
     }
 
     public String getReadAt() {
@@ -101,6 +101,6 @@ public class NotificationEntity implements Serializable {
     }
 
     public void setReadAt(String readAt) {
-        this.readAt = readAt;
+        this.readAt = readAt != null ? readAt : "";
     }
 }

@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,54 +32,96 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
 }
 
 dependencies {
-
+    // AndroidX Core
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.recyclerview)
+    implementation(libs.fragment)
+    implementation(libs.fragment.ktx)
+    implementation(libs.core.ktx)
+    
+    // Jetpack Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
+    implementation(libs.activity.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
+    
+    // Compose工具
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
+    
+    // Lifecycle & ViewModel
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
+    implementation(libs.lifecycle.runtime)
+    implementation(libs.lifecycle.common.java8)
+    
+    // Room Database
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.sse)
+    implementation(libs.gson)
+    
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    
+    // JWT解析库
+    implementation(libs.jjwt.api)
+    implementation(libs.jjwt.impl)
+    implementation(libs.jjwt.jackson)
+    
+    // Glide图片加载库
+    implementation(libs.glide)
+    ksp(libs.glide.compiler)
+    
+    // Coil图片加载库（用于Compose）
+    implementation(libs.coil)
+    
+    // EventBus
+    implementation(libs.eventbus)
+    
+    // 图片裁剪
+    implementation(libs.image.cropper)
+    
+    // 图片查看（手势缩放）
+    implementation(libs.photoview)
+    
+    // BlurView 模糊效果
+    implementation(libs.blurview)
+    
+    // Markwon Markdown渲染库
+    implementation(libs.markwon.core)
+    implementation(libs.markwon.ext.tables)
+    implementation(libs.markwon.ext.tasklist)
+    implementation(libs.markwon.ext.strikethrough)
+    implementation(libs.markwon.image.glide)
+    
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
-    implementation("com.squareup.okhttp3:okhttp-sse:5.3.2")
-    implementation("com.google.code.gson:gson:2.10.1")
-    
-    // Room Database
-    val roomVersion = "2.5.0"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    
-    // Lifecycle & ViewModel
-    val lifecycleVersion = "2.6.2"
-    implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-runtime:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
-    
-    // Fragment KTX
-    implementation("androidx.fragment:fragment:1.6.1")
-    
-    // JWT解析库
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    
-    // Glide图片加载库
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-    
-    // EventBus
-    implementation("org.greenrobot:eventbus:3.3.1")
-    
-    // 图片裁剪
-    implementation("com.github.CanHub:Android-Image-Cropper:4.5.0")
-    
-    // 图片查看（手势缩放）
-    implementation("com.github.chrisbanes:PhotoView:2.3.0")
 }

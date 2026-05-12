@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.example.androidfronted.data.model.CertState;
 import com.example.androidfronted.data.repository.NotificationRepository;
 import com.example.androidfronted.event.NotificationEvent;
 import com.example.androidfronted.ui.settings.SettingsFragment;
+import com.example.androidfronted.ui.smartcustomerservice.SmartCustomerServiceFragment;
+import com.example.androidfronted.ui.widget.CreditScoreCardView;
 import com.example.androidfronted.utils.ImageLoader;
 import com.example.androidfronted.utils.ImageUrlHelper;
 import com.example.androidfronted.viewmodel.auth.PersonalInformationViewModel;
@@ -35,8 +38,10 @@ public class ProfileFragment extends Fragment {
     private NotificationRepository notificationRepository;
     private ImageView ivAvatar;
     private TextView tvUsername;
-    private ImageView ivCertificationStatus;
-    private TextView tvCertificationStatus;
+    private LinearLayout llCertified;
+    private LinearLayout llNotCertified;
+    private LinearLayout llEditProfile;
+    private CreditScoreCardView creditScoreCard;
     private FrameLayout flMessageBadge;
     private TextView tvMessageBadge;
 
@@ -60,18 +65,27 @@ public class ProfileFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(PersonalInformationViewModel.class);
         notificationViewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication()))
                 .get(NotificationViewModel.class);
+        
         ivAvatar = view.findViewById(R.id.iv_avatar);
         tvUsername = view.findViewById(R.id.tv_username);
-        ivCertificationStatus = view.findViewById(R.id.iv_certification_status);
-        tvCertificationStatus = view.findViewById(R.id.tv_certification_status);
+        llCertified = view.findViewById(R.id.ll_certified);
+        llNotCertified = view.findViewById(R.id.ll_not_certified);
+        llEditProfile = view.findViewById(R.id.ll_edit_profile);
+        creditScoreCard = view.findViewById(R.id.credit_score_card);
         flMessageBadge = view.findViewById(R.id.fl_message_badge);
         tvMessageBadge = view.findViewById(R.id.tv_message_badge);
 
+        setupBlurView();
         setupObservers();
         setupClickListeners(view);
         viewModel.loadUserInfo();
         viewModel.loadCertificationStatus();
         notificationViewModel.loadUnreadCount();
+    }
+
+    private void setupBlurView() {
+        ViewGroup rootView = (ViewGroup) requireActivity().getWindow().getDecorView().findViewById(android.R.id.content);
+        creditScoreCard.setupBlurView(rootView);
     }
 
     @Override
@@ -104,6 +118,14 @@ public class ProfileFragment extends Fragment {
         viewModel.getCertificationState().observe(getViewLifecycleOwner(), certState -> {
             updateCertificationUI(certState);
         });
+
+        viewModel.getCreditScore().observe(getViewLifecycleOwner(), score -> {
+            if (score != null) {
+                creditScoreCard.setCreditScore(score);
+            } else {
+                creditScoreCard.setCreditScore(0);
+            }
+        });
         
         notificationViewModel.getUnreadCount().observe(getViewLifecycleOwner(), count -> {
             if (count != null && count > 0) {
@@ -121,24 +143,26 @@ public class ProfileFragment extends Fragment {
 
     private void updateCertificationUI(CertState certState) {
         if (certState == null) {
-            ivCertificationStatus.setVisibility(View.GONE);
-            tvCertificationStatus.setVisibility(View.GONE);
+            llCertified.setVisibility(View.GONE);
+            llNotCertified.setVisibility(View.GONE);
         } else if (certState == CertState.CERTIFIED) {
-            ivCertificationStatus.setVisibility(View.VISIBLE);
-            tvCertificationStatus.setVisibility(View.VISIBLE);
-            ivCertificationStatus.setImageResource(R.drawable.ic_profile_verified);
-            tvCertificationStatus.setText(R.string.text_certified);
-            tvCertificationStatus.setTextColor(getResources().getColor(R.color.white));
+            llCertified.setVisibility(View.VISIBLE);
+            llNotCertified.setVisibility(View.GONE);
         } else {
-            ivCertificationStatus.setVisibility(View.VISIBLE);
-            tvCertificationStatus.setVisibility(View.VISIBLE);
-            ivCertificationStatus.setImageResource(R.drawable.ic_profile_verified_red);
-            tvCertificationStatus.setText(R.string.text_not_certified);
-            tvCertificationStatus.setTextColor(getResources().getColor(R.color.status_error));
+            llCertified.setVisibility(View.GONE);
+            llNotCertified.setVisibility(View.VISIBLE);
         }
     }
 
     private void setupClickListeners(View view) {
+        ivAvatar.setOnClickListener(v -> {
+            navigateToDetail(new AvatarEditFragment());
+        });
+
+        llEditProfile.setOnClickListener(v -> {
+            navigateToDetail(new PersonalInformationFragment());
+        });
+
         view.findViewById(R.id.item_account_security).setOnClickListener(v -> {
             navigateToDetail(new AccountSecurityFragment());
         });
@@ -150,14 +174,30 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.item_bank_card).setOnClickListener(v -> {
             navigateToDetail(new MyBankCardsFragment());
         });
+
+        view.findViewById(R.id.item_customer_service).setOnClickListener(v -> {
+            navigateToDetail(new SmartCustomerServiceFragment());
+        });
         
         view.findViewById(R.id.item_message_center).setOnClickListener(v -> {
             Intent intent = NotificationCenterActivity.newIntent(requireContext());
             startActivity(intent);
         });
 
+        view.findViewById(R.id.item_faq).setOnClickListener(v -> {
+        });
+
+        view.findViewById(R.id.item_privacy_policy).setOnClickListener(v -> {
+        });
+
         view.findViewById(R.id.item_settings).setOnClickListener(v -> {
             navigateToDetail(new SettingsFragment());
+        });
+
+        view.findViewById(R.id.tv_feedback).setOnClickListener(v -> {
+        });
+
+        view.findViewById(R.id.tv_about_us).setOnClickListener(v -> {
         });
     }
 

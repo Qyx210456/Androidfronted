@@ -1,5 +1,6 @@
 package com.example.androidfronted.data.local.entity;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,17 +8,25 @@ import androidx.room.PrimaryKey;
 public class CertificationEntity {
     @PrimaryKey
     private int userId;
+    @Nullable
     private String idCard;
     private int creditScore;
+    @Nullable
     private String bankCardId;
     private int workCertId;
+    @Nullable
     private String employmentCertPath;
+    @Nullable
     private String salaryCertPath;
     private int triCertId;
+    @Nullable
     private String socialSecurityPath;
+    @Nullable
     private String creditReportPath;
     private int immovableCertId;
+    @Nullable
     private String propertyCertPath;
+    @Nullable
     private String carCertPath;
 
     public CertificationEntity(int userId, String idCard, int creditScore, String bankCardId,

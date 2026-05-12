@@ -117,7 +117,7 @@ public class PaymentFragment extends Fragment {
 
         viewModel.getCurrentTermPlan().observe(getViewLifecycleOwner(), plan -> {
             if (plan != null) {
-                tvAmount.setText(viewModel.formatAmount(plan.getTotal()));
+                tvAmount.setText(viewModel.formatAmount(plan.getTotalAmount()));
                 int term = currentTerm + 1;
                 tvTerm.setText(getString(R.string.payment_term_format, term));
             }

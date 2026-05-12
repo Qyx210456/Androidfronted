@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.androidfronted.util.NotificationStateManager;
+import com.example.androidfronted.utils.MarkwonProvider;
 
 public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
@@ -15,6 +16,9 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        
+        MarkwonProvider.INSTANCE.init(this);
+        
         NotificationStateManager.getInstance().setAppInForeground(true);
         
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {

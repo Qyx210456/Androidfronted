@@ -241,16 +241,24 @@ public class LoanOrderRepository {
                     
                     List<RepaymentPlanEntity> entities = new ArrayList<>();
                     for (RepaymentPlanResponse.RepaymentPlanItem item : response.getData()) {
-                        String status = (item.getTerm() <= currentTerm) ? "已还" : "未还";
-                        Log.d(TAG, "Term: " + item.getTerm() + ", currentTerm: " + currentTerm + ", status: " + status);
+                        String status = item.getStatus();
+                        if (status == null || status.isEmpty()) {
+                            status = "未还";
+                        }
+                        Log.d(TAG, "Term: " + item.getTerm() + ", status from backend: " + status);
                         RepaymentPlanEntity entity = new RepaymentPlanEntity(
-                            0,  // localId auto-generated
-                            orderId,
+                            0,
+                            item.getId(),
+                            item.getOrderId(),
                             item.getTerm(),
                             item.getPrincipal(),
                             item.getInterest(),
-                            item.getTotal(),
-                            status
+                            item.getTotalAmount(),
+                            status,
+                            item.getRemainingPrincipal(),
+                            item.getRemainingInterest(),
+                            item.getDueDate(),
+                            item.getActualPayDate()
                         );
                         entities.add(entity);
                     }
@@ -425,7 +433,7 @@ public class LoanOrderRepository {
                                     if ("未还".equals(plan.getStatus())) {
                                         principalSum[0] += plan.getPrincipal();
                                         interestSum[0] += plan.getInterest();
-                                        amountSum[0] += plan.getTotal();
+                                        amountSum[0] += plan.getTotalAmount();
                                     }
                                 }
                             }

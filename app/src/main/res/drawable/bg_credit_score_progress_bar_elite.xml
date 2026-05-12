@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 圆角 5dp -->
+    <corners android:radius="5dp" />
+
+    <!--横向渐变： 从左到右-->
+    <gradient
+        android:startColor="@color/credit_elite_start"
+        android:centerColor="@color/credit_elite_center"
+        android:endColor="@color/credit_elite_end"
+        android:angle="0" />
+</shape>

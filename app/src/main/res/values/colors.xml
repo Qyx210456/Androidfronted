@@ -187,4 +187,99 @@
     <color name="loan_manage_my_orders">#2A82E4</color>
     <color name="loan_manage_repayment_record">#00BAAD</color>
 
+    <!--“我的”界面信誉分卡片颜色-->
+    <!-- 基础信用卡片：渐变起始色  -->
+    <color name="base_credit_gradient_start">#B3F3F5F5</color>
+    <!-- 基础信用卡片：渐变结束色  -->
+    <color name="base_credit_gradient_end">#B3C9E5FF</color>
+
+    <!-- 稳健信用卡片：渐变起始色  -->
+    <color name="stable_credit_gradient_start">#B3F3F5F5</color>
+    <!-- 稳健信用卡片：渐变结束色  -->
+    <color name="stable_credit_gradient_end">#B3C8E1E8</color>
+
+    <!-- 良好信用：渐变起始色 (左上) -->
+    <color name="good_credit_color_1">#B3FDCD79</color>
+    <!-- 良好信用：渐变中间色 (中间) -->
+    <color name="good_credit_color_2">#B3FDCD79</color>
+    <!-- 良好信用：渐变结束色 (右下) -->
+    <color name="good_credit_color_3">#B3F8D48C</color>
+
+    <!-- 优秀信用：渐变颜色 1  -->
+    <color name="excellent_credit_color_1">#B3EFF0FB</color>
+    <!-- 优秀信用：渐变颜色 2  -->
+    <color name="excellent_credit_color_2">#B3E4D4FE</color>
+    <!-- 优秀信用：渐变颜色 3  -->
+    <color name="excellent_credit_color_3">#B3ABC3FF</color>
+
+    <!-- 卓越信用：背景色 -->
+    <color name="elite_credit_bg">#B31A1A1A</color>
+
+    <!--“我的”界面信誉分卡片进度条颜色-->
+    <!-- ================= 1. 基础信用 (蓝色系) ================= -->
+    <color name="credit_basic_start">#228EFB</color> <!-- 左 -->
+    <color name="credit_basic_end">#0C70FB</color>   <!-- 右 -->
+
+    <!-- ================= 2. 稳健 (青色/灰蓝系) ================= -->
+    <color name="credit_steady_start">#AECAD3</color> <!-- 左 -->
+    <color name="credit_steady_end">#37778F</color>   <!-- 右 -->
+
+    <!-- ================= 3. 良好 (橙色系) ================= -->
+    <color name="credit_good_start">#F2A146</color> <!-- 左 -->
+    <color name="credit_good_end">#BD6A0D</color>   <!-- 右 -->
+
+    <!-- ================= 4. 优秀 (紫色系) ================= -->
+    <color name="credit_excellent_start">#B6BEFD</color> <!-- 左 -->
+    <color name="credit_excellent_end">#4A39FF</color>   <!-- 右 -->
+
+    <!-- ================= 卓越信用 (金色三段渐变) ================= -->
+    <!--  左侧浅色 -->
+    <color name="credit_elite_start">#FAE9C6</color>
+    <!-- 中间过渡色 -->
+    <color name="credit_elite_center">#F8AD67</color>
+    <!--  右侧深色 -->
+    <color name="credit_elite_end">#F7CA5A</color>
+
+    <!--“我的”界面信誉分卡片进度条未达到部分颜色-->
+    <!-- 50% 透明度白色 (用于 基础/稳健 的未完成部分) -->
+    <color name="credit_bg_pending_default">#80FFFFFF</color>
+
+    <!-- 良好 - 未完成部分 (米黄色) -->
+    <color name="credit_bg_pending_good">#FCDEA8</color>
+
+    <!-- 优秀 - 未完成部分 (浅蓝色) -->
+    <color name="credit_bg_pending_excellent">#C6D7FD</color>
+
+    <!-- 卓越 - 未完成部分 (深灰色/黑色) -->
+    <color name="credit_bg_pending_elite">#2A2728</color>
+
+    <!--“我的”界面信誉分卡片文字颜色-->
+    <!-- ================= 1. 基础信用 (蓝色系) ================= -->
+    <color name="credit_basic_text_primary">#507CE6</color>
+    <color name="credit_basic_text_secondary">#3D7CB6</color>
+
+    <!-- ================= 2. 稳健 (青色/灰蓝系) ================= -->
+    <color name="credit_steady_text_primary">#2A748D</color>
+    <color name="credit_steady_text_secondary">#376477</color>
+
+    <!-- ================= 3. 良好 (橙色系) ================= -->
+    <color name="credit_good_text_primary">#9F5300</color>
+    <color name="credit_good_text_secondary">#A46509</color>
+    <color name="credit_good_text_tertiary">#AA7014</color>
+
+    <!-- ================= 4. 优秀 (紫色系) ================= -->
+    <color name="credit_excellent_text_primary">#4B3EF9</color>
+    <color name="credit_excellent_text_secondary">#372ABF</color>
+
+    <!-- ================= 5. 卓越 (金色系) ================= -->
+    <color name="credit_elite_text_primary">#F2CB69</color>
+    <color name="credit_elite_text_secondary">#FFECBF</color>
+
+    <!-- ================= 功能区域字体颜色 ================= -->
+    <!-- 横向功能区字体颜色 -->
+    <color name="text_functional_horizontal">#6F7278</color>
+    <!-- 列表功能区字体颜色 -->
+    <color name="text_functional_list">#363B47</color>
+
+    <color name="bg_top_bar">#FF458FFC</color>
 </resources>

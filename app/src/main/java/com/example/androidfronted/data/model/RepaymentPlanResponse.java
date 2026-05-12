@@ -45,6 +45,12 @@ public class RepaymentPlanResponse {
      * 单期还款计划数据
      */
     public static class RepaymentPlanItem {
+        @SerializedName("id")
+        private long id;
+
+        @SerializedName("orderId")
+        private long orderId;
+
         @SerializedName("term")
         private int term;
 
@@ -54,8 +60,45 @@ public class RepaymentPlanResponse {
         @SerializedName("interest")
         private double interest;
 
-        @SerializedName("total")
-        private double total;
+        @SerializedName("totalAmount")
+        private double totalAmount;
+
+        @SerializedName("status")
+        private String status;
+
+        @SerializedName("remainingPrincipal")
+        private double remainingPrincipal;
+
+        @SerializedName("remainingInterest")
+        private double remainingInterest;
+
+        @SerializedName("dueDate")
+        private String dueDate;
+
+        @SerializedName("actualPayDate")
+        private String actualPayDate;
+
+        @SerializedName("createdAt")
+        private String createdAt;
+
+        @SerializedName("updatedAt")
+        private String updatedAt;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public long getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(long orderId) {
+            this.orderId = orderId;
+        }
 
         public int getTerm() {
             return term;
@@ -81,12 +124,68 @@ public class RepaymentPlanResponse {
             this.interest = interest;
         }
 
-        public double getTotal() {
-            return total;
+        public double getTotalAmount() {
+            return totalAmount;
         }
 
-        public void setTotal(double total) {
-            this.total = total;
+        public void setTotalAmount(double totalAmount) {
+            this.totalAmount = totalAmount;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public double getRemainingPrincipal() {
+            return remainingPrincipal;
+        }
+
+        public void setRemainingPrincipal(double remainingPrincipal) {
+            this.remainingPrincipal = remainingPrincipal;
+        }
+
+        public double getRemainingInterest() {
+            return remainingInterest;
+        }
+
+        public void setRemainingInterest(double remainingInterest) {
+            this.remainingInterest = remainingInterest;
+        }
+
+        public String getDueDate() {
+            return dueDate;
+        }
+
+        public void setDueDate(String dueDate) {
+            this.dueDate = dueDate;
+        }
+
+        public String getActualPayDate() {
+            return actualPayDate;
+        }
+
+        public void setActualPayDate(String actualPayDate) {
+            this.actualPayDate = actualPayDate;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
         }
     }
 }

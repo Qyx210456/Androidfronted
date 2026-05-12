@@ -4,16 +4,14 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import java.io.Serializable;
 
-/**
- * 还款计划本地实体类
- * 后端不返回还款状态，由前端本地维护
- */
 @Entity(tableName = "repayment_plans")
 public class RepaymentPlanEntity implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int localId;
 
-    private int orderId;
+    private long planId;
+
+    private long orderId;
 
     private int term;
 
@@ -21,19 +19,34 @@ public class RepaymentPlanEntity implements Serializable {
 
     private double interest;
 
-    private double total;
+    private double totalAmount;
 
     private String status;
 
-    public RepaymentPlanEntity(int localId, int orderId, int term, double principal, 
-                               double interest, double total, String status) {
+    private double remainingPrincipal;
+
+    private double remainingInterest;
+
+    private String dueDate;
+
+    private String actualPayDate;
+
+    public RepaymentPlanEntity(int localId, long planId, long orderId, int term, double principal,
+                               double interest, double totalAmount, String status,
+                               double remainingPrincipal, double remainingInterest,
+                               String dueDate, String actualPayDate) {
         this.localId = localId;
+        this.planId = planId;
         this.orderId = orderId;
         this.term = term;
         this.principal = principal;
         this.interest = interest;
-        this.total = total;
+        this.totalAmount = totalAmount;
         this.status = status;
+        this.remainingPrincipal = remainingPrincipal;
+        this.remainingInterest = remainingInterest;
+        this.dueDate = dueDate;
+        this.actualPayDate = actualPayDate;
     }
 
     public int getLocalId() {
@@ -44,11 +57,19 @@ public class RepaymentPlanEntity implements Serializable {
         this.localId = localId;
     }
 
-    public int getOrderId() {
+    public long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(long planId) {
+        this.planId = planId;
+    }
+
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -76,12 +97,12 @@ public class RepaymentPlanEntity implements Serializable {
         this.interest = interest;
     }
 
-    public double getTotal() {
-        return total;
+    public double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getStatus() {
@@ -90,5 +111,37 @@ public class RepaymentPlanEntity implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public double getRemainingPrincipal() {
+        return remainingPrincipal;
+    }
+
+    public void setRemainingPrincipal(double remainingPrincipal) {
+        this.remainingPrincipal = remainingPrincipal;
+    }
+
+    public double getRemainingInterest() {
+        return remainingInterest;
+    }
+
+    public void setRemainingInterest(double remainingInterest) {
+        this.remainingInterest = remainingInterest;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public String getActualPayDate() {
+        return actualPayDate;
+    }
+
+    public void setActualPayDate(String actualPayDate) {
+        this.actualPayDate = actualPayDate;
     }
 }
