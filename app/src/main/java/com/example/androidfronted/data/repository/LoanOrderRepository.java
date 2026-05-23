@@ -50,8 +50,8 @@ public class LoanOrderRepository {
                         LoanOrderEntity entity = new LoanOrderEntity(
                             order.getId(),
                             order.getLoanAmount(),
-                            order.getStatus(),
-                            order.getStartTime(),
+                            order.getStatus() != null ? order.getStatus() : "",
+                            order.getStartTime() != null ? order.getStartTime() : "",
                             order.getTerm(),
                             order.getCurrentTerm(),
                             order.getOverdueDays()
@@ -138,18 +138,18 @@ public class LoanOrderRepository {
                         order.getId(),
                         order.getUserId(),
                         order.getProductId(),
-                        data.getProductName(),
-                        order.getStatus(),
+                        data.getProductName() != null ? data.getProductName() : "",
+                        order.getStatus() != null ? order.getStatus() : "",
                         order.getRepaidAmount(),
                         order.getLoanAmount(),
                         order.getInterestRate(),
-                        order.getRepaidType(),
+                        order.getRepaidType() != null ? order.getRepaidType() : "",
                         order.getLoanPeriod(),
                         order.getTerm(),
                         order.getCurrentTerm(),
-                        order.getContract(),
+                        order.getContract() != null ? order.getContract() : "",
                         order.getOverdueDays(),
-                        order.getStartTime()
+                        order.getStartTime() != null ? order.getStartTime() : ""
                     );
                     
                     localDataSource.saveLoanOrderDetail(entity);
@@ -257,8 +257,8 @@ public class LoanOrderRepository {
                             status,
                             item.getRemainingPrincipal(),
                             item.getRemainingInterest(),
-                            item.getDueDate(),
-                            item.getActualPayDate()
+                            item.getDueDate() != null ? item.getDueDate() : "",
+                            item.getActualPayDate() != null ? item.getActualPayDate() : ""
                         );
                         entities.add(entity);
                     }
@@ -407,10 +407,13 @@ public class LoanOrderRepository {
     }
 
     public void getAllUnpaidStats(@NonNull UnpaidStatsCallback callback) {
+        Log.d(TAG, "getAllUnpaidStats: starting to fetch unpaid stats");
         localDataSource.getAllLoanOrders(new LocalDataSource.DataSourceCallback<List<LoanOrderEntity>>() {
             @Override
             public void onSuccess(List<LoanOrderEntity> orders) {
+                Log.d(TAG, "getAllUnpaidStats: got " + (orders != null ? orders.size() : 0) + " loan orders");
                 if (orders == null || orders.isEmpty()) {
+                    Log.d(TAG, "getAllUnpaidStats: no orders, returning 0");
                     callback.onSuccess(0, 0, 0);
                     return;
                 }
@@ -424,30 +427,38 @@ public class LoanOrderRepository {
                 for (LoanOrderEntity order : orders) {
                     int orderId = order.getId();
                     int currentTerm = order.getCurrentTerm();
+                    Log.d(TAG, "getAllUnpaidStats: processing order " + orderId + ", currentTerm=" + currentTerm);
                     
                     getRepaymentPlan(orderId, currentTerm, new RepaymentPlanCallback() {
                         @Override
                         public void onSuccess(List<RepaymentPlanEntity> plans) {
+                            Log.d(TAG, "getAllUnpaidStats: got " + (plans != null ? plans.size() : 0) + " repayment plans for order " + orderId);
                             if (plans != null) {
                                 for (RepaymentPlanEntity plan : plans) {
+                                    Log.d(TAG, "getAllUnpaidStats: plan term=" + plan.getTerm() + ", status=" + plan.getStatus() + ", principal=" + plan.getPrincipal());
                                     if ("未还".equals(plan.getStatus())) {
                                         principalSum[0] += plan.getPrincipal();
                                         interestSum[0] += plan.getInterest();
                                         amountSum[0] += plan.getTotalAmount();
+                                        Log.d(TAG, "getAllUnpaidStats: added unpaid plan, principalSum=" + principalSum[0]);
                                     }
                                 }
                             }
                             
                             processedOrders[0]++;
+                            Log.d(TAG, "getAllUnpaidStats: processed " + processedOrders[0] + "/" + totalOrders + " orders");
                             if (processedOrders[0] == totalOrders) {
+                                Log.d(TAG, "getAllUnpaidStats: final result - principal=" + principalSum[0] + ", interest=" + interestSum[0] + ", amount=" + amountSum[0]);
                                 callback.onSuccess(principalSum[0], interestSum[0], amountSum[0]);
                             }
                         }
 
                         @Override
                         public void onError(String errorMessage) {
+                            Log.e(TAG, "getAllUnpaidStats: error getting repayment plan for order " + orderId + ": " + errorMessage);
                             processedOrders[0]++;
                             if (processedOrders[0] == totalOrders) {
+                                Log.d(TAG, "getAllUnpaidStats: final result (with errors) - principal=" + principalSum[0] + ", interest=" + interestSum[0] + ", amount=" + amountSum[0]);
                                 callback.onSuccess(principalSum[0], interestSum[0], amountSum[0]);
                             }
                         }
@@ -457,8 +468,60 @@ public class LoanOrderRepository {
 
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "getAllUnpaidStats: error getting loan orders: " + errorMessage);
                 callback.onError(errorMessage);
             }
         });
+    }
+
+    /**
+     * 提前还款
+     * @param orderId 订单ID
+     * @param callback 回调
+     */
+    public void earlyRepay(int orderId, @NonNull EarlyRepayCallback callback) {
+        String token = tokenManager.getToken();
+        Log.d(TAG, "earlyRepay, orderId: " + orderId);
+        remoteDataSource.earlyRepay(token, orderId, new RemoteDataSource.NetworkCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "Early repay success: " + response);
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to early repay: " + errorMessage);
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    public void applyPostpone(int orderId, @NonNull PostponeCallback callback) {
+        String token = tokenManager.getToken();
+        Log.d(TAG, "applyPostpone, orderId: " + orderId);
+        remoteDataSource.applyPostpone(token, orderId, new RemoteDataSource.NetworkCallback<String>() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "Apply postpone success: " + response);
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to apply postpone: " + errorMessage);
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    public interface EarlyRepayCallback {
+        void onSuccess(String message);
+        void onError(String errorMessage);
+    }
+
+    public interface PostponeCallback {
+        void onSuccess(String message);
+        void onError(String errorMessage);
     }
 }

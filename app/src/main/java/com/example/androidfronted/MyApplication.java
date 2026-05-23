@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.androidfronted.util.FloatingBallManager;
 import com.example.androidfronted.util.NotificationStateManager;
 import com.example.androidfronted.utils.MarkwonProvider;
 
@@ -20,6 +21,8 @@ public class MyApplication extends Application {
         MarkwonProvider.INSTANCE.init(this);
         
         NotificationStateManager.getInstance().setAppInForeground(true);
+        
+        FloatingBallManager.getInstance(this).init();
         
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

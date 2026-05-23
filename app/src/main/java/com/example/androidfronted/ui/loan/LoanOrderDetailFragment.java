@@ -116,6 +116,24 @@ public class LoanOrderDetailFragment extends BaseDetailFragment {
                     .addToBackStack(null)
                     .commit();
         });
+
+        view.findViewById(R.id.btn_early_repayment).setOnClickListener(v -> {
+            EarlyRepaymentFragment fragment = EarlyRepaymentFragment.newInstance(orderId);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(((ViewGroup) requireView().getParent()).getId(), fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
+        view.findViewById(R.id.btn_apply_defer).setOnClickListener(v -> {
+            ApplyDeferFragment fragment = ApplyDeferFragment.newInstance(orderId);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(((ViewGroup) requireView().getParent()).getId(), fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
     private void observeData() {

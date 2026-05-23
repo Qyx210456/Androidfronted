@@ -21,6 +21,7 @@ import com.example.androidfronted.data.local.entity.NotificationEntity;
 import com.example.androidfronted.data.repository.AuthRepository;
 import com.example.androidfronted.data.repository.NotificationRepository;
 import com.example.androidfronted.event.NotificationEvent;
+import com.example.androidfronted.util.FloatingBallManager;
 import com.example.androidfronted.util.InAppNotificationManager;
 import com.example.androidfronted.util.NotificationStateManager;
 import com.example.androidfronted.util.TokenManager;
@@ -215,12 +216,16 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         
-        if (intent != null && intent.getBooleanExtra(EXTRA_SHOW_PROFILE, false)) {
-            Log.d(TAG, "onNewIntent: 显示 ProfileFragment");
-            getSupportFragmentManager().popBackStackImmediate(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            getSupportFragmentManager().executePendingTransactions();
-            showMainFragment(profileFragment, TAG_PROFILE);
-            bottomNav.setSelectedItemId(R.id.nav_profile);
+        if (intent != null) {
+            FloatingBallManager.getInstance(getApplication()).handleIntent(this, intent);
+            
+            if (intent.getBooleanExtra(EXTRA_SHOW_PROFILE, false)) {
+                Log.d(TAG, "onNewIntent: 显示 ProfileFragment");
+                getSupportFragmentManager().popBackStackImmediate(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager().executePendingTransactions();
+                showMainFragment(profileFragment, TAG_PROFILE);
+                bottomNav.setSelectedItemId(R.id.nav_profile);
+            }
         }
     }
 
@@ -299,10 +304,13 @@ public class MainActivity extends AppCompatActivity {
             transaction.hide(currentMainFragment);
         }
         transaction.show(fragment);
-        transaction.commit();
+        transaction.commitNow();
         
         currentMainFragment = fragment;
         Log.d(TAG, "显示主 Fragment: " + tag);
+        
+        // 通知 FloatingBallManager Fragment 已显示
+        FloatingBallManager.getInstance(getApplication()).onFragmentShown(fragment);
     }
 
     private void setupBottomNavigation() {

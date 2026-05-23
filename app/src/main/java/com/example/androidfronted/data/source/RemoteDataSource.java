@@ -226,6 +226,9 @@ public class RemoteDataSource {
         } else if (response instanceof AuthSubmitResponse) {
             AuthSubmitResponse res = (AuthSubmitResponse) response;
             return (res != null && res.getMessage() != null) ? res.getMessage() : "提交失败 (" + statusCode + ")";
+        } else if (response instanceof com.example.androidfronted.data.model.PostponeResponse) {
+            com.example.androidfronted.data.model.PostponeResponse res = (com.example.androidfronted.data.model.PostponeResponse) response;
+            return (res != null && res.getMessage() != null) ? res.getMessage() : "延期申请失败 (" + statusCode + ")";
         }
         return "请求失败 (" + statusCode + ")";
     }
@@ -639,6 +642,54 @@ public class RemoteDataSource {
                 .build();
 
         executeRequest(httpRequest, "Get repayment plan", RepaymentPlanResponse.class, callback);
+    }
+
+    /**
+     * 提前还款
+     * @param token 用户token
+     * @param orderId 订单ID
+     * @param callback 网络回调
+     */
+    public void earlyRepay(String token, int orderId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/" + orderId + "/early-repay")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Early repay", ProductApplyResponse.class,
+                new DataExtractor<ProductApplyResponse, String>() {
+                    @Override
+                    public String extract(ProductApplyResponse response) {
+                        return response.getMessage();
+                    }
+
+                    @Override
+                    public boolean validate(ProductApplyResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
+    }
+
+    public void applyPostpone(String token, int orderId, final NetworkCallback<String> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/" + orderId + "/postpone")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
+                .build();
+
+        executeRequestWithDataExtraction(httpRequest, "Apply postpone", com.example.androidfronted.data.model.PostponeResponse.class,
+                new DataExtractor<com.example.androidfronted.data.model.PostponeResponse, String>() {
+                    @Override
+                    public String extract(com.example.androidfronted.data.model.PostponeResponse response) {
+                        return response.getData();
+                    }
+
+                    @Override
+                    public boolean validate(com.example.androidfronted.data.model.PostponeResponse response) {
+                        return response != null && response.getCode() == 200;
+                    }
+                }, callback);
     }
 
     public interface NetworkCallback<T> {

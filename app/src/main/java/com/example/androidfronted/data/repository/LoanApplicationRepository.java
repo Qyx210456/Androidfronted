@@ -64,11 +64,11 @@ public class LoanApplicationRepository {
                     for (ApplicationListResponse.ApplicationRecord record : response.getData()) {
                         ApplicationEntity entity = new ApplicationEntity(
                             record.getApplicationId(),
-                            record.getProductName(),
+                            record.getProductName() != null ? record.getProductName() : "",
                             record.getLoanAmount(),
-                            record.getStatus(),
-                            record.getApplyTime(),
-                            record.getRejectReason()
+                            record.getStatus() != null ? record.getStatus() : "",
+                            record.getApplyTime() != null ? record.getApplyTime() : "",
+                            record.getRejectReason() != null ? record.getRejectReason() : ""
                         );
                         entities.add(entity);
                     }
@@ -178,16 +178,16 @@ public class LoanApplicationRepository {
                     for (ApplicationListResponse.ApplicationRecord record : response.getData()) {
                         ApplicationEntity entity = new ApplicationEntity(
                             record.getApplicationId(),
-                            record.getProductName(),
+                            record.getProductName() != null ? record.getProductName() : "",
                             record.getLoanAmount(),
-                            record.getStatus(),
-                            record.getApplyTime(),
-                            record.getRejectReason()
+                            record.getStatus() != null ? record.getStatus() : "",
+                            record.getApplyTime() != null ? record.getApplyTime() : "",
+                            record.getRejectReason() != null ? record.getRejectReason() : ""
                         );
                         entities.add(entity);
                         
                         if (record.getApplicationId() == applicationId) {
-                            productName = record.getProductName();
+                            productName = record.getProductName() != null ? record.getProductName() : "";
                         }
                     }
                     
@@ -218,16 +218,16 @@ public class LoanApplicationRepository {
                         apiDetail.getId(),
                         apiDetail.getUserId(),
                         apiDetail.getProductId(),
-                        apiDetail.getStatus(),
+                        apiDetail.getStatus() != null ? apiDetail.getStatus() : "",
                         apiDetail.getLoanAmount(),
                         apiDetail.getInterestRate(),
                         apiDetail.getLoanPeriod(),
                         apiDetail.getTerm(),
-                        apiDetail.getRepaidType(),
-                        apiDetail.getRejectReason(),
-                        apiDetail.getApplyTime(),
-                        apiDetail.getReviewTime(),
-                        productName
+                        apiDetail.getRepaidType() != null ? apiDetail.getRepaidType() : "",
+                        apiDetail.getRejectReason() != null ? apiDetail.getRejectReason() : "",
+                        apiDetail.getApplyTime() != null ? apiDetail.getApplyTime() : "",
+                        apiDetail.getReviewTime() != null ? apiDetail.getReviewTime() : "",
+                        productName != null ? productName : ""
                     );
                     
                     localDataSource.saveApplicationDetail(entity);

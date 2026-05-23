@@ -1,6 +1,7 @@
 package com.example.androidfronted.viewmodel.loan;
 
 import android.app.Application;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -9,6 +10,8 @@ import com.example.androidfronted.viewmodel.base.BaseViewModel;
 import java.text.DecimalFormat;
 
 public class LoanManageViewModel extends BaseViewModel {
+    private static final String TAG = "LoanManageViewModel";
+    
     private final LoanOrderRepository loanOrderRepository;
     
     private final MutableLiveData<Double> totalPrincipal = new MutableLiveData<>(0.0);
@@ -18,6 +21,7 @@ public class LoanManageViewModel extends BaseViewModel {
     public LoanManageViewModel(@NonNull Application application, LoanOrderRepository loanOrderRepository) {
         super(application);
         this.loanOrderRepository = loanOrderRepository;
+        Log.d(TAG, "LoanManageViewModel created");
     }
 
     public LiveData<Double> getTotalPrincipal() {
@@ -33,9 +37,11 @@ public class LoanManageViewModel extends BaseViewModel {
     }
 
     public void loadUnpaidStats() {
+        Log.d(TAG, "loadUnpaidStats called");
         loanOrderRepository.getAllUnpaidStats(new LoanOrderRepository.UnpaidStatsCallback() {
             @Override
             public void onSuccess(double principal, double interest, double amount) {
+                Log.d(TAG, "onSuccess: principal=" + principal + ", interest=" + interest + ", amount=" + amount);
                 totalPrincipal.postValue(principal);
                 totalInterest.postValue(interest);
                 totalAmount.postValue(amount);
@@ -43,6 +49,7 @@ public class LoanManageViewModel extends BaseViewModel {
 
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "onError: " + errorMessage);
                 totalPrincipal.postValue(0.0);
                 totalInterest.postValue(0.0);
                 totalAmount.postValue(0.0);

@@ -34,4 +34,12 @@
         <item name="android:windowExitAnimation">@anim/slide_out_to_top</item>
     </style>
 
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="colorAccent">@color/defer_primary_blue</item>
+        <item name="android:textColorPrimary">@color/defer_dark_blue</item>
+        <item name="android:textColorSecondary">@color/defer_gray</item>
+    </style>
+
 </resources>
