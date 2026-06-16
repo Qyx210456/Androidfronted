@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 这是一个字体家族容器 -->
 <font-family xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- 规则 1：当系统需要 300 (Light) 粗细时，加载 lxgw_light.ttf -->
-    <font
-        android:fontWeight="300"
-        android:font="@font/lxgw_wenkai_regular_light" />
-
-    <!-- 规则 2：当系统需要 400 (Regular) 粗细时，加载 lxgw_gb_screen_regular.ttf -->
     <font
         android:fontWeight="400"
-        android:font="@font/lxgw_wenkai_gb_screen" />
-
-    <!-- 规则 3：当系统需要 700 (Bold) 粗细时，加载 lxgw_medium.ttf -->
-    <font
-        android:fontWeight="700"
-        android:font="@font/lxgw_wenkai_regular_medium" />
-
+        android:font="@font/lxgw_subset" />
 </font-family>

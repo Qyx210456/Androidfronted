@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,12 +33,16 @@ public class RegisterStep2Activity extends AppCompatActivity {
     private TextView btnGetCode;
     private Button btnRegister;
     private CheckBox cbAgreement;
-    private TextView tvBackStep;
+    private LinearLayout tvBackStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_register_step2);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
 
         viewModel = new ViewModelProvider(this).get(RegisterStep2ViewModel.class);
 

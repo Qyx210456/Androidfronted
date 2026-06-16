@@ -406,6 +406,28 @@ public class LoanOrderRepository {
         });
     }
 
+    public void updateLoanOrderProductInfo(int orderId, String productName, String nextRepaymentDate, @NonNull UpdateProductInfoCallback callback) {
+        Log.d(TAG, "updateLoanOrderProductInfo: orderId=" + orderId + ", productName=" + productName + ", nextRepaymentDate=" + nextRepaymentDate);
+        localDataSource.updateLoanOrderProductInfo(orderId, productName, nextRepaymentDate, new LocalDataSource.DataSourceCallback<Void>() {
+            @Override
+            public void onSuccess(Void data) {
+                Log.d(TAG, "updateLoanOrderProductInfo onSuccess");
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "updateLoanOrderProductInfo onError: " + errorMessage);
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    public interface UpdateProductInfoCallback {
+        void onSuccess();
+        void onError(String errorMessage);
+    }
+
     public void getAllUnpaidStats(@NonNull UnpaidStatsCallback callback) {
         Log.d(TAG, "getAllUnpaidStats: starting to fetch unpaid stats");
         localDataSource.getAllLoanOrders(new LocalDataSource.DataSourceCallback<List<LoanOrderEntity>>() {

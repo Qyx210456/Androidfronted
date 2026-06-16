@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFF8FAFF">
+    android:background="#FFF8FAFF"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <!-- 顶部导航栏 -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -133,52 +137,74 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:paddingVertical="8dp">
+
             <TextView
+                android:id="@+id/tvAmountRange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="贷款金额："
-                android:textColor="@color/color_262626"
-                android:textSize="15sp" />
+                android:text=""
+                android:textColor="#4CAF50"
+                android:textSize="13sp"
+                android:layout_marginStart="80dp"
+                android:layout_marginBottom="4dp" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvAmountSelector"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_term_selector"
-                    android:elevation="2dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp">
-                    <TextView
-                        android:id="@+id/tvSelectedAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:text=""
-                        android:hint="请选择贷款金额"
-                        android:textColor="@color/text_quaternary"
-                        android:textColorHint="@color/text_quaternary"
-                        android:textSize="15sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="贷款金额："
+                    android:textColor="@color/color_262626"
+                    android:textSize="15sp" />
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_arrow_drop_down"
-                        app:tint="#FF458FFC" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvAmountSelector"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_term_selector"
+                        android:elevation="2dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp">
+                        <EditText
+                            android:id="@+id/etAmount"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            android:hint="请输入贷款金额"
+                            android:inputType="number"
+                            android:textColor="@color/number_amount"
+                            android:textColorHint="@color/text_quaternary"
+                            android:textSize="15sp"
+                            android:maxLines="1"
+                            android:imeOptions="actionDone" />
+                    </FrameLayout>
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvAmountError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#F44336"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="4dp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -188,7 +214,7 @@
             android:orientation="horizontal"
             android:paddingVertical="8dp">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:text="还款期数："
                 android:textColor="@color/color_262626"

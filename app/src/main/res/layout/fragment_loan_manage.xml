@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/loan_manage_bg_gradient"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +13,7 @@
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="16dp"
+        android:paddingTop="8dp"
         android:paddingBottom="32dp">
 
         <!-- 该月待还款卡片 -->
@@ -294,8 +295,9 @@
                         android:layout_centerInParent="true"
                         android:text="我的\n申请"
                         android:textColor="@color/loan_manage_my_applications"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lxgw_family"/>
 
                     <!-- 右下角箭头 -->
                     <ImageView
@@ -351,8 +353,9 @@
                         android:layout_centerInParent="true"
                         android:text="我的\n贷款"
                         android:textColor="@color/loan_manage_my_orders"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lxgw_family"/>
 
                     <!-- 右下角箭头 -->
                     <ImageView
@@ -407,8 +410,9 @@
                         android:layout_centerInParent="true"
                         android:text="还款\n记录"
                         android:textColor="@color/loan_manage_repayment_record"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lxgw_family"/>
 
                     <!-- 右下角箭头 -->
                     <ImageView

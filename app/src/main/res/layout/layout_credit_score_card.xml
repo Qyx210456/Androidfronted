@@ -104,7 +104,8 @@
                             android:layout_marginBottom="2dp"
                             android:text="信誉分"
                             android:textColor="@color/credit_basic_text_secondary"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lxgw_family"/>
 
                         <TextView
                             android:id="@+id/tv_score_remaining"
@@ -114,7 +115,8 @@
                             android:layout_marginBottom="2dp"
                             android:text=" 还差260信誉分可升级"
                             android:textColor="@color/credit_basic_text_secondary"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lxgw_family"/>
 
                         <ImageView
                             android:id="@+id/iv_arrow"
@@ -139,6 +141,7 @@
                             android:text="350 信誉分"
                             android:textColor="@color/credit_basic_text_secondary"
                             android:textSize="14sp"
+                            android:fontFamily="@font/lxgw_family"
                             android:textStyle="bold" />
                     </LinearLayout>
 

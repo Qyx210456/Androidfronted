@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--审批通过筛选按钮的文字颜色选择器-->
+    <item android:color="#16A34A" android:state_selected="true"/>
+    <item android:color="#374151"/> <!-- 未选中时的深灰色文字 -->
+</selector>

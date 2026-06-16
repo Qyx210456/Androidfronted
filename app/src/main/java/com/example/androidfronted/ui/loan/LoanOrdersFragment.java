@@ -58,6 +58,8 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
     @Override
     public void onResume() {
         super.onResume();
+        // 从详情页返回时，重新加载本地数据以显示最新的产品名称和还款日期
+        viewModel.loadLoanOrdersFromLocal();
         // 底部导航栏的隐藏由 BaseDetailFragment 处理
     }
 
@@ -109,6 +111,9 @@ public class LoanOrdersFragment extends com.example.androidfronted.ui.base.BaseD
         btnFilterNormal.setOnClickListener(v -> filterOrders("正常"));
         btnFilterOverdue.setOnClickListener(v -> filterOrders("已逾期"));
         btnFilterCompleted.setOnClickListener(v -> filterOrders("已完成"));
+
+        // 设置默认选中状态：全部按钮默认选中
+        btnFilterAll.setSelected(true);
     }
 
     private void loadData() {

@@ -4,7 +4,8 @@ import java.util.UUID
 
 data class ChatRequest(
     val message: String,
-    val session_id: String? = null
+    val sessionId: String? = null,  // 改为驼峰命名，匹配Java后端接口
+    val agentMode: String = "react"  // 智能体范式，默认react
 )
 
 data class ChatMessage(

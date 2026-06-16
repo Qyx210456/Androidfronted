@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8FAFF">
+    android:background="#FFF8FAFF"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
     <!--NestedScrollView布局确保内容可滚动-->
 
     <!-- 首页内容区域-->
@@ -17,7 +19,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="16dp">
 
             <!-- 使用LinearLayout包裹ImageView和TextView，并将其居中 -->
             <LinearLayout
@@ -54,7 +56,7 @@
             android:id="@+id/layoutSystemNotice"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/bg_notification_rounded"
             android:clickable="true"

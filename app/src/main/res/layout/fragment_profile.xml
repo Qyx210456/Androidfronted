@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_lightest"
-    android:fitsSystemWindows="false">
+    android:background="@color/gray_lightest">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -35,7 +34,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="44dp"
                     android:orientation="horizontal"
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp">
@@ -130,6 +129,7 @@
                                     android:layout_marginStart="4dp"
                                     android:text="未实名认证"
                                     android:textColor="@color/white"
+                                    android:fontFamily="@font/lxgw_family"
                                     android:textSize="14sp" />
                             </LinearLayout>
 
@@ -159,6 +159,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="4dp"
                                     android:text="编辑资料"
+                                    android:fontFamily="@font/lxgw_family"
                                     android:textColor="@color/white"
                                     android:textSize="14sp" />
                             </LinearLayout>

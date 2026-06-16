@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 上传类型选择底部弹窗的单个选项项布局 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <TextView
+            android:id="@+id/tv_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/iv_check"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_check_blue"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/defer_border_gray" />
+
+</LinearLayout>

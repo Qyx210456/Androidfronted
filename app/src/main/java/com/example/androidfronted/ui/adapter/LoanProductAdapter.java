@@ -3,7 +3,6 @@ package com.example.androidfronted.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,7 +53,6 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
 
      class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvProductName, tvDescription, tvLimitValue, tvTermValue, tvMinRateValue;
-        Button btnLearnMore;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,7 +61,6 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
             tvLimitValue = itemView.findViewById(R.id.tvLimitValue);
             tvTermValue = itemView.findViewById(R.id.tvTermValue);
             tvMinRateValue = itemView.findViewById(R.id.tvMinInterestRate);
-            btnLearnMore = itemView.findViewById(R.id.btnLearnMore);
         }
 
         void bind(LoanProduct product) {
@@ -95,7 +92,7 @@ public class LoanProductAdapter extends RecyclerView.Adapter<LoanProductAdapter.
             }
             tvTermValue.setText(termsText);
 
-            btnLearnMore.setOnClickListener(v -> {
+            itemView.setOnClickListener(v -> {
                 if (onLearnMoreClickListener != null) {
                     onLearnMoreClickListener.onLearnMoreClick(product);
                 }

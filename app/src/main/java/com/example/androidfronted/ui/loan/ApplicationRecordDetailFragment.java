@@ -157,8 +157,10 @@ public class ApplicationRecordDetailFragment extends BaseDetailFragment {
         // 设置状态
         String status = detail.getStatus();
         tvStatusLabel.setText(viewModel.getStatusText(status));
-        int statusColor = viewModel.getStatusColor(status);
-        tvStatusLabel.setBackgroundColor(requireContext().getResources().getColor(statusColor));
+        int statusBackgroundRes = viewModel.getStatusBackgroundRes(status);
+        tvStatusLabel.setBackgroundResource(statusBackgroundRes);
+        int statusTextColor = viewModel.getStatusTextColor(status);
+        tvStatusLabel.setTextColor(requireContext().getResources().getColor(statusTextColor));
 
         // 设置贷款金额
         DecimalFormat df = new DecimalFormat("#,##0.00");

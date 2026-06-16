@@ -1,186 +1,125 @@
 package com.example.androidfronted.ui.personalinformationinfo;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
-import com.example.androidfronted.ui.ImageEditActivity;
 import com.example.androidfronted.ui.InfoConfirmSuccessFragment;
 import com.example.androidfronted.ui.adapter.UploadedCertificateAdapter;
-import com.example.androidfronted.ui.base.BaseDetailFragment;
-import com.example.androidfronted.utils.ImageCropHelper;
-import com.example.androidfronted.utils.ImageUploadHelper;
 import com.example.androidfronted.viewmodel.auth.JobCertViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CertificateOfJobFragment extends BaseDetailFragment {
-    private Spinner spinnerCertType;
-    private Spinner spinnerUploadType;
-    private RecyclerView rvCertificates;
-    private UploadedCertificateAdapter adapter;
+public class CertificateOfJobFragment extends BaseCertFragment {
     private JobCertViewModel viewModel;
-    private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private ActivityResultLauncher<Intent> imageEditLauncher;
-    private ImageView ivUploadIcon;
-    private TextView tvUploadHint;
-    private File employmentFile;
-    private File salaryFile;
-    private Uri pendingImageUri;
-    private String pendingUploadType;
 
-    private String getMimeType(String filePath) {
-        String type = null;
-        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(filePath);
-        if (extension != null) {
-            type = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-        return type;
+    @Override
+    protected Object getViewModel() {
+        return viewModel;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_certificate_of_job, container, false);
+    protected int getLayoutId() {
+        return R.layout.fragment_certificate_of_job;
+    }
+
+    @Override
+    protected int getSuccessType() {
+        return InfoConfirmSuccessFragment.TYPE_JOB;
+    }
+
+    @Override
+    protected List<String> getCertTypes() {
+        List<String> certTypes = new ArrayList<>();
+        certTypes.add("全部");
+        certTypes.add("工作证明图片");
+        certTypes.add("工资流水截图或银行流水");
+        return certTypes;
+    }
+
+    @Override
+    protected List<String> getUploadTypes() {
+        List<String> types = new ArrayList<>();
+        types.add("工作证明图片");
+        types.add("工资流水截图或银行流水");
+        return types;
+    }
+
+    @Override
+    protected int getContainerNotCertifiedId() {
+        return R.id.container_not_certified;
+    }
+
+    @Override
+    protected int getContainerUploadingId() {
+        return R.id.container_uploading;
+    }
+
+    @Override
+    protected int getContainerCertifiedId() {
+        return R.id.container_certified;
+    }
+
+    @Override
+    protected int getBtnConfirmUploadId() {
+        return R.id.btn_confirm_employment_upload;
+    }
+
+    @Override
+    protected int getBtnAddId() {
+        return R.id.btn_add_job;
+    }
+
+    @Override
+    protected int getBtnStartUploadId() {
+        return R.id.btn_job_upload;
+    }
+
+    @Override
+    protected void onFileSelected(File file, String uploadType) {
+        if (uploadType != null && uploadType.contains("工作证明")) {
+            firstFile = file;
+            secondFile = null;
+        } else if (uploadType != null && uploadType.contains("工资")) {
+            secondFile = file;
+            firstFile = null;
+        }
+    }
+
+    @Override
+    protected void handleNavigation(int navigationType) {
+        switch (navigationType) {
+            case NavigationEvent.NAVIGATE_TO_PERSONAL_INFO:
+            case NavigationEvent.NAVIGATE_BACK:
+                navigateBack();
+                break;
+            case NavigationEvent.NAVIGATE_TO_JOB_CERT_UPLOAD:
+                viewModel.startUpload();
+                break;
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         viewModel = new ViewModelProvider(this).get(JobCertViewModel.class);
-        spinnerCertType = view.findViewById(R.id.spinner_filter);
-        spinnerUploadType = view.findViewById(R.id.spinner_employment_type);
-        rvCertificates = view.findViewById(R.id.rv_uploaded_certificates);
-        ivUploadIcon = view.findViewById(R.id.iv_upload_icon);
-        tvUploadHint = view.findViewById(R.id.tv_upload_hint);
-
-        setupImagePicker();
-        setupImageEditLauncher();
-        setupSpinner();
-        setupUploadSpinner();
-        setupRecyclerView();
-        setupObservers();
-        setupClickListeners(view);
-        loadCertInfo();
+        super.onViewCreated(view, savedInstanceState);
     }
 
-    private void setupImagePicker() {
-        imagePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri selectedImageUri = result.getData().getData();
-                        if (selectedImageUri != null) {
-                            pendingUploadType = spinnerUploadType.getSelectedItem() != null ? 
-                                spinnerUploadType.getSelectedItem().toString() : "";
-                            openImageEdit(selectedImageUri);
-                        }
-                    }
-                });
-    }
-
-    private void setupImageEditLauncher() {
-        imageEditLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri resultUri = result.getData().getParcelableExtra(ImageEditActivity.EXTRA_RESULT_URI);
-                        if (resultUri != null && ivUploadIcon != null) {
-                            ivUploadIcon.setImageURI(resultUri);
-                            if (tvUploadHint != null) {
-                                tvUploadHint.setVisibility(View.GONE);
-                            }
-                            Toast.makeText(getContext(), "图片已选择", Toast.LENGTH_SHORT).show();
-                            
-                            ImageCropHelper.compressCroppedImage(getContext(), resultUri,
-                                new ImageCropHelper.CropCallback() {
-                                    @Override
-                                    public void onSuccess(Uri compressedUri) {
-                                        File compressedFile = new File(compressedUri.getPath());
-                                        if (pendingUploadType.contains("工作证明")) {
-                                            employmentFile = compressedFile;
-                                        } else if (pendingUploadType.contains("工资")) {
-                                            salaryFile = compressedFile;
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                        }
-                    }
-                });
-    }
-
-    private void openImageEdit(Uri imageUri) {
-        Intent intent = new Intent(getContext(), ImageEditActivity.class);
-        intent.putExtra(ImageEditActivity.EXTRA_IMAGE_URI, imageUri);
-        intent.putExtra(ImageEditActivity.EXTRA_CROP_SHAPE, ImageEditActivity.CROP_SHAPE_RECTANGLE);
-        imageEditLauncher.launch(intent);
-    }
-
-    private void setupRecyclerView() {
-        adapter = new UploadedCertificateAdapter();
-        rvCertificates.setAdapter(adapter);
-    }
-
-    private void setupSpinner() {
-        String[] certTypes = new String[]{"工作证明图片", "工资流水截图或银行流水"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
-            android.R.layout.simple_spinner_item, certTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCertType.setAdapter(adapter);
-    }
-
-    private void setupUploadSpinner() {
-        String[] uploadTypes = new String[]{"工作证明图片", "工资流水截图或银行流水"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
-            android.R.layout.simple_spinner_item, uploadTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerUploadType.setAdapter(adapter);
-    }
-
-    private void setupObservers() {
-        viewModel.getCertState().observe(getViewLifecycleOwner(), state -> {
-            updateUIByState(state);
-        });
+    @Override
+    protected void setupObservers() {
+        viewModel.getCertState().observe(getViewLifecycleOwner(), this::updateUIByState);
 
         viewModel.getCertData().observe(getViewLifecycleOwner(), certData -> {
             if (certData != null && getView() != null && adapter != null) {
-                List<UploadedCertificateAdapter.CertificateItem> items = new ArrayList<>();
-                
-                if (certData.getEmploymentCertPath() != null && !certData.getEmploymentCertPath().isEmpty()) {
-                    items.add(new UploadedCertificateAdapter.CertificateItem("工作证明图片", certData.getEmploymentCertPath()));
-                }
-                
-                if (certData.getSalaryCertPath() != null && !certData.getSalaryCertPath().isEmpty()) {
-                    items.add(new UploadedCertificateAdapter.CertificateItem("工资流水截图或银行流水", certData.getSalaryCertPath()));
-                }
-                
-                adapter.setItems(items);
+                filterCertificates();
             }
         });
 
@@ -198,79 +137,13 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
 
         viewModel.getNavigationEvent().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
-                handleNavigation(event);
+                handleNavigation(event.getNavigationType());
             }
         });
     }
 
-    private void setupClickListeners(View view) {
-        view.findViewById(R.id.btn_job_upload).setOnClickListener(v -> {
-            viewModel.startUpload();
-        });
-
-        view.findViewById(R.id.btn_add_job).setOnClickListener(v -> {
-            viewModel.startUpload();
-        });
-
-        view.findViewById(R.id.btn_confirm_employment_upload).setOnClickListener(v -> {
-            android.util.Log.d("CertificateOfJobFragment", "btn_confirm_employment_upload clicked");
-            
-            if (employmentFile == null && salaryFile == null) {
-                Toast.makeText(getContext(), "请先选择要上传的图片", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
-            okhttp3.RequestBody employmentRequestBody = null;
-            okhttp3.RequestBody salaryRequestBody = null;
-            
-            if (employmentFile != null) {
-                String mimeType = getMimeType(employmentFile.getAbsolutePath());
-                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
-                employmentRequestBody = okhttp3.RequestBody.create(
-                    mediaType,
-                    employmentFile
-                );
-            }
-            
-            if (salaryFile != null) {
-                String mimeType = getMimeType(salaryFile.getAbsolutePath());
-                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
-                salaryRequestBody = okhttp3.RequestBody.create(
-                    mediaType,
-                    salaryFile
-                );
-            }
-            
-            android.util.Log.d("CertificateOfJobFragment", "calling viewModel.submitCert");
-            android.util.Log.d("CertificateOfJobFragment", "employmentFile: " + (employmentFile != null ? employmentFile.getAbsolutePath() : "null"));
-            android.util.Log.d("CertificateOfJobFragment", "salaryFile: " + (salaryFile != null ? salaryFile.getAbsolutePath() : "null"));
-            viewModel.submitCert(employmentRequestBody, salaryRequestBody);
-        });
-
-        view.findViewById(R.id.iv_upload_icon).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            imagePickerLauncher.launch(intent);
-        });
-
-        view.findViewById(R.id.btn_delete).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "管理", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void navigateToSuccessPage() {
-        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
-        Bundle args = new Bundle();
-        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, InfoConfirmSuccessFragment.TYPE_JOB);
-        successFragment.setArguments(args);
-        
-        getParentFragmentManager().beginTransaction()
-                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
-                .commit();
-    }
-
-    private void loadCertInfo() {
+    @Override
+    protected void loadCertInfo() {
         viewModel.getCertInfo(new JobCertViewModel.CertInfoCallback() {
             @Override
             public void onSuccess(CertInfoResponse response) {
@@ -282,70 +155,59 @@ public class CertificateOfJobFragment extends BaseDetailFragment {
         });
     }
 
-    private void updateUIByState(CertState state) {
-        if (getView() == null) return;
-
-        View containerNotCertified = getView().findViewById(R.id.container_not_certified);
-        View containerUploading = getView().findViewById(R.id.container_uploading);
-        View containerCertified = getView().findViewById(R.id.container_certified);
-        View btnConfirmUpload = getView().findViewById(R.id.btn_confirm_employment_upload);
-        View btnAddJob = getView().findViewById(R.id.btn_add_job);
-
-        if (containerNotCertified != null) containerNotCertified.setVisibility(View.GONE);
-        if (containerUploading != null) containerUploading.setVisibility(View.GONE);
-        if (containerCertified != null) containerCertified.setVisibility(View.GONE);
-        if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.GONE);
-        if (btnAddJob != null) btnAddJob.setVisibility(View.GONE);
-
-        if (state == null) {
-            return;
-        }
-
-        switch (state) {
-            case NOT_CERTIFIED:
-                if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);
-                break;
-            case UPLOADING:
-                if (containerUploading != null) containerUploading.setVisibility(View.VISIBLE);
-                if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.VISIBLE);
-                break;
-            case CERTIFIED:
-                if (containerCertified != null) containerCertified.setVisibility(View.VISIBLE);
-                if (btnAddJob != null) btnAddJob.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
-    private void handleNavigation(NavigationEvent event) {
-        switch (event.getNavigationType()) {
-            case NavigationEvent.NAVIGATE_TO_PERSONAL_INFO:
-                navigateBack();
-                break;
-            case NavigationEvent.NAVIGATE_BACK:
-                navigateBack();
-                break;
-            case NavigationEvent.NAVIGATE_TO_JOB_CERT_UPLOAD:
-                viewModel.startUpload();
-                break;
-        }
+    @Override
+    protected void submitCert() {
+        android.util.Log.d("CertificateOfJobFragment", "submitCert called");
+        viewModel.submitCert(createRequestBody(firstFile), createRequestBody(secondFile));
     }
 
     @Override
-    protected void navigateBack() {
-        CertState currentState = viewModel.getCertState().getValue();
-        if (currentState == CertState.UPLOADING) {
-            viewModel.cancelUpload();
-        } else {
-            super.navigateBack();
+    protected void filterCertificates() {
+        if (adapter == null) return;
+        
+        CertInfoResponse.WorkCert certData = viewModel.getCertData().getValue();
+        if (certData == null) return;
+        
+        List<UploadedCertificateAdapter.CertificateItem> items = new ArrayList<>();
+        
+        if (currentFilterType.equals("全部") || currentFilterType.equals("工作证明图片")) {
+            if (certData.getEmploymentCertPath() != null && !certData.getEmploymentCertPath().isEmpty()) {
+                items.add(new UploadedCertificateAdapter.CertificateItem("工作证明图片", certData.getEmploymentCertPath()));
+            }
         }
+        
+        if (currentFilterType.equals("全部") || currentFilterType.equals("工资流水截图或银行流水")) {
+            if (certData.getSalaryCertPath() != null && !certData.getSalaryCertPath().isEmpty()) {
+                items.add(new UploadedCertificateAdapter.CertificateItem("工资流水截图或银行流水", certData.getSalaryCertPath()));
+            }
+        }
+        
+        adapter.setItems(items);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        CertState currentState = viewModel.getCertState().getValue();
-        if (currentState != CertState.UPLOADING) {
-            loadCertInfo();
-        }
+    protected void onStartUploadClick() {
+        viewModel.startUpload();
+    }
+
+    @Override
+    protected CertState getCertStateValue() {
+        return viewModel.getCertState().getValue();
+    }
+
+    @Override
+    protected void cancelUpload() {
+        viewModel.cancelUpload();
+    }
+
+    private void navigateToSuccessPage() {
+        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
+        Bundle args = new Bundle();
+        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, getSuccessType());
+        successFragment.setArguments(args);
+        
+        getParentFragmentManager().beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
+                .commit();
     }
 }

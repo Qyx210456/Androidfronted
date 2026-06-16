@@ -247,6 +247,27 @@ public class LocalDataSource {
 
     public void saveLoanOrders(List<LoanOrderEntity> orders) {
         executor.execute(() -> {
+            // 先读取本地已有的数据，保留productName和nextRepaymentDate字段
+            List<LoanOrderEntity> existingOrders = loanOrderDao.getAllLoanOrders();
+            java.util.Map<Integer, LoanOrderEntity> existingMap = new java.util.HashMap<>();
+            for (LoanOrderEntity order : existingOrders) {
+                existingMap.put(order.getId(), order);
+            }
+            
+            // 合并数据：保留已有的productName和nextRepaymentDate
+            for (LoanOrderEntity newOrder : orders) {
+                LoanOrderEntity existing = existingMap.get(newOrder.getId());
+                if (existing != null) {
+                    // 如果本地已有数据，保留productName和nextRepaymentDate
+                    if (existing.getProductName() != null && !existing.getProductName().isEmpty()) {
+                        newOrder.setProductName(existing.getProductName());
+                    }
+                    if (existing.getNextRepaymentDate() != null && !existing.getNextRepaymentDate().isEmpty()) {
+                        newOrder.setNextRepaymentDate(existing.getNextRepaymentDate());
+                    }
+                }
+            }
+            
             loanOrderDao.deleteAll();
             loanOrderDao.insertAll(orders);
         });
@@ -305,6 +326,23 @@ public class LocalDataSource {
             try {
                 loanOrderDetailDao.updateCurrentTerm(orderId, newCurrentTerm);
                 loanOrderDao.updateCurrentTerm(orderId, newCurrentTerm);
+                mainHandler.post(() -> callback.onSuccess(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mainHandler.post(() -> callback.onError(e.getMessage()));
+            }
+        });
+    }
+
+    public void updateLoanOrderProductInfo(int orderId, String productName, String nextRepaymentDate, DataSourceCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                if (productName != null && !productName.isEmpty()) {
+                    loanOrderDao.updateProductName(orderId, productName);
+                }
+                if (nextRepaymentDate != null && !nextRepaymentDate.isEmpty()) {
+                    loanOrderDao.updateNextRepaymentDate(orderId, nextRepaymentDate);
+                }
                 mainHandler.post(() -> callback.onSuccess(null));
             } catch (Exception e) {
                 e.printStackTrace();

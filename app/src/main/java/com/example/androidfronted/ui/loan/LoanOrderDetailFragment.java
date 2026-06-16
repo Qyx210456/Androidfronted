@@ -213,7 +213,7 @@ public class LoanOrderDetailFragment extends BaseDetailFragment {
         tvLoanName.setText(detail.getProductName());
 
         String status = detail.getStatus();
-        tvOrderStatus.setText(status);
+        tvOrderStatus.setText(viewModel.getStatusText(status));
         tvOrderStatus.setBackgroundResource(viewModel.getStatusBackground(status));
         tvOrderStatus.setTextColor(requireContext().getResources().getColor(viewModel.getStatusTextColor(status)));
 

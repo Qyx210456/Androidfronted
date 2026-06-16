@@ -1,38 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:background="@drawable/bg_dialog_top_rounded">
 
-    <!--贷款详情页还款期限选择底部弹窗选择器-->
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="选择还款期数"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/color_242c2f"
-        android:gravity="center"
-        android:paddingBottom="16dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
-    <NumberPicker
-        android:id="@+id/numberPicker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="16dp" />
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_btn_cancel"
+            app:backgroundTint="@null"
+            android:text="取消"
+            android:textColor="#FF666666"
+            android:textSize="15sp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:minWidth="80dp" />
 
-    <Button
-        android:id="@+id/btnConfirm"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="选择还款期数"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/defer_dark_blue"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_btn_confirm"
+            app:backgroundTint="@null"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:minWidth="80dp" />
+
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_gradient_blue_horizontal"
-        android:text="确认"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_height="1dp"
+        android:background="#FFE5E5E5" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
+
+        <com.example.androidfronted.widget.TermNumberPicker
+            android:id="@+id/numberPicker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="-30dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="#FFE5E5E5" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="#FFE5E5E5" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
 
 </LinearLayout>

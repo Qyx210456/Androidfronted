@@ -161,6 +161,14 @@ public class PersonalInfoFragment extends BaseDetailFragment {
     }
 
     @Override
+    protected void navigateBack() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBottomNavigationVisible(true);
+        }
+        super.navigateBack();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         android.util.Log.d("PersonalInfoFragment", "onPause called");

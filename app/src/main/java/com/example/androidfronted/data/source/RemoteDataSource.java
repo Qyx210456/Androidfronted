@@ -75,6 +75,9 @@ public class RemoteDataSource {
                     }
 
                     T res = gson.fromJson(responseBody, responseClass);
+                    // 添加日志输出返回体
+                    Log.d(TAG, requestName + " response: " + responseBody);
+                    Log.d(TAG, requestName + " parsed response: " + res);
                     mainHandler.post(() -> callback.onSuccess(res));
                 } catch (Exception e) {
                     Log.e(TAG, "Parse " + requestName + " response failed", e);

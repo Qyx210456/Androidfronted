@@ -1,29 +1,32 @@
 package com.example.androidfronted.ui;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.NumberPicker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.LoanProduct;
 import com.example.androidfronted.ui.adapter.LoanOptionAdapter;
+import com.example.androidfronted.ui.loan.TermPickerBottomSheet;
 import com.example.androidfronted.viewmodel.loan.ProductDetailViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,14 +40,20 @@ public class ProductDetailActivity extends AppCompatActivity {
     private LoanProduct product;
     private LoanOptionAdapter optionAdapter;
     private TextView tvSelectedTerm;
-    private TextView tvSelectedAmount;
+    private EditText etAmount;
+    private TextView tvAmountRange;
+    private TextView tvAmountError;
+    private CardView cvAmountSelector;
     private Button btnApplyGlobal;
+    private DecimalFormat decimalFormat;
+    private LinearLayout rootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_detail);
 
+        decimalFormat = new DecimalFormat("#,###");
         viewModel = new ViewModelProvider(this).get(ProductDetailViewModel.class);
 
         setupObservers();
@@ -54,22 +63,12 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void setupObservers() {
         viewModel.getIsLoading().observe(this, isLoading -> {
-            if (isLoading) {
-                btnApplyGlobal.setEnabled(false);
-            } else {
-                btnApplyGlobal.setEnabled(true);
-            }
+            btnApplyGlobal.setEnabled(!isLoading);
         });
 
         viewModel.getErrorMessage().observe(this, errorMessage -> {
             if (errorMessage != null) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        viewModel.getValidationError().observe(this, error -> {
-            if (error != null) {
-                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -81,21 +80,58 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> viewModel.navigateBack());
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
+        rootLayout = findViewById(R.id.root_layout);
         tvSelectedTerm = findViewById(R.id.tvSelectedTerm);
-        tvSelectedAmount = findViewById(R.id.tvSelectedAmount);
+        etAmount = findViewById(R.id.etAmount);
+        tvAmountRange = findViewById(R.id.tvAmountRange);
+        tvAmountError = findViewById(R.id.tvAmountError);
+        cvAmountSelector = findViewById(R.id.cvAmountSelector);
         btnApplyGlobal = findViewById(R.id.btnApplyGlobal);
         View cvTermSelector = findViewById(R.id.cvTermSelector);
-        View cvAmountSelector = findViewById(R.id.cvAmountSelector);
 
         tvSelectedTerm.setText("");
-        tvSelectedAmount.setText("");
 
         cvTermSelector.setOnClickListener(v -> showTermPickerDialog());
-        cvAmountSelector.setOnClickListener(v -> showAmountInputDialog());
 
-        btnApplyGlobal.setOnClickListener(v -> viewModel.validateAndNavigateToApply());
+        etAmount.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                validateAmountOnFocusLost();
+            }
+        });
+
+        etAmount.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                etAmount.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etAmount.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
+        btnApplyGlobal.setOnClickListener(v -> validateAndSubmit());
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                float x = ev.getRawX() + v.getLeft() - location[0];
+                float y = ev.getRawY() + v.getTop() - location[1];
+                
+                if (x < v.getLeft() || x > v.getRight() || y < v.getTop() || y > v.getBottom()) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void loadProductData() {
@@ -108,6 +144,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         Log.d(TAG, "产品最小金额: " + product.getMinAmount() + ", 最大金额: " + product.getMaxAmount());
 
         viewModel.setProduct(product);
+        
+        String rangeText = "贷款金额范围: " + decimalFormat.format(product.getMinAmount()) + " ~ " + decimalFormat.format(product.getMaxAmount()) + " 元";
+        tvAmountRange.setText(rangeText);
+        
         bindProductInfo();
         bindOptions();
     }
@@ -140,100 +180,107 @@ public class ProductDetailActivity extends AppCompatActivity {
         List<Integer> terms = new ArrayList<>(product.getTerms());
         Collections.sort(terms);
 
-        NumberPicker picker = new NumberPicker(this);
-        picker.setMinValue(0);
-        picker.setMaxValue(terms.size() - 1);
-        picker.setDisplayedValues(terms.stream().map(t -> t + "期").toArray(String[]::new));
-
         Integer currentTerm = viewModel.getSelectedTerm().getValue();
-        if (currentTerm != null && currentTerm > 0 && terms.contains(currentTerm)) {
-            picker.setValue(terms.indexOf(currentTerm));
-        }
+        int selectedTerm = currentTerm != null ? currentTerm : 0;
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("选择还款期数")
-                .setView(picker)
-                .setPositiveButton("确定", (d, w) -> {
-                    int selectedTerm = terms.get(picker.getValue());
-                    viewModel.setSelectedTerm(selectedTerm);
-                    tvSelectedTerm.setText(selectedTerm + "期");
-                    tvSelectedTerm.setTextColor(ContextCompat.getColor(ProductDetailActivity.this, R.color.number_amount));
-                })
-                .setNegativeButton("取消", null)
-                .create();
-
-        Window window = dialog.getWindow();
-        if (window != null) {
-            window.setGravity(Gravity.BOTTOM);
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            window.setAttributes(params);
-        }
-
-        dialog.show();
+        TermPickerBottomSheet bottomSheet = TermPickerBottomSheet.newInstance(terms, selectedTerm);
+        bottomSheet.setOnTermSelectedListener(term -> {
+            viewModel.setSelectedTerm(term);
+            tvSelectedTerm.setText(term + "期");
+            tvSelectedTerm.setTextColor(ContextCompat.getColor(ProductDetailActivity.this, R.color.number_amount));
+        });
+        bottomSheet.show(getSupportFragmentManager(), "TermPickerBottomSheet");
     }
 
-    private void showAmountInputDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("输入贷款金额");
+    private void validateAmountOnFocusLost() {
+        String amountStr = etAmount.getText().toString().trim();
         
-        final EditText input = new EditText(this);
-        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        input.setHint("请输入贷款金额（" + product.getMinAmount() + "-" + product.getMaxAmount() + "）");
-        builder.setView(input);
+        if (amountStr.isEmpty()) {
+            clearAmountError();
+            viewModel.setSelectedAmount(0);
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(amountStr);
+            String error = validateAmount(amount);
+            
+            if (error != null) {
+                showAmountError(error);
+            } else {
+                clearAmountError();
+                viewModel.setSelectedAmount(amount);
+            }
+        } catch (NumberFormatException e) {
+            showAmountError("请输入有效的数字");
+        }
+    }
+
+    private String validateAmount(double amount) {
+        if (amount <= 0) {
+            return "贷款金额必须大于0";
+        }
+        if (amount < product.getMinAmount()) {
+            return "金额不能低于 " + decimalFormat.format(product.getMinAmount()) + " 元";
+        }
+        if (amount > product.getMaxAmount()) {
+            return "金额不能高于 " + decimalFormat.format(product.getMaxAmount()) + " 元";
+        }
+        return null;
+    }
+
+    private void showAmountError(String error) {
+        tvAmountError.setText(error);
+        tvAmountError.setVisibility(View.VISIBLE);
+        FrameLayout frameLayout = (FrameLayout) cvAmountSelector.getChildAt(0);
+        frameLayout.setBackgroundResource(R.drawable.bg_amount_error);
+        etAmount.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+    }
+
+    private void clearAmountError() {
+        tvAmountError.setVisibility(View.GONE);
+        FrameLayout frameLayout = (FrameLayout) cvAmountSelector.getChildAt(0);
+        frameLayout.setBackgroundResource(R.drawable.bg_term_selector);
+        etAmount.setTextColor(ContextCompat.getColor(this, R.color.number_amount));
+    }
+
+    private void validateAndSubmit() {
+        String amountStr = etAmount.getText().toString().trim();
         
-        builder.setPositiveButton("确定", null);
-        builder.setNegativeButton("取消", (dialog, which) -> {
-            Log.d(TAG, "用户点击取消");
-            dialog.dismiss();
-        });
-        
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialogInterface -> {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                String amountStr = input.getText().toString();
-                Log.d(TAG, "用户输入金额: " + amountStr);
-                
-                if (amountStr.isEmpty()) {
-                    Log.e(TAG, "金额为空");
-                    Toast.makeText(this, "请输入贷款金额", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                
-                try {
-                    double amount = Double.parseDouble(amountStr);
-                    Log.d(TAG, "解析金额: " + amount + ", min: " + product.getMinAmount() + ", max: " + product.getMaxAmount());
-                    
-                    if (amount <= 0) {
-                        Log.e(TAG, "金额必须大于0");
-                        Toast.makeText(this, "贷款金额必须大于0", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (amount < product.getMinAmount()) {
-                        Log.e(TAG, "金额小于最小值: " + amount + " < " + product.getMinAmount());
-                        Toast.makeText(this, "贷款金额不能小于" + product.getMinAmount() + "元", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (amount > product.getMaxAmount()) {
-                        Log.e(TAG, "金额大于最大值: " + amount + " > " + product.getMaxAmount());
-                        Toast.makeText(this, "贷款金额不能大于" + product.getMaxAmount() + "元", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    
-                    Log.d(TAG, "金额验证通过，设置selectedAmount: " + amount);
-                    viewModel.setSelectedAmount(amount);
-                    tvSelectedAmount.setText(amount + "元");
-                    tvSelectedAmount.setTextColor(ContextCompat.getColor(ProductDetailActivity.this, R.color.number_amount));
-                    dialog.dismiss();
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, "数字格式错误: " + e.getMessage());
-                    Toast.makeText(this, "请输入有效的数字", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-        
-        dialog.show();
+        if (amountStr.isEmpty()) {
+            showAmountError("请输入贷款金额");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(amountStr);
+            String error = validateAmount(amount);
+            
+            if (error != null) {
+                showAmountError(error);
+                return;
+            }
+            
+            clearAmountError();
+            viewModel.setSelectedAmount(amount);
+            
+            Integer selectedTerm = viewModel.getSelectedTerm().getValue();
+            if (selectedTerm == null) {
+                Toast.makeText(this, "请选择还款期数", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            LoanProduct.LoanOption selectedOption = viewModel.getSelectedOption().getValue();
+            if (selectedOption == null) {
+                Toast.makeText(this, "请选择方案", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            viewModel.validateAndNavigateToApply();
+            
+        } catch (NumberFormatException e) {
+            showAmountError("请输入有效的数字");
+        }
     }
 
     private void bindOptions() {

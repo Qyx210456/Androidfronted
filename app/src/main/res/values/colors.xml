@@ -54,7 +54,7 @@
     <!-- 主色调 - 蓝色系 -->
     <color name="main_blue">#FF2D7FF9</color>
     <color name="light_blue">#FF5C9EFF</color>
-    <color name="bg_notification">#FFF0F7FF</color>
+    <color name="bg_notification">#FFE0EDFF</color>
     <color name="lightest_blue">#FFF8FAFF</color>
     <color name="notification_blue">#FFF0F7FF</color>
 
@@ -144,6 +144,12 @@
     <color name="application_detail_status_corner_approved">#22C55E</color>
     <color name="application_detail_status_corner_rejected">#EF4444</color>
     <color name="application_detail_status_corner_cancelled">#6B7280</color>
+
+    <!--单个申请详情中随数据状态切换的文字颜色-->
+    <color name="application_detail_status_text_pending">#1F6FEB</color>
+    <color name="application_detail_status_text_approved">#16A34A</color>
+    <color name="application_detail_status_text_rejected">#DC2626</color>
+    <color name="application_detail_status_text_cancelled">#6B7280</color>
 
     <!--贷款订单列表状态角标背景边框及字体颜色-->
     <!-- 状态：正常 (蓝色) -->

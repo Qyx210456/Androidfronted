@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="贷款信息"
-                    android:textColor="#B3E0FF"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="当前剩余本金"
-                        android:textColor="#B3E0FF"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
 
                     <TextView
@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="年利率 (APR)"
-                        android:textColor="#B3E0FF"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
 
                     <TextView
@@ -127,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="贷款起始日"
-                        android:textColor="#B3E0FF"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
 
                     <TextView
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="贷款到期日"
-                        android:textColor="#B3E0FF"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
 
                     <TextView

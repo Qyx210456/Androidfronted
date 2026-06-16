@@ -79,6 +79,9 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                 hideLoading();
                 orderDetail.postValue(detail);
                 loadRepaymentPlanData(orderId, detail.getRepaidAmount(), detail.getCurrentTerm());
+                
+                // 更新本地数据库中的productName
+                updateProductName(orderId, detail.getProductName());
             }
 
             @Override
@@ -87,6 +90,22 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                 showError(errorMsg);
             }
         });
+    }
+
+    private void updateProductName(int orderId, String productName) {
+        if (productName != null && !productName.isEmpty()) {
+            loanOrderRepository.updateLoanOrderProductInfo(orderId, productName, "", new LoanOrderRepository.UpdateProductInfoCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "updateProductName onSuccess: orderId=" + orderId + ", productName=" + productName);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "updateProductName onError: " + errorMessage);
+                }
+            });
+        }
     }
 
     public void refreshOrderDetail(int orderId) {
@@ -159,6 +178,11 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                     double unpaidTotalSum = 0;
                     double unpaidPrincipalSum = 0;
                     double unpaidInterestSum = 0;
+                    String nextRepaymentDate = "";
+                    
+                    // 获取订单详情的状态
+                    LoanOrderDetailEntity detail = orderDetail.getValue();
+                    String orderStatus = detail != null ? detail.getStatus() : "";
                     
                     for (RepaymentPlanEntity plan : plans) {
                         total += plan.getTotalAmount();
@@ -167,6 +191,19 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                             unpaidTotalSum += plan.getTotalAmount();
                             unpaidPrincipalSum += plan.getPrincipal();
                             unpaidInterestSum += plan.getInterest();
+                            
+                            // 找到下次还款日期（第一个未还的期数）
+                            if (nextRepaymentDate.isEmpty()) {
+                                nextRepaymentDate = plan.getDueDate();
+                            }
+                        }
+                        
+                        // 对于已完成订单，获取currentTerm期的实际还款日期作为结清日期
+                        if ("已完成".equals(orderStatus) && plan.getTerm() == currentTerm) {
+                            String actualPayDate = plan.getActualPayDate();
+                            if (actualPayDate != null && !actualPayDate.isEmpty()) {
+                                nextRepaymentDate = actualPayDate;
+                            }
                         }
                     }
                     
@@ -175,6 +212,11 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                     unpaidPrincipal.postValue(unpaidPrincipalSum);
                     unpaidInterest.postValue(unpaidInterestSum);
                     calculateProgress(repaidAmount, total);
+                    
+                    // 更新下次还款日期或结清日期到本地数据库
+                    if (!nextRepaymentDate.isEmpty()) {
+                        updateNextRepaymentDate(orderId, nextRepaymentDate);
+                    }
                 }
             }
 
@@ -183,6 +225,22 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                 Log.e(TAG, "Failed to load repayment plan: " + errorMessage);
             }
         });
+    }
+
+    private void updateNextRepaymentDate(int orderId, String nextRepaymentDate) {
+        if (nextRepaymentDate != null && !nextRepaymentDate.isEmpty()) {
+            loanOrderRepository.updateLoanOrderProductInfo(orderId, "", nextRepaymentDate, new LoanOrderRepository.UpdateProductInfoCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "updateNextRepaymentDate onSuccess: orderId=" + orderId + ", nextRepaymentDate=" + nextRepaymentDate);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "updateNextRepaymentDate onError: " + errorMessage);
+                }
+            });
+        }
     }
 
     private void calculateProgress(double repaidAmount, double totalAmount) {
@@ -235,6 +293,19 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                 return R.color.order_status_completed_text;
             default:
                 return R.color.order_status_normal_text;
+        }
+    }
+
+    public String getStatusText(String status) {
+        switch (status) {
+            case "正常":
+                return "还款中";
+            case "已完成":
+                return "已结清";
+            case "已逾期":
+                return "已逾期";
+            default:
+                return status;
         }
     }
 

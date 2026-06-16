@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.androidfronted.ui.MainActivity
 import com.example.androidfronted.ui.smartcustomerservice.screen.SmartCustomerServiceScreen
 import com.example.androidfronted.viewmodel.smartcustomerservice.ChatViewModel
+import com.example.androidfronted.util.FloatingBallManager
 
 class SmartCustomerServiceFragment : Fragment() {
     
@@ -26,9 +27,15 @@ class SmartCustomerServiceFragment : Fragment() {
     }
     
     private var onBackCallback: (() -> Unit)? = null
+    private var finishOnBack: Boolean = false
     
     fun setOnBackCallback(callback: () -> Unit) {
         onBackCallback = callback
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        finishOnBack = arguments?.getBoolean(ARG_FINISH_ON_BACK, false) ?: false
     }
     
     override fun onCreateView(
@@ -48,8 +55,10 @@ class SmartCustomerServiceFragment : Fragment() {
                     onBackClick = {
                         if (onBackCallback != null) {
                             onBackCallback?.invoke()
-                        } else {
+                        } else if (parentFragmentManager.backStackEntryCount > 0) {
                             parentFragmentManager.popBackStack()
+                        } else {
+                            activity?.finish()
                         }
                     }
                 )
@@ -68,8 +77,14 @@ class SmartCustomerServiceFragment : Fragment() {
     }
     
     companion object {
-        fun newInstance(): SmartCustomerServiceFragment {
-            return SmartCustomerServiceFragment()
+        private const val ARG_FINISH_ON_BACK = "finish_on_back"
+        
+        fun newInstance(finishOnBack: Boolean = false): SmartCustomerServiceFragment {
+            return SmartCustomerServiceFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(ARG_FINISH_ON_BACK, finishOnBack)
+                }
+            }
         }
     }
 }

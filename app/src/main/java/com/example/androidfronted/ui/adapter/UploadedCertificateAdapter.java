@@ -48,16 +48,6 @@ public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCer
         notifyDataSetChanged();
     }
 
-    public List<String> getAllImageUrls() {
-        List<String> urls = new ArrayList<>();
-        for (CertificateItem item : items) {
-            if (item.getImagePath() != null && !item.getImagePath().isEmpty()) {
-                urls.add(ImageUrlHelper.getFullImageUrl(item.getImagePath()));
-            }
-        }
-        return urls;
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -78,13 +68,9 @@ public class UploadedCertificateAdapter extends RecyclerView.Adapter<UploadedCer
             
             holder.ivImage.setOnClickListener(v -> {
                 Context context = holder.itemView.getContext();
-                List<String> allUrls = getAllImageUrls();
-                int currentPosition = allUrls.indexOf(imageUrl);
-                if (currentPosition < 0) currentPosition = 0;
                 
                 Intent intent = new Intent(context, ImagePreviewActivity.class);
-                intent.putStringArrayListExtra(ImagePreviewActivity.EXTRA_IMAGE_URLS, new ArrayList<>(allUrls));
-                intent.putExtra(ImagePreviewActivity.EXTRA_CURRENT_POSITION, currentPosition);
+                intent.putExtra(ImagePreviewActivity.EXTRA_SINGLE_IMAGE_URL, imageUrl);
                 context.startActivity(intent);
             });
         } else {

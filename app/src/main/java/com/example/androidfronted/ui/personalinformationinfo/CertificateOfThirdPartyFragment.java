@@ -1,185 +1,125 @@
 package com.example.androidfronted.ui.personalinformationinfo;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
-import com.example.androidfronted.ui.ImageEditActivity;
 import com.example.androidfronted.ui.InfoConfirmSuccessFragment;
 import com.example.androidfronted.ui.adapter.UploadedCertificateAdapter;
-import com.example.androidfronted.ui.base.BaseDetailFragment;
-import com.example.androidfronted.utils.ImageCropHelper;
-import com.example.androidfronted.utils.ImageUploadHelper;
 import com.example.androidfronted.viewmodel.auth.ThirdPartyCertViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
-    private Spinner spinnerCertType;
-    private Spinner spinnerUploadType;
-    private RecyclerView rvCertificates;
-    private UploadedCertificateAdapter adapter;
+public class CertificateOfThirdPartyFragment extends BaseCertFragment {
     private ThirdPartyCertViewModel viewModel;
-    private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private ActivityResultLauncher<Intent> imageEditLauncher;
-    private ImageView ivUploadIcon;
-    private TextView tvUploadHint;
-    private File socialSecurityFile;
-    private File creditReportFile;
-    private String pendingUploadType;
 
-    private String getMimeType(String filePath) {
-        String type = null;
-        String extension = android.webkit.MimeTypeMap.getFileExtensionFromUrl(filePath);
-        if (extension != null) {
-            type = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-        return type;
+    @Override
+    protected Object getViewModel() {
+        return viewModel;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_certificate_of_third_party, container, false);
+    protected int getLayoutId() {
+        return R.layout.fragment_certificate_of_third_party;
+    }
+
+    @Override
+    protected int getSuccessType() {
+        return InfoConfirmSuccessFragment.TYPE_THIRD_PARTY;
+    }
+
+    @Override
+    protected List<String> getCertTypes() {
+        List<String> certTypes = new ArrayList<>();
+        certTypes.add("全部");
+        certTypes.add("社保缴纳记录图片");
+        certTypes.add("征信报告图片");
+        return certTypes;
+    }
+
+    @Override
+    protected List<String> getUploadTypes() {
+        List<String> types = new ArrayList<>();
+        types.add("社保缴纳记录图片");
+        types.add("征信报告图片");
+        return types;
+    }
+
+    @Override
+    protected int getContainerNotCertifiedId() {
+        return R.id.container_not_certified;
+    }
+
+    @Override
+    protected int getContainerUploadingId() {
+        return R.id.container_uploading;
+    }
+
+    @Override
+    protected int getContainerCertifiedId() {
+        return R.id.container_certified;
+    }
+
+    @Override
+    protected int getBtnConfirmUploadId() {
+        return R.id.btn_confirm_third_party_upload;
+    }
+
+    @Override
+    protected int getBtnAddId() {
+        return R.id.btn_add_other;
+    }
+
+    @Override
+    protected int getBtnStartUploadId() {
+        return R.id.btn_other_upload;
+    }
+
+    @Override
+    protected void onFileSelected(File file, String uploadType) {
+        if (uploadType != null && uploadType.contains("社保")) {
+            firstFile = file;
+            secondFile = null;
+        } else if (uploadType != null && uploadType.contains("征信")) {
+            secondFile = file;
+            firstFile = null;
+        }
+    }
+
+    @Override
+    protected void handleNavigation(int navigationType) {
+        switch (navigationType) {
+            case NavigationEvent.NAVIGATE_TO_PERSONAL_INFO:
+            case NavigationEvent.NAVIGATE_BACK:
+                navigateBack();
+                break;
+            case NavigationEvent.NAVIGATE_TO_THIRD_PARTY_CERT_UPLOAD:
+                viewModel.startUpload();
+                break;
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         viewModel = new ViewModelProvider(this).get(ThirdPartyCertViewModel.class);
-        spinnerCertType = view.findViewById(R.id.spinner_filter);
-        spinnerUploadType = view.findViewById(R.id.spinner_third_party_type);
-        rvCertificates = view.findViewById(R.id.rv_uploaded_certificates);
-        ivUploadIcon = view.findViewById(R.id.iv_upload_icon);
-        tvUploadHint = view.findViewById(R.id.tv_upload_hint);
-
-        setupImagePicker();
-        setupImageEditLauncher();
-        setupSpinner();
-        setupUploadSpinner();
-        setupRecyclerView();
-        setupObservers();
-        setupClickListeners(view);
-        loadCertInfo();
+        super.onViewCreated(view, savedInstanceState);
     }
 
-    private void setupImagePicker() {
-        imagePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri selectedImageUri = result.getData().getData();
-                        if (selectedImageUri != null) {
-                            pendingUploadType = spinnerUploadType.getSelectedItem() != null ? 
-                                spinnerUploadType.getSelectedItem().toString() : "";
-                            openImageEdit(selectedImageUri);
-                        }
-                    }
-                });
-    }
-
-    private void setupImageEditLauncher() {
-        imageEditLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                        Uri resultUri = result.getData().getParcelableExtra(ImageEditActivity.EXTRA_RESULT_URI);
-                        if (resultUri != null && ivUploadIcon != null) {
-                            ivUploadIcon.setImageURI(resultUri);
-                            if (tvUploadHint != null) {
-                                tvUploadHint.setVisibility(View.GONE);
-                            }
-                            Toast.makeText(getContext(), "图片已选择", Toast.LENGTH_SHORT).show();
-                            
-                            ImageCropHelper.compressCroppedImage(getContext(), resultUri,
-                                new ImageCropHelper.CropCallback() {
-                                    @Override
-                                    public void onSuccess(Uri compressedUri) {
-                                        File compressedFile = new File(compressedUri.getPath());
-                                        if (pendingUploadType.contains("社保")) {
-                                            socialSecurityFile = compressedFile;
-                                        } else if (pendingUploadType.contains("征信")) {
-                                            creditReportFile = compressedFile;
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(String errorMessage) {
-                                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                        }
-                    }
-                });
-    }
-
-    private void openImageEdit(Uri imageUri) {
-        Intent intent = new Intent(getContext(), ImageEditActivity.class);
-        intent.putExtra(ImageEditActivity.EXTRA_IMAGE_URI, imageUri);
-        intent.putExtra(ImageEditActivity.EXTRA_CROP_SHAPE, ImageEditActivity.CROP_SHAPE_RECTANGLE);
-        imageEditLauncher.launch(intent);
-    }
-
-    private void setupRecyclerView() {
-        adapter = new UploadedCertificateAdapter();
-        rvCertificates.setAdapter(adapter);
-    }
-
-    private void setupSpinner() {
-        String[] certTypes = new String[]{"社保缴纳记录图片", "征信报告图片"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
-            android.R.layout.simple_spinner_item, certTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCertType.setAdapter(adapter);
-    }
-
-    private void setupUploadSpinner() {
-        String[] uploadTypes = new String[]{"社保缴纳记录图片", "征信报告图片"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
-            android.R.layout.simple_spinner_item, uploadTypes);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerUploadType.setAdapter(adapter);
-    }
-
-    private void setupObservers() {
-        viewModel.getCertState().observe(getViewLifecycleOwner(), state -> {
-            updateUIByState(state);
-        });
+    @Override
+    protected void setupObservers() {
+        viewModel.getCertState().observe(getViewLifecycleOwner(), this::updateUIByState);
 
         viewModel.getCertData().observe(getViewLifecycleOwner(), certData -> {
             if (certData != null && getView() != null && adapter != null) {
-                List<UploadedCertificateAdapter.CertificateItem> items = new ArrayList<>();
-                
-                if (certData.getSocialSecurityPath() != null && !certData.getSocialSecurityPath().isEmpty()) {
-                    items.add(new UploadedCertificateAdapter.CertificateItem("社保缴纳记录图片", certData.getSocialSecurityPath()));
-                }
-                
-                if (certData.getCreditReportPath() != null && !certData.getCreditReportPath().isEmpty()) {
-                    items.add(new UploadedCertificateAdapter.CertificateItem("征信报告图片", certData.getCreditReportPath()));
-                }
-                
-                adapter.setItems(items);
+                filterCertificates();
             }
         });
 
@@ -197,79 +137,13 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
 
         viewModel.getNavigationEvent().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
-                handleNavigation(event);
+                handleNavigation(event.getNavigationType());
             }
         });
     }
 
-    private void setupClickListeners(View view) {
-        view.findViewById(R.id.btn_other_upload).setOnClickListener(v -> {
-            viewModel.startUpload();
-        });
-
-        view.findViewById(R.id.btn_add_other).setOnClickListener(v -> {
-            viewModel.startUpload();
-        });
-
-        view.findViewById(R.id.btn_confirm_third_party_upload).setOnClickListener(v -> {
-            android.util.Log.d("CertificateOfThirdPartyFragment", "btn_confirm_third_party_upload clicked");
-            
-            if (socialSecurityFile == null && creditReportFile == null) {
-                Toast.makeText(getContext(), "请先选择要上传的图片", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
-            okhttp3.RequestBody socialSecurityRequestBody = null;
-            okhttp3.RequestBody creditReportRequestBody = null;
-            
-            if (socialSecurityFile != null) {
-                String mimeType = getMimeType(socialSecurityFile.getAbsolutePath());
-                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
-                socialSecurityRequestBody = okhttp3.RequestBody.create(
-                    mediaType,
-                    socialSecurityFile
-                );
-            }
-            
-            if (creditReportFile != null) {
-                String mimeType = getMimeType(creditReportFile.getAbsolutePath());
-                okhttp3.MediaType mediaType = mimeType != null ? okhttp3.MediaType.parse(mimeType) : okhttp3.MediaType.parse("image/*");
-                creditReportRequestBody = okhttp3.RequestBody.create(
-                    mediaType,
-                    creditReportFile
-                );
-            }
-            
-            android.util.Log.d("CertificateOfThirdPartyFragment", "calling viewModel.submitCert");
-            android.util.Log.d("CertificateOfThirdPartyFragment", "socialSecurityFile: " + (socialSecurityFile != null ? socialSecurityFile.getAbsolutePath() : "null"));
-            android.util.Log.d("CertificateOfThirdPartyFragment", "creditReportFile: " + (creditReportFile != null ? creditReportFile.getAbsolutePath() : "null"));
-            viewModel.submitCert(socialSecurityRequestBody, creditReportRequestBody);
-        });
-
-        view.findViewById(R.id.iv_upload_icon).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            imagePickerLauncher.launch(intent);
-        });
-
-        view.findViewById(R.id.btn_delete).setOnClickListener(v -> {
-            Toast.makeText(getContext(), "管理", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void navigateToSuccessPage() {
-        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
-        Bundle args = new Bundle();
-        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, InfoConfirmSuccessFragment.TYPE_THIRD_PARTY);
-        successFragment.setArguments(args);
-        
-        getParentFragmentManager().beginTransaction()
-                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
-                .commit();
-    }
-
-    private void loadCertInfo() {
+    @Override
+    protected void loadCertInfo() {
         viewModel.getCertInfo(new ThirdPartyCertViewModel.CertInfoCallback() {
             @Override
             public void onSuccess(CertInfoResponse response) {
@@ -281,70 +155,58 @@ public class CertificateOfThirdPartyFragment extends BaseDetailFragment {
         });
     }
 
-    private void updateUIByState(CertState state) {
-        if (getView() == null) return;
-
-        View containerNotCertified = getView().findViewById(R.id.container_not_certified);
-        View containerUploading = getView().findViewById(R.id.container_uploading);
-        View containerCertified = getView().findViewById(R.id.container_certified);
-        View btnConfirmUpload = getView().findViewById(R.id.btn_confirm_third_party_upload);
-        View btnAddOther = getView().findViewById(R.id.btn_add_other);
-
-        if (containerNotCertified != null) containerNotCertified.setVisibility(View.GONE);
-        if (containerUploading != null) containerUploading.setVisibility(View.GONE);
-        if (containerCertified != null) containerCertified.setVisibility(View.GONE);
-        if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.GONE);
-        if (btnAddOther != null) btnAddOther.setVisibility(View.GONE);
-
-        if (state == null) {
-            return;
-        }
-
-        switch (state) {
-            case NOT_CERTIFIED:
-                if (containerNotCertified != null) containerNotCertified.setVisibility(View.VISIBLE);
-                break;
-            case UPLOADING:
-                if (containerUploading != null) containerUploading.setVisibility(View.VISIBLE);
-                if (btnConfirmUpload != null) btnConfirmUpload.setVisibility(View.VISIBLE);
-                break;
-            case CERTIFIED:
-                if (containerCertified != null) containerCertified.setVisibility(View.VISIBLE);
-                if (btnAddOther != null) btnAddOther.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
-    private void handleNavigation(NavigationEvent event) {
-        switch (event.getNavigationType()) {
-            case NavigationEvent.NAVIGATE_TO_PERSONAL_INFO:
-                navigateBack();
-                break;
-            case NavigationEvent.NAVIGATE_BACK:
-                navigateBack();
-                break;
-            case NavigationEvent.NAVIGATE_TO_THIRD_PARTY_CERT_UPLOAD:
-                viewModel.startUpload();
-                break;
-        }
+    @Override
+    protected void submitCert() {
+        viewModel.submitCert(createRequestBody(firstFile), createRequestBody(secondFile));
     }
 
     @Override
-    protected void navigateBack() {
-        CertState currentState = viewModel.getCertState().getValue();
-        if (currentState == CertState.UPLOADING) {
-            viewModel.cancelUpload();
-        } else {
-            super.navigateBack();
+    protected void filterCertificates() {
+        if (adapter == null) return;
+        
+        CertInfoResponse.TriCert certData = viewModel.getCertData().getValue();
+        if (certData == null) return;
+        
+        List<UploadedCertificateAdapter.CertificateItem> items = new ArrayList<>();
+        
+        if (currentFilterType.equals("全部") || currentFilterType.equals("社保缴纳记录图片")) {
+            if (certData.getSocialSecurityPath() != null && !certData.getSocialSecurityPath().isEmpty()) {
+                items.add(new UploadedCertificateAdapter.CertificateItem("社保缴纳记录图片", certData.getSocialSecurityPath()));
+            }
         }
+        
+        if (currentFilterType.equals("全部") || currentFilterType.equals("征信报告图片")) {
+            if (certData.getCreditReportPath() != null && !certData.getCreditReportPath().isEmpty()) {
+                items.add(new UploadedCertificateAdapter.CertificateItem("征信报告图片", certData.getCreditReportPath()));
+            }
+        }
+        
+        adapter.setItems(items);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        CertState currentState = viewModel.getCertState().getValue();
-        if (currentState != CertState.UPLOADING) {
-            loadCertInfo();
-        }
+    protected void onStartUploadClick() {
+        viewModel.startUpload();
+    }
+
+    @Override
+    protected CertState getCertStateValue() {
+        return viewModel.getCertState().getValue();
+    }
+
+    @Override
+    protected void cancelUpload() {
+        viewModel.cancelUpload();
+    }
+
+    private void navigateToSuccessPage() {
+        InfoConfirmSuccessFragment successFragment = new InfoConfirmSuccessFragment();
+        Bundle args = new Bundle();
+        args.putInt(InfoConfirmSuccessFragment.ARG_TARGET_FRAGMENT, getSuccessType());
+        successFragment.setArguments(args);
+        
+        getParentFragmentManager().beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), successFragment)
+                .commit();
     }
 }

@@ -1,160 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="9dp"
-    android:background="@drawable/bg_loan_product_item">
+    android:layout_marginTop="12dp"
+    android:background="@drawable/bg_loan_product_item_new">
 
-    <!-- 第一行：产品名称 + 描述 -->
-    <LinearLayout
-        android:id="@+id/line1"
-        android:layout_width="match_parent"
+    <!-- 第一行：图标 + 贷款名称 + 标签 -->
+    <ImageView
+        android:id="@+id/ivProductIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/ic_item_product_sort"
+        android:contentDescription="@string/product_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="0dp"
-        android:gravity="center_vertical">
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#231917"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/ivProductIcon"
+        app:layout_constraintEnd_toStartOf="@id/tvProductTag"
+        app:layout_constraintTop_toTopOf="@id/ivProductIcon"
+        app:layout_constraintBottom_toBottomOf="@id/ivProductIcon"/>
 
-        <!-- 产品名称：左间距 16dp -->
-        <TextView
-            android:id="@+id/tvProductName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="#1A1A1A"
-            android:textSize="16sp"
-            android:gravity="center_vertical"/>
-
-        <!-- 产品描述：仅与名称间距 10dp，无右间距 -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:paddingStart="6dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="6dp"
-            android:paddingBottom="2dp"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center_vertical"/>
-
-    </LinearLayout>
-
-    <!-- 第二行：最高额度、贷款期限、贷款用途 -->
-    <LinearLayout
-        android:id="@+id/line2"
-        android:layout_width="match_parent"
+    <!-- 标签位置改为右上角 -->
+    <TextView
+        android:id="@+id/tvProductTag"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line1"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <!-- 最高额度 -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="9dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="@string/highest_limit"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-            <TextView
-                android:id="@+id/tvLimitValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:textColor="@color/number_amount"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- 最低利率 -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="9dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="最低利率"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-
-            <!-- 最低利率（替代原“贷款用途”） -->
-            <TextView
-                android:id="@+id/tvMinInterestRate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:textColor="@color/number_rate"
-                android:textSize="16sp"
-                android:ellipsize="end"
-                android:maxLines="1" />
-        </LinearLayout>
-
-        <!-- 贷款期限（terms只显示 min-max：如 "3-24"）-->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="9dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="@string/loan_term"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-            <TextView
-                android:id="@+id/tvTermValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:ellipsize="end"
-                android:maxLines="1" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- 第三行：“了解详情”按钮 -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnLearnMore"
-        android:layout_width="65dp"
-        android:layout_height="35dp"
-        android:layout_below="@id/line2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_learn_more_button"
-        android:gravity="center"
-        android:text="@string/learn_more"
-        android:textSize="13sp"
-        android:textColor="@color/white"
-        android:fontFamily="sans-serif-medium" />
+        android:layout_marginTop="12dp"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
+        android:background="@drawable/bg_product_tag"
+        android:text="贷款类型"
+        android:textColor="#2196F3"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</RelativeLayout>
+    <!-- 第二行：产品描述 -->
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:textColor="#53433F"
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivProductIcon"/>
+
+    <!-- 第三行：最高额度、最低利率、贷款期限 -->
+    <!-- 最高额度 -->
+    <LinearLayout
+        android:id="@+id/llLimit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/llRate"
+        app:layout_constraintTop_toBottomOf="@id/tvDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最高额度"
+            android:textColor="#85736E"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvLimitValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#4EACFB"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 最低利率 -->
+    <LinearLayout
+        android:id="@+id/llRate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/llLimit"
+        app:layout_constraintEnd_toStartOf="@id/llTerm"
+        app:layout_constraintTop_toBottomOf="@id/tvDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最低利率"
+            android:textColor="#85736E"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvMinInterestRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#8F4C38"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- 贷款期限 -->
+    <LinearLayout
+        android:id="@+id/llTerm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/llRate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="贷款期限"
+            android:textColor="#85736E"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvTermValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#53433F"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

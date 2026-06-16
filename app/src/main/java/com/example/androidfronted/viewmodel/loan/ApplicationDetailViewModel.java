@@ -159,6 +159,32 @@ public class ApplicationDetailViewModel extends BaseViewModel {
         return com.example.androidfronted.R.color.application_detail_status_corner_pending;
     }
 
+    public int getStatusBackgroundRes(String status) {
+        if ("AI拒绝".equals(status) || "审核中".equals(status)) {
+            return com.example.androidfronted.R.drawable.bg_application_record_detail_corner_status_pending;
+        } else if ("已通过".equals(status)) {
+            return com.example.androidfronted.R.drawable.bg_application_record_detail_corner_status_approved;
+        } else if ("人工拒绝".equals(status)) {
+            return com.example.androidfronted.R.drawable.bg_application_record_detail_corner_status_rejected;
+        } else if ("已取消".equals(status) || "AI拒绝取消".equals(status)) {
+            return com.example.androidfronted.R.drawable.bg_application_record_detail_corner_status_cancelled;
+        }
+        return com.example.androidfronted.R.drawable.bg_application_record_detail_corner_status_pending;
+    }
+
+    public int getStatusTextColor(String status) {
+        if ("AI拒绝".equals(status) || "审核中".equals(status)) {
+            return com.example.androidfronted.R.color.application_detail_status_text_pending; // #1F6FEB
+        } else if ("已通过".equals(status)) {
+            return com.example.androidfronted.R.color.application_detail_status_text_approved; // #16A34A
+        } else if ("人工拒绝".equals(status)) {
+            return com.example.androidfronted.R.color.application_detail_status_text_rejected; // #DC2626
+        } else if ("已取消".equals(status) || "AI拒绝取消".equals(status)) {
+            return com.example.androidfronted.R.color.application_detail_status_text_cancelled; // #6B7280
+        }
+        return com.example.androidfronted.R.color.application_detail_status_text_pending; // #1F6FEB
+    }
+
     public String getStatusText(String status) {
         if ("AI拒绝".equals(status)) {
             return "审核中";

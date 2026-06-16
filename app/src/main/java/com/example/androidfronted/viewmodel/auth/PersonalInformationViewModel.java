@@ -63,6 +63,21 @@ public class PersonalInformationViewModel extends BaseViewModel {
 
     public void loadCertificationStatus() {
         Log.d("PersonalInformationViewModel", "loadCertificationStatus called");
+        
+        authRepository.getLocalCertInfo(new AuthRepository.AuthCallback<com.example.androidfronted.data.local.entity.CertificationEntity>() {
+            @Override
+            public void onSuccess(com.example.androidfronted.data.local.entity.CertificationEntity certification) {
+                if (certification != null && certification.getCreditScore() > 0) {
+                    creditScore.postValue(certification.getCreditScore());
+                    Log.d("PersonalInformationViewModel", "Loaded local credit score: " + certification.getCreditScore());
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+            }
+        });
+        
         authRepository.getLocalIdCertState(new AuthRepository.AuthCallback<CertState>() {
             @Override
             public void onSuccess(CertState certState) {

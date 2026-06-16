@@ -124,14 +124,36 @@
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp"/>
 
-                <Spinner
-                    android:id="@+id/spinner_third_party_type"
+                <LinearLayout
+                    android:id="@+id/ll_upload_type"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:background="@drawable/bg_id_card"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:hint="请选择上传资料类型"/>
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tv_upload_type"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|start"
+                        android:text="请选择上传资料类型"
+                        android:textColor="@color/text_quaternary"
+                        android:textSize="13sp"/>
+
+                    <ImageView
+                        android:id="@+id/iv_dropdown_arrow"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_drop_down"
+                        app:tint="#FF458FFC" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -246,11 +268,13 @@
             <LinearLayout
                 android:id="@+id/ll_filter"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_id_card"
-                android:padding="8dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -263,11 +287,19 @@
 
                 <Spinner
                     android:id="@+id/spinner_filter"
+                    style="@style/CustomSpinnerStyle"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@null"
-                    android:hint="请选择证明类型"/>
+                    android:background="@android:color/transparent"
+                    android:paddingEnd="0dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_filter_arrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_drop_down"
+                    app:tint="#FF458FFC" />
 
             </LinearLayout>
 

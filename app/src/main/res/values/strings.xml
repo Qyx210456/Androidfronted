@@ -230,9 +230,9 @@
     <string name="my_loans">我的贷款</string>
     <string name="loan_order_count">共有%d条贷款订单</string>
     <string name="no_loan_orders">暂无贷款订单记录</string>
-    <string name="filter_normal">正常</string>
+    <string name="filter_normal">还款中</string>
     <string name="filter_overdue">已逾期</string>
-    <string name="filter_completed">已完成</string>
+    <string name="filter_completed">已结清</string>
 
     <!--消息通知相关-->
     <string name="notification_center">消息中心</string>
@@ -282,5 +282,8 @@
     <string name="payment_success_done">完成</string>
     <string name="payment_select_method_hint">请选择支付方式</string>
     <string name="payment_get_detail_failed">获取订单详情失败</string>
+
+    <!--贷款产品列表项-->
+    <string name="product_icon">产品图标</string>
 
 </resources>

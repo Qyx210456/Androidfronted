@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--还款中（正常）筛选按钮的文字颜色选择器-->
+    <item android:color="@color/order_status_normal_text" android:state_selected="true"/>
+    <item android:color="#374151"/> <!-- 未选中时的深灰色文字 -->
+</selector>

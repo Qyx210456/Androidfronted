@@ -28,4 +28,10 @@ public interface LoanOrderDao {
 
     @Query("UPDATE loan_orders SET currentTerm = :newCurrentTerm WHERE id = :id")
     void updateCurrentTerm(int id, int newCurrentTerm);
+
+    @Query("UPDATE loan_orders SET productName = :productName WHERE id = :id")
+    void updateProductName(int id, String productName);
+
+    @Query("UPDATE loan_orders SET nextRepaymentDate = :nextRepaymentDate WHERE id = :id")
+    void updateNextRepaymentDate(int id, String nextRepaymentDate);
 }

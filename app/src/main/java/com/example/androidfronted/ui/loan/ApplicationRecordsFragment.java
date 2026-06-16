@@ -178,13 +178,18 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_cancel_application_confirm, null);
             builder.setView(dialogView);
-            
+
             // 获取按钮
             Button btnConfirm = dialogView.findViewById(R.id.btn_dialog_confirm);
             Button btnCancel = dialogView.findViewById(R.id.btn_dialog_cancel);
-            
+
             final android.app.AlertDialog dialog = builder.create();
-            
+
+            // 设置对话框背景为透明，避免圆角外出现白色背景
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            }
+
             btnConfirm.setOnClickListener(v -> {
                 dialog.dismiss();
                 // 执行取消申请操作
@@ -195,18 +200,18 @@ public class ApplicationRecordsFragment extends com.example.androidfronted.ui.ba
                             Toast.makeText(getContext(), successMessage, Toast.LENGTH_SHORT).show();
                         }
                     }
-                    
+
                     @Override
                     public void onError(String errorMessage) {
                         // 错误信息已在ViewModel中处理
                     }
                 });
             });
-            
+
             btnCancel.setOnClickListener(v -> {
                 dialog.dismiss();
             });
-            
+
             dialog.show();
         }
     }

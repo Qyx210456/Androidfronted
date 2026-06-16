@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsetsController;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -161,6 +162,20 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         InAppNotificationManager.getInstance().onActivityResumed(this);
         cancelAllSystemNotifications();
+        
+        if (currentMainFragment != null) {
+            String tag = null;
+            if (currentMainFragment == homeFragment) {
+                tag = TAG_HOME;
+            } else if (currentMainFragment == loanFragment) {
+                tag = TAG_LOAN;
+            } else if (currentMainFragment == profileFragment) {
+                tag = TAG_PROFILE;
+            }
+            if (tag != null) {
+                updateStatusBarForFragment(tag);
+            }
+        }
     }
 
     @Override
@@ -309,8 +324,39 @@ public class MainActivity extends AppCompatActivity {
         currentMainFragment = fragment;
         Log.d(TAG, "显示主 Fragment: " + tag);
         
-        // 通知 FloatingBallManager Fragment 已显示
+        updateStatusBarForFragment(tag);
+        
         FloatingBallManager.getInstance(getApplication()).onFragmentShown(fragment);
+    }
+
+    private void updateStatusBarForFragment(String tag) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+            WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                if (TAG_HOME.equals(tag)) {
+                    controller.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    );
+                } else {
+                    controller.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    );
+                }
+            }
+        } else {
+            if (TAG_HOME.equals(tag)) {
+                getWindow().setStatusBarColor(android.graphics.Color.parseColor("#FFF8FAFF"));
+                getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                );
+            } else {
+                getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+                getWindow().getDecorView().setSystemUiVisibility(0);
+            }
+        }
     }
 
     private void setupBottomNavigation() {

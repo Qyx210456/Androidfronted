@@ -116,7 +116,7 @@ class ChatRepository private constructor(private val context: Context) {
         
         val request = ChatRequest(
             message = message,
-            session_id = currentSessionId
+            sessionId = currentSessionId  // 改为驼峰命名
         )
         
         val aiMessageBuilder = StringBuilder()

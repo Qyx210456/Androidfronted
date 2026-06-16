@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Spinner选中项显示布局，用于认证页面的筛选下拉框 -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:gravity="center_vertical|start"
+    android:paddingStart="0dp"
+    android:paddingEnd="0dp"
+    android:textColor="@color/text_secondary"
+    android:textSize="13sp"
+    android:background="@color/white"
+    android:ellipsize="end"
+    android:singleLine="true" />

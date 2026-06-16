@@ -43,6 +43,10 @@ public class RegisterStep1Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_register_step1);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+
         viewModel = new ViewModelProvider(this).get(RegisterStep1ViewModel.class);
 
         setupObservers();

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.androidfronted.R;
@@ -338,6 +340,25 @@ public class HomeFragment extends Fragment {
         }
         if (isAdded() && hotProductAdapter.getProducts() != null && hotProductAdapter.getProducts().size() > 1) {
             startAutoScroll();
+        }
+        if (viewPagerProducts != null) {
+            viewPagerProducts.post(() -> {
+                if (viewPagerProducts != null && isAdded()) {
+                    try {
+                        RecyclerView recyclerView = (RecyclerView) viewPagerProducts.getChildAt(0);
+                        if (recyclerView != null) {
+                            recyclerView.dispatchTouchEvent(android.view.MotionEvent.obtain(
+                                android.os.SystemClock.uptimeMillis(),
+                                android.os.SystemClock.uptimeMillis(),
+                                android.view.MotionEvent.ACTION_CANCEL,
+                                0, 0, 0
+                            ));
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error resetting ViewPager2 state: " + e.getMessage());
+                    }
+                }
+            });
         }
     }
 

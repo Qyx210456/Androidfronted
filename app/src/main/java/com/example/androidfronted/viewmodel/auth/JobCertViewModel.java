@@ -1,51 +1,19 @@
 package com.example.androidfronted.viewmodel.auth;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import android.app.Application;
 import android.util.Log;
-import com.example.androidfronted.data.model.AuthSubmitResponse;
 import com.example.androidfronted.data.model.CertInfoResponse;
 import com.example.androidfronted.data.model.CertState;
 import com.example.androidfronted.data.repository.AuthRepository;
-import com.example.androidfronted.viewmodel.base.BaseViewModel;
-import com.example.androidfronted.viewmodel.base.NavigationEvent;
-public class JobCertViewModel extends BaseViewModel {
-    private final AuthRepository repository;
-    private final MutableLiveData<AuthSubmitResponse> submitResult = new MutableLiveData<>();
-    private final MutableLiveData<CertState> certState = new MutableLiveData<>();
-    private final MutableLiveData<CertInfoResponse.WorkCert> certData = new MutableLiveData<>();
-    private final MutableLiveData<String> bankCardId = new MutableLiveData<>();
-    private CertState previousState = null;
+
+public class JobCertViewModel extends BaseCertViewModel<CertInfoResponse.WorkCert> {
 
     public JobCertViewModel(@NonNull Application application) {
         super(application);
-        this.repository = AuthRepository.getInstance(application);
-        // 在构造函数中加载本地认证信息
-        loadLocalCertInfo();
     }
 
-    public MutableLiveData<AuthSubmitResponse> getSubmitResult() {
-        return submitResult;
-    }
-
-    public MutableLiveData<CertState> getCertState() {
-        return certState;
-    }
-
-    public MutableLiveData<CertInfoResponse.WorkCert> getCertData() {
-        return certData;
-    }
-
-    public MutableLiveData<String> getBankCardId() {
-        return bankCardId;
-    }
-
-    public interface CertInfoCallback {
-        void onSuccess(CertInfoResponse response);
-        void onError(String errorMessage);
-    }
-
+    @Override
     public void getCertInfo(CertInfoCallback callback) {
         repository.getCertInfo(new AuthRepository.AuthCallback<CertInfoResponse>() {
             @Override
@@ -64,10 +32,11 @@ public class JobCertViewModel extends BaseViewModel {
                     if (workCert != null && 
                         (workCert.getEmploymentCertPath() != null && !workCert.getEmploymentCertPath().isEmpty() ||
                          workCert.getSalaryCertPath() != null && !workCert.getSalaryCertPath().isEmpty())) {
-                        certState.postValue(CertState.CERTIFIED);
+                        CertState currentState = certState.getValue();
+                        if (currentState != CertState.UPLOADING && currentState != null) {
+                            certState.postValue(CertState.CERTIFIED);
+                        }
                     } else {
-                        // 网络请求成功但数据为空时，保持当前状态，不设置为 NOT_CERTIFIED
-                        // 这样可以避免覆盖本地的已认证状态，防止页面闪烁
                         Log.d("JobCertViewModel", "getCertInfo, workCert is null or empty, keeping current state");
                     }
                 }
@@ -86,6 +55,7 @@ public class JobCertViewModel extends BaseViewModel {
         });
     }
 
+    @Override
     public void submitCert(okhttp3.RequestBody employmentFile, okhttp3.RequestBody salaryFile) {
         Log.d("JobCertViewModel", "submitCert called");
         Log.d("JobCertViewModel", "submitCert, employmentFile: " + (employmentFile != null ? "present" : "null"));
@@ -96,40 +66,27 @@ public class JobCertViewModel extends BaseViewModel {
         certState.setValue(CertState.UPLOADING);
         Log.d("JobCertViewModel", "submitCert, state changed to UPLOADING");
         repository.submitOtherCert("", null, null, employmentFile, salaryFile, null, null,
-                new AuthRepository.AuthCallback<AuthSubmitResponse>() {
+                new AuthRepository.AuthCallback<com.example.androidfronted.data.model.AuthSubmitResponse>() {
                     @Override
-                    public void onSuccess(AuthSubmitResponse response) {
+                    public void onSuccess(com.example.androidfronted.data.model.AuthSubmitResponse response) {
                         Log.d("JobCertViewModel", "submitCert, onSuccess");
-                        previousState = null;
-                        submitResult.postValue(response);
-                        getCertInfo(null);
+                        handleSuccess(response);
                     }
 
                     @Override
                     public void onError(String errorMsg) {
                         Log.e("JobCertViewModel", "submitCert, onError: " + errorMsg);
-                        certState.postValue(previousState != null ? previousState : CertState.NOT_CERTIFIED);
-                        previousState = null;
-                        showError(errorMsg);
+                        handleError(errorMsg);
                     }
                 });
-    }
-
-    public void startUpload() {
-        previousState = certState.getValue();
-        certState.setValue(CertState.UPLOADING);
-    }
-
-    public void cancelUpload() {
-        certState.postValue(previousState);
-        previousState = null;
     }
 
     public void navigateToUpload() {
         navigate(com.example.androidfronted.viewmodel.base.NavigationEvent.NAVIGATE_TO_JOB_CERT_UPLOAD);
     }
-    
-    private void loadLocalCertInfo() {
+
+    @Override
+    protected void loadLocalCertInfo() {
         Log.d("JobCertViewModel", "loadLocalCertInfo called");
         repository.getLocalJobCertState(new AuthRepository.AuthCallback<CertState>() {
             @Override

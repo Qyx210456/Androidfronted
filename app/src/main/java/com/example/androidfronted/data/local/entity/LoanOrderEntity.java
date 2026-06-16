@@ -15,6 +15,8 @@ public class LoanOrderEntity implements Serializable {
     private int term;
     private int currentTerm;
     private int overdueDays;
+    private String productName;  // 产品名称（从订单详情获取）
+    private String nextRepaymentDate;  // 下次还款日期（从还款计划获取）
 
     public LoanOrderEntity(int id, double loanAmount, String status, String startTime, int term, int currentTerm, int overdueDays) {
         this.id = id;
@@ -24,6 +26,8 @@ public class LoanOrderEntity implements Serializable {
         this.term = term;
         this.currentTerm = currentTerm;
         this.overdueDays = overdueDays;
+        this.productName = "";  // 默认为空
+        this.nextRepaymentDate = "";  // 默认为空
     }
 
     public int getId() {
@@ -80,5 +84,21 @@ public class LoanOrderEntity implements Serializable {
 
     public void setOverdueDays(int overdueDays) {
         this.overdueDays = overdueDays;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getNextRepaymentDate() {
+        return nextRepaymentDate;
+    }
+
+    public void setNextRepaymentDate(String nextRepaymentDate) {
+        this.nextRepaymentDate = nextRepaymentDate;
     }
 }

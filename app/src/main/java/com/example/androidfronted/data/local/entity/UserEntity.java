@@ -1,5 +1,6 @@
 package com.example.androidfronted.data.local.entity;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,10 +8,12 @@ import androidx.room.PrimaryKey;
 public class UserEntity {
     @PrimaryKey
     private int userId;
+    @Nullable
     private String userName;
+    @Nullable
     private String avatar;
 
-    public UserEntity(int userId, String userName, String avatar) {
+    public UserEntity(int userId, @Nullable String userName, @Nullable String avatar) {
         this.userId = userId;
         this.userName = userName;
         this.avatar = avatar;

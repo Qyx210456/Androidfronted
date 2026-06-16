@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 上传类型选择底部弹窗布局，用于认证页面的资料类型选择 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/defer_border_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:layout_gravity="center_horizontal"
+        android:text="选择上传资料类型"
+        android:textColor="@color/text_secondary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="300dp"
+        android:overScrollMode="never" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp" />
+
+</LinearLayout>
