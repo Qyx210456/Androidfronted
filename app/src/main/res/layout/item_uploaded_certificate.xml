@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white">
+    android:background="@drawable/bg_uploaded_certificate_background"
+    android:clipChildren="true">
 
+    <!-- 图片（添加padding使边框覆盖） -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="4dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="28dp">
 
-        <!-- 上传的图片 -->
         <ImageView
             android:id="@+id/iv_uploaded_image"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            android:background="@android:color/transparent"/>
-
-        <!-- 证明类型 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp">
-
-            <TextView
-                android:id="@+id/tv_certificate_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
+            android:layout_height="260dp"
+            android:scaleType="centerCrop"/>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    <!-- 文字（覆盖在底部边框区域内） -->
+    <TextView
+        android:id="@+id/tv_certificate_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 顶部和左右边框覆盖（4dp） -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_border_top_sides"/>
+
+</FrameLayout>

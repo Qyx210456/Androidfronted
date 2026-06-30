@@ -335,7 +335,42 @@ class ChatSseClient(private val context: Context) {
             // 检查是否是错误事件
             if (data.contains("发生错误") || data.contains("Error") || data.contains("AuthenticationRequired")) {
                 Log.e(TAG, "推断为error事件（仅记录日志，不反馈到屏幕）: $data")
-                // 不调用onError，只记录日志
+                return
+            }
+            
+            // 检查是否是tool_call事件（可能使用单引号或双引号）
+            if (data.contains("tool_name") && (data.contains("tool_call") || data.contains("query_loan_products"))) {
+                Log.d(TAG, "推断为tool_call事件，不显示给用户")
+                try {
+                    val jsonData = data.replace("'", "\"")
+                    val toolCallMap = gson.fromJson(jsonData, Map::class.java)
+                    val toolName = toolCallMap["tool_name"] as? String ?: ""
+                    @Suppress("UNCHECKED_CAST")
+                    val arguments = toolCallMap["arguments"] as? Map<String, Any> ?: emptyMap()
+                    onToolCall(ToolCallInfo(toolName, arguments))
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to parse tool_call: $data", e)
+                }
+                return
+            }
+            
+            // 检查是否是tool_result事件（可能使用单引号或双引号）
+            if (data.contains("tool_name") && data.contains("result")) {
+                Log.d(TAG, "推断为tool_result事件，不显示给用户")
+                try {
+                    val jsonData = data.replace("'", "\"")
+                    val resultMap = gson.fromJson(jsonData, Map::class.java)
+                    val result = resultMap["result"] as? String ?: ""
+                    onToolResult(result)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to parse tool_result: $data", e)
+                }
+                return
+            }
+            
+            // 检查是否包含Python字典格式的tool调用信息
+            if ((data.contains("{'tool_name'") || data.contains("{\"tool_name\"")) && !data.contains("content")) {
+                Log.d(TAG, "检测到Python字典格式的tool调用，不显示给用户")
                 return
             }
             
@@ -379,7 +414,7 @@ class ChatSseClient(private val context: Context) {
                 Log.d(TAG, "Data不是JSON格式，当作普通消息处理")
             }
             
-            // 如果都不是，当作普通消息处理
+            // 如果都不是，当作普通消息处理（打字机效果）
             Log.d(TAG, "推断为message事件")
             onMessage(data)
             return
@@ -405,6 +440,7 @@ class ChatSseClient(private val context: Context) {
                 onMessage(data)
             }
             "tool_call" -> {
+                Log.d(TAG, "收到tool_call事件，不显示给用户")
                 try {
                     val jsonData = data.replace("'", "\"")
                     val toolCallMap = gson.fromJson(jsonData, Map::class.java)
@@ -417,6 +453,7 @@ class ChatSseClient(private val context: Context) {
                 }
             }
             "tool_result" -> {
+                Log.d(TAG, "收到tool_result事件，不显示给用户")
                 try {
                     val jsonData = data.replace("'", "\"")
                     val resultMap = gson.fromJson(jsonData, Map::class.java)

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.util.ToastUtils;
 import com.example.androidfronted.viewmodel.auth.RegisterStep2ViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 
@@ -78,8 +79,9 @@ public class RegisterStep2Activity extends AppCompatActivity {
 
         viewModel.getRegisterSuccess().observe(this, success -> {
             if (success != null && success) {
-                Toast.makeText(this, "注册成功！", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterStep2Activity.this, LoginActivity.class));
+                ToastUtils.pendingRegisterSuccess = true;
+                Intent intent = new Intent(RegisterStep2Activity.this, LoginActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

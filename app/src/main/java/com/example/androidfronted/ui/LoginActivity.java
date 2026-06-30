@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +125,16 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             tabVerifyCode.setTextColor(0xFF666666);
             tabPassword.setTextColor(0xFFFFFFFF);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        if (ToastUtils.pendingRegisterSuccess) {
+            ToastUtils.pendingRegisterSuccess = false;
+            ToastUtils.showSuccessToast(this, "注册成功");
         }
     }
 }

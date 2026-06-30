@@ -26,6 +26,7 @@ import com.example.androidfronted.util.FloatingBallManager;
 import com.example.androidfronted.util.InAppNotificationManager;
 import com.example.androidfronted.util.NotificationStateManager;
 import com.example.androidfronted.util.TokenManager;
+import com.example.androidfronted.util.ToastUtils;
 import com.example.androidfronted.viewmodel.base.ViewModelFactory;
 import com.example.androidfronted.viewmodel.notification.NotificationViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -90,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Token 有效，加载主界面");
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getBooleanExtra("show_login_success", false)) {
+            ToastUtils.showSuccessToast(this, "登录成功");
+        }
 
         notificationRepository = NotificationRepository.getInstance(this);
         notificationViewModel = new ViewModelProvider(this, new ViewModelFactory(getApplication()))

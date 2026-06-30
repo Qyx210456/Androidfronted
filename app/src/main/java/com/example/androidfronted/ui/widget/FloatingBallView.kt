@@ -59,8 +59,16 @@ class FloatingBallView(context: Context) : FrameLayout(context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private var onBallClickListener: (() -> Unit)? = null
 
+    private var lastKeyboardCheckTime: Long = 0
+    private val keyboardCheckInterval: Long = 200  // 200ms间隔检查
+
     private val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-        checkKeyboardVisibility()
+        // 限制检查频率，避免频繁调用
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastKeyboardCheckTime >= keyboardCheckInterval) {
+            lastKeyboardCheckTime = currentTime
+            checkKeyboardVisibility()
+        }
     }
 
     private var isKeyboardVisible: Boolean = false
@@ -256,11 +264,30 @@ class FloatingBallView(context: Context) : FrameLayout(context) {
         }
     }
 
+    private var lastSaveX: Float = 0f
+    private var lastSaveY: Float = 0f
+    private var hasPendingSave: Boolean = false
+
     private fun savePosition() {
-        prefs.edit()
-            .putFloat(KEY_BALL_X, x)
-            .putFloat(KEY_BALL_Y, y)
-            .apply()
+        // 只有位置发生明显变化时才保存，避免频繁IO
+        if (abs(x - lastSaveX) < 5 && abs(y - lastSaveY) < 5) {
+            return
+        }
+
+        lastSaveX = x
+        lastSaveY = y
+
+        // 使用异步保存，避免阻塞主线程
+        if (!hasPendingSave) {
+            hasPendingSave = true
+            postDelayed({
+                prefs.edit()
+                    .putFloat(KEY_BALL_X, lastSaveX)
+                    .putFloat(KEY_BALL_Y, lastSaveY)
+                    .apply()
+                hasPendingSave = false
+            }, 500)  // 延迟500ms保存，减少频繁保存
+        }
     }
 
     private fun restorePosition() {

@@ -24,7 +24,7 @@ fun MarkdownText(
 
     LaunchedEffect(markdown) {
         if (isStreaming) {
-            delay(80)
+            delay(20)
         }
         debouncedMarkdown = markdown
     }

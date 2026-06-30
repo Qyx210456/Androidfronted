@@ -113,8 +113,7 @@ public class TokenManager {
 
             long exp = json.optLong("exp", 0);
             if (exp <= 0) {
-                Log.d(TAG, "Token exp field invalid (exp <= 0), considering as expired");
-                return true;
+                Log.d(TAG, "Token exp field invalid (exp <= 0), considering as expired");return true;
             }
 
             long currentTimeSec = System.currentTimeMillis() / 1000;

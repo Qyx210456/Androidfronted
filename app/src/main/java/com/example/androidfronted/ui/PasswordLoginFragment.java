@@ -167,10 +167,9 @@ public class PasswordLoginFragment extends Fragment {
 
                 fetchOfflineNotifications();
 
-                Toast.makeText(getContext(), "登录成功！", Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("show_login_success", true);
                 startActivity(intent);
             }
 
