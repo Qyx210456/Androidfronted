@@ -228,4 +228,14 @@
 
     </LinearLayout>
 
+    <!-- 安全键盘容器：密码登录时由 SafeKeyboard 填充，平时不可见 -->
+    <LinearLayout
+        android:id="@+id/safe_keyboard_place"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -101,7 +101,7 @@
                 android:background="@null"
                 android:fontFamily="sans-serif"
                 android:hint="请输入密码"
-                android:inputType="textPassword"
+                android:inputType="textVisiblePassword"
                 android:paddingStart="16dp"
                 android:paddingEnd="44dp"
                 android:textColor="#333333"
@@ -138,7 +138,7 @@
                 android:background="@null"
                 android:fontFamily="sans-serif"
                 android:hint="请确认密码"
-                android:inputType="textPassword"
+                android:inputType="textVisiblePassword"
                 android:paddingStart="16dp"
                 android:paddingEnd="44dp"
                 android:textColor="#333333"
@@ -203,5 +203,15 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <!-- 安全键盘容器：密码输入时由 SafeKeyboard 填充，平时不可见 -->
+    <LinearLayout
+        android:id="@+id/safe_keyboard_place"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

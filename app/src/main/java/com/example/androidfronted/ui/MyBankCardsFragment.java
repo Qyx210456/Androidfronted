@@ -27,6 +27,12 @@ public class MyBankCardsFragment extends BaseDetailFragment {
     private BankCardAdapter adapter;
     private MyBankCardsViewModel viewModel;
 
+    /** 银行卡页展示卡号等敏感信息，开启防截屏防录屏 */
+    @Override
+    protected boolean shouldEnableSecureFlag() {
+        return true;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

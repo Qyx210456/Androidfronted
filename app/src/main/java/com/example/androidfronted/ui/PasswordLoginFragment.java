@@ -26,6 +26,7 @@ import com.example.androidfronted.data.model.LoginResponse;
 import com.example.androidfronted.data.repository.AuthRepository;
 import com.example.androidfronted.data.repository.NotificationRepository;
 import com.example.androidfronted.event.NotificationEvent;
+import com.example.androidfronted.security.SecureKeyboardManager;
 import com.example.androidfronted.service.SseNotificationService;
 import com.example.androidfronted.util.TokenManager;
 import com.google.gson.Gson;
@@ -47,6 +48,7 @@ public class PasswordLoginFragment extends Fragment {
     private AuthRepository authRepository;
     private NotificationRepository notificationRepository;
     private boolean isPasswordVisible = false;
+    private SecureKeyboardManager secureKeyboard;
 
     private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,20}$";
     private static final String PHONE_PATTERN = "^1[3-9]\\d{9}$";
@@ -70,6 +72,48 @@ public class PasswordLoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
         setupListeners();
+        setupSecureKeyboard(view);
+    }
+
+    /**
+     * 接入安全键盘：
+     *  - 键盘容器在宿主 LoginActivity 布局底部（activity_login.xml 的 safe_keyboard_place）
+     *  - rootView 传本 Fragment 根布局，库只监测本页输入框的焦点
+     *  - etPassword 使用随机键位键盘，防止按点击坐标反推密码
+     *  - etPhone 不绑定，仍使用系统输入法
+     */
+    private void setupSecureKeyboard(View view) {
+        android.widget.LinearLayout keyboardPlace =
+                requireActivity().findViewById(R.id.safe_keyboard_place);
+        if (keyboardPlace == null) {
+            return;
+        }
+        secureKeyboard = SecureKeyboardManager.attach(
+                requireActivity(), keyboardPlace, view, view, "密码登录");
+        secureKeyboard.bind(etPassword);
+
+        // 键盘显示时按返回键先收起键盘，而不是退出页面
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new androidx.activity.OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        if (secureKeyboard == null || !secureKeyboard.onBackPressed()) {
+                            setEnabled(false);
+                            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                            setEnabled(true);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (secureKeyboard != null) {
+            secureKeyboard.release();
+            secureKeyboard = null;
+        }
     }
 
     private void initViews(View view) {

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.security.ScreenCaptureGuard;
+import com.example.androidfronted.security.SecureKeyboardManager;
 import com.example.androidfronted.viewmodel.auth.RegisterStep1ViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
 
@@ -37,6 +39,21 @@ public class RegisterStep1Activity extends AppCompatActivity {
 
     private boolean isPasswordVisible = false;
     private boolean isConfirmVisible = false;
+    private SecureKeyboardManager secureKeyboard;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 注册第一步输入账号密码，进入前台开启防截屏防录屏
+        ScreenCaptureGuard.enable(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 离开页面立即恢复，避免影响其他页面
+        ScreenCaptureGuard.disable(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +70,41 @@ public class RegisterStep1Activity extends AppCompatActivity {
         initViews();
         receiveDataFromStep2();
         setupClickListeners();
+        setupSecureKeyboard();
+    }
+
+    /**
+     * 接入安全键盘：
+     *  - etPassword / etConfirmPassword 使用固定 QWERTY 键位键盘，etUsername 仍用系统输入法
+     *  - 键盘容器在 fragment_register_step1.xml 底部，遮挡输入框时由库自动顶起卡片
+     */
+    private void setupSecureKeyboard() {
+        android.widget.LinearLayout keyboardPlace = findViewById(R.id.safe_keyboard_place);
+        if (keyboardPlace == null) {
+            return;
+        }
+        View root = findViewById(android.R.id.content);
+        View card = findViewById(R.id.cardContainer);
+        secureKeyboard = SecureKeyboardManager.attach(this, keyboardPlace, root, card, "注册");
+        secureKeyboard.bind(etPassword);
+        secureKeyboard.bind(etConfirmPassword);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (secureKeyboard != null && secureKeyboard.onBackPressed()) {
+            return; // 键盘正在显示，先收起键盘
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (secureKeyboard != null) {
+            secureKeyboard.release();
+            secureKeyboard = null;
+        }
     }
 
     private void setupObservers() {

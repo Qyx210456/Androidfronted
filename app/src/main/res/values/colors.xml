@@ -305,4 +305,8 @@
     <color name="defer_option_selected_bg">#E6FFFFFF</color>
     <color name="defer_shadow_blue">#1F458FFC</color>
     <color name="defer_glow_blue">#59458FFC</color>
+
+    <!--安全键盘自定义配色（eg.深蓝灰主题）-->
+    <color name="safe_keyboard_title">#8FA8D8</color>
+    <color name="safe_keyboard_key_text">#EAF0FF</color>
 </resources>

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.security.ScreenCaptureGuard;
 import com.example.androidfronted.util.ToastUtils;
 
 import java.util.ArrayList;
@@ -131,10 +132,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        
+
+        // 登录页包含密码输入，进入前台开启防截屏防录屏
+        ScreenCaptureGuard.enable(this);
+
         if (ToastUtils.pendingRegisterSuccess) {
             ToastUtils.pendingRegisterSuccess = false;
             ToastUtils.showSuccessToast(this, "注册成功");
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 离开登录页立即恢复，避免影响其他页面
+        ScreenCaptureGuard.disable(this);
     }
 }

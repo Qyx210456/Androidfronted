@@ -119,6 +119,9 @@ dependencies {
     implementation(libs.markwon.ext.tasklist)
     implementation(libs.markwon.ext.strikethrough)
     implementation(libs.markwon.image.glide)
+
+    // 安全键盘（第三方库，JitPack 托管，MIT 协议）
+    implementation("com.github.SValence:SafeKeyboard:2.0")
     
     // Testing
     testImplementation(libs.junit)

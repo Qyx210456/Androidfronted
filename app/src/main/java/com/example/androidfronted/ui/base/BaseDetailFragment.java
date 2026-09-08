@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.example.androidfronted.R;
+import com.example.androidfronted.security.ScreenCaptureGuard;
 import com.example.androidfronted.ui.MainActivity;
 
 /**
@@ -44,6 +45,27 @@ public abstract class BaseDetailFragment extends Fragment {
         if (view != null) {
             setupBackButton(view);
         }
+        // 防截屏：敏感页面（子类声明 shouldEnableSecureFlag()=true）进入前台时开启
+        if (shouldEnableSecureFlag()) {
+            ScreenCaptureGuard.enable(getActivity());
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 防截屏：敏感页面离开前台立即恢复，避免影响同窗口其他页面
+        if (shouldEnableSecureFlag()) {
+            ScreenCaptureGuard.disable(getActivity());
+        }
+    }
+
+    /**
+     * 是否开启防截屏防录屏（FLAG_SECURE）。
+     * 涉及密码、银行卡号等敏感信息的页面覆写并返回 true。
+     */
+    protected boolean shouldEnableSecureFlag() {
+        return false;
     }
 
     /**

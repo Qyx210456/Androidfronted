@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.androidfronted.R;
+import com.example.androidfronted.security.ScreenCaptureGuard;
 import com.example.androidfronted.util.ToastUtils;
 import com.example.androidfronted.viewmodel.auth.RegisterStep2ViewModel;
 import com.example.androidfronted.viewmodel.base.NavigationEvent;
@@ -35,6 +36,20 @@ public class RegisterStep2Activity extends AppCompatActivity {
     private Button btnRegister;
     private CheckBox cbAgreement;
     private LinearLayout tvBackStep;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 注册流程页：账号密码正由 Intent 传递/回传，整流程开启防截屏防录屏
+        ScreenCaptureGuard.enable(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 离开页面立即恢复，避免影响其他页面
+        ScreenCaptureGuard.disable(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
