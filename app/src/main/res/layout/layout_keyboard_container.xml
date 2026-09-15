@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  安全键盘容器布局（覆盖 SafeKeyboard 库同名布局，实现自定义配色演示）
+  覆盖原理：App 模块同名资源在合并时优先于依赖库资源，
+  SafeKeyboardConfig 默认 keyboardContainerLayoutId 指向的 R.layout.layout_keyboard_container
+  将解析为本文件。必须保留库中定义的全部 id（keyboardBgImg / keyboardImg / keyboardTip /
+  keyboardDoneImg / keyboardDone / safeKeyboardViewId），否则库 findViewById 会失败。
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="280dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/bg_safe_keyboard"
     android:clickable="true"
     android:focusable="true">
@@ -22,7 +29,7 @@
     <LinearLayout
         android:id="@+id/keyboardContainerRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -97,6 +104,8 @@
                 android:keyPreviewHeight="60dp"
                 android:keyPreviewLayout="@layout/keyboard_preview_layout"
                 android:keyPreviewOffset="0dp"
+                android:keyTextSize="22sp"
+                android:labelTextSize="18sp"
                 android:keyTextColor="@color/safe_keyboard_key_text" />
 
         </FrameLayout>

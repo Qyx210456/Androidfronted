@@ -1,5 +1,6 @@
 package com.example.androidfronted.ui.base;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,9 +55,15 @@ public abstract class BaseDetailFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // 防截屏：敏感页面离开前台立即恢复，避免影响同窗口其他页面
+        // 防截屏（静态整页防护型页面）：应用内跳转（窗口仍持有焦点）立即恢复，
+        // 避免影响同窗口其他页面；退后台（窗口失去焦点）保持防护，任务卡片黑屏
         if (shouldEnableSecureFlag()) {
-            ScreenCaptureGuard.disable(getActivity());
+            Activity activity = getActivity();
+            View decor = activity == null ? null : activity.getWindow().getDecorView();
+            boolean inAppNavigation = decor == null || decor.hasWindowFocus();
+            if (inAppNavigation) {
+                ScreenCaptureGuard.disable(activity);
+            }
         }
     }
 

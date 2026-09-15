@@ -38,17 +38,17 @@ public class RegisterStep2Activity extends AppCompatActivity {
     private LinearLayout tvBackStep;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // 注册流程页：账号密码正由 Intent 传递/回传，整流程开启防截屏防录屏
-        ScreenCaptureGuard.enable(this);
+    protected void onStart() {
+        super.onStart();
+        // C 兜底策略：本页无安全键盘（密码不在本页输入），前台可正常截屏，
+        // 退后台时开启防护，任务卡片黑屏
+        ScreenCaptureGuard.disable(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        // 离开页面立即恢复，避免影响其他页面
-        ScreenCaptureGuard.disable(this);
+    protected void onStop() {
+        super.onStop();
+        ScreenCaptureGuard.enable(this);
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 安全键盘整体背景（eg.深蓝灰主题） -->
+<!-- 安全键盘整体背景（浅色主题，深色变体由 values-night 颜色令牌自动切换） -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#1F2633" />
+    <solid android:color="@color/safe_keyboard_bg" />
 </shape>

@@ -15,18 +15,12 @@ import com.example.androidfronted.ui.base.BaseDetailFragment;
 
 /**
  * 设置密码页：原密码 / 新密码 / 确认新密码 三个输入框
- * - 防截屏：shouldEnableSecureFlag()=true，由 BaseDetailFragment 托管
+ * - 防截屏：B+C 组合策略由 SecureKeyboardManager 托管（键盘弹起才防护 + 退后台兜底）
  * - 安全键盘：三个输入框统一使用 SafeKeyboard，避免系统输入法记录键值
  */
 public class AccountPasswordFragment extends BaseDetailFragment {
 
     private SecureKeyboardManager secureKeyboard;
-
-    /** 设置密码页涉及三个密码输入框，开启防截屏防录屏 */
-    @Override
-    protected boolean shouldEnableSecureFlag() {
-        return true;
-    }
 
     @Nullable
     @Override

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  安全键盘深色主题预留：当 App 未来启用深色主题（或系统深色模式 + DayNight 资源查找）时，
+  键盘自动回落到本文件的深色配色，无需改动任何布局与代码。
+  当前浅色基础值见 values/colors.xml。
+-->
+<resources>
+    <!--安全键盘配色（深蓝灰主题，原浅色改造前配色）-->
+    <color name="safe_keyboard_title">#8FA8D8</color>
+    <color name="safe_keyboard_key_text">#EAF0FF</color>
+    <color name="safe_keyboard_bg">#1F2633</color>
+    <color name="safe_keyboard_key_bg">#2F3A52</color>
+    <color name="safe_keyboard_key_bg_pressed">#4E639A</color>
+    <color name="safe_keyboard_special_bg">#26324A</color>
+    <color name="safe_keyboard_special_bg_pressed">#566EB0</color>
+    <color name="safe_keyboard_special_stroke">#26324A</color>
+    <color name="safe_keyboard_done_pressed">#3D4C73</color>
+    <color name="safe_keyboard_icon">#FFFFFF</color>
+</resources>

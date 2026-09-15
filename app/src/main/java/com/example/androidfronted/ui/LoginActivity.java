@@ -130,11 +130,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // 登录页包含密码输入，进入前台开启防截屏防录屏
-        ScreenCaptureGuard.enable(this);
+    protected void onStart() {
+        super.onStart();
+        // C 兜底策略：登录页前台可正常截屏（B 键盘联动防护由 SecureKeyboardManager 托管），
+        // 退后台时开启防护，任务卡片黑屏
+        ScreenCaptureGuard.disable(this);
 
         if (ToastUtils.pendingRegisterSuccess) {
             ToastUtils.pendingRegisterSuccess = false;
@@ -143,9 +143,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        // 离开登录页立即恢复，避免影响其他页面
-        ScreenCaptureGuard.disable(this);
+    protected void onStop() {
+        super.onStop();
+        ScreenCaptureGuard.enable(this);
     }
 }

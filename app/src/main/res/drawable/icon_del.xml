@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 覆盖 SafeKeyboard 库同名白色 PNG：删除键图标 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="166.7dp"
+    android:viewportWidth="27.125"
+    android:viewportHeight="22.604">
+    <!-- 退格主体：左侧尖点 (5.34,11.3)，右侧圆角矩形，中心 x=13.56 与视口中心对齐 -->
+    <path
+        android:pathData="M10.2,4.6 L19.9,4.6 A1.9,1.9 0 0 1 21.78,6.5 L21.78,16.08 A1.9,1.9 0 0 1 19.9,17.98 L10.2,17.98 L5.34,11.3 Z"
+        android:strokeColor="@color/safe_keyboard_icon"
+        android:strokeWidth="2"
+        android:strokeLineJoin="miter"
+        android:fillColor="#00000000" />
+    <!-- X 清除符：主体中心 (16,11.3) -->
+    <path
+        android:pathData="M14.2,9.5 L17.8,13.1 M17.8,9.5 L14.2,13.1"
+        android:strokeColor="@color/safe_keyboard_icon"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

@@ -42,17 +42,17 @@ public class RegisterStep1Activity extends AppCompatActivity {
     private SecureKeyboardManager secureKeyboard;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // 注册第一步输入账号密码，进入前台开启防截屏防录屏
-        ScreenCaptureGuard.enable(this);
+    protected void onStart() {
+        super.onStart();
+        // C 兜底策略：注册页前台可正常截屏（输密码时的键盘联动防护由 SecureKeyboardManager 托管），
+        // 退后台时开启防护，任务卡片黑屏
+        ScreenCaptureGuard.disable(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        // 离开页面立即恢复，避免影响其他页面
-        ScreenCaptureGuard.disable(this);
+    protected void onStop() {
+        super.onStop();
+        ScreenCaptureGuard.enable(this);
     }
 
     @Override

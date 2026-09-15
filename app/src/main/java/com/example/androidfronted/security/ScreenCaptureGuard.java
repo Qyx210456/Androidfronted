@@ -5,7 +5,6 @@ import android.view.WindowManager;
 
 /**
  * 防截屏防录屏工具
- *
  */
 public final class ScreenCaptureGuard {
 

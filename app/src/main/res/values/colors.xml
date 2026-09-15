@@ -306,7 +306,18 @@
     <color name="defer_shadow_blue">#1F458FFC</color>
     <color name="defer_glow_blue">#59458FFC</color>
 
-    <!--安全键盘自定义配色（eg.深蓝灰主题）-->
-    <color name="safe_keyboard_title">#8FA8D8</color>
-    <color name="safe_keyboard_key_text">#EAF0FF</color>
+    <!--安全键盘配色（浅色主题；深色变体见 values-night/colors.xml）
+        功能键（shift/删除/键盘切换）采用深色底 + 白色标签设计：
+        库 SafeKeyboardView.drawTextAndIcon 硬编码白色画笔，标签只能为白色，
+        因此浅色主题下功能键底色必须足够深以保证标签/图标可见 -->
+    <color name="safe_keyboard_title">#5A6B8C</color>
+    <color name="safe_keyboard_key_text">#1F2633</color>
+    <color name="safe_keyboard_bg">#F2F4F8</color>
+    <color name="safe_keyboard_key_bg">#FFFFFF</color>
+    <color name="safe_keyboard_key_bg_pressed">#DCE4F2</color>
+    <color name="safe_keyboard_special_bg">#33405E</color>
+    <color name="safe_keyboard_special_bg_pressed">#4A5C88</color>
+    <color name="safe_keyboard_special_stroke">#33405E</color>
+    <color name="safe_keyboard_done_pressed">#DCE4F2</color>
+    <color name="safe_keyboard_icon">#FFFFFF</color>
 </resources>
