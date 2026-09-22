@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 产品列表卡片背景：个人消费（蓝） -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 阴影层 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/card_bg_personal_shadow"/>
+            <corners
+                android:topLeftRadius="12dp"
+                android:bottomLeftRadius="24dp"
+                android:topRightRadius="0dp"
+                android:bottomRightRadius="12dp"/>
+            <padding
+                android:left="0dp"
+                android:right="8dp"
+                android:top="8dp"
+                android:bottom="0dp"/>
+        </shape>
+    </item>
+
+    <!-- 底部描边 -->
+    <item android:left="0dp" android:right="0dp" android:top="0dp" android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/card_bg_personal_border"/>
+            <corners
+                android:topLeftRadius="12dp"
+                android:bottomLeftRadius="24dp"
+                android:topRightRadius="0dp"
+                android:bottomRightRadius="12dp"/>
+        </shape>
+    </item>
+
+    <!-- 左侧描边 -->
+    <item android:left="0dp" android:right="8dp" android:top="8dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/card_bg_personal_border"/>
+            <corners
+                android:topLeftRadius="12dp"
+                android:bottomLeftRadius="24dp"
+                android:topRightRadius="0dp"
+                android:bottomRightRadius="12dp"/>
+        </shape>
+    </item>
+
+    <!-- 主体背景 -->
+    <item android:left="8dp" android:right="0dp" android:top="0dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/card_bg_personal_content"/>
+            <corners
+                android:topLeftRadius="4dp"
+                android:bottomLeftRadius="16dp"
+                android:topRightRadius="0dp"
+                android:bottomRightRadius="4dp"/>
+        </shape>
+    </item>
+</layer-list>

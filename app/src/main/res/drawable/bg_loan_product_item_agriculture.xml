@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 产品列表卡片背景：农业生产（绿）-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 阴影层 - 右侧和顶部有阴影 -->
+    <!-- 阴影层 -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#80DAE7FB"/>
+            <solid android:color="@color/card_bg_agriculture_shadow"/>
             <corners
                 android:topLeftRadius="12dp"
                 android:bottomLeftRadius="24dp"
@@ -17,10 +18,10 @@
         </shape>
     </item>
 
-    <!-- 底部描边 - 只覆盖底部8dp -->
+    <!-- 底部描边 -->
     <item android:left="0dp" android:right="0dp" android:top="0dp" android:bottom="0dp">
         <shape android:shape="rectangle">
-            <solid android:color="#BBDEFB"/>
+            <solid android:color="@color/card_bg_agriculture_border"/>
             <corners
                 android:topLeftRadius="12dp"
                 android:bottomLeftRadius="24dp"
@@ -29,10 +30,10 @@
         </shape>
     </item>
 
-    <!-- 左侧描边 - 只覆盖左侧8dp -->
+    <!-- 左侧描边 -->
     <item android:left="0dp" android:right="8dp" android:top="8dp" android:bottom="8dp">
         <shape android:shape="rectangle">
-            <solid android:color="#BBDEFB"/>
+            <solid android:color="@color/card_bg_agriculture_border"/>
             <corners
                 android:topLeftRadius="12dp"
                 android:bottomLeftRadius="24dp"
@@ -41,10 +42,10 @@
         </shape>
     </item>
 
-    <!-- 主体白色背景 - 覆盖中间区域，露出底部和左侧描边 -->
+    <!-- 主体背景 -->
     <item android:left="8dp" android:right="0dp" android:top="0dp" android:bottom="8dp">
         <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF"/>
+            <solid android:color="@color/card_bg_agriculture_content"/>
             <corners
                 android:topLeftRadius="4dp"
                 android:bottomLeftRadius="16dp"

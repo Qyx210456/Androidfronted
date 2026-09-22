@@ -16,6 +16,7 @@ import com.example.androidfronted.data.model.LoanProductResponse;
 import com.example.androidfronted.data.model.LoginRequest;
 import com.example.androidfronted.data.model.LoginResponse;
 import com.example.androidfronted.data.model.NotificationResponse;
+import com.example.androidfronted.data.model.OrderStatisticsResponse;
 import com.example.androidfronted.data.model.ProductApplyRequest;
 import com.example.androidfronted.data.model.ProductApplyResponse;
 import com.example.androidfronted.data.model.RegisterRequest;
@@ -651,11 +652,16 @@ public class RemoteDataSource {
      * 提前还款
      * @param token 用户token
      * @param orderId 订单ID
+     * @param periods 提前还款期数（null=一次性结清剩余全部期数，1~剩余期数=提前偿还接下来N期）
      * @param callback 网络回调
      */
-    public void earlyRepay(String token, int orderId, final NetworkCallback<String> callback) {
+    public void earlyRepay(String token, int orderId, Integer periods, final NetworkCallback<String> callback) {
+        String url = BASE_URL + "/orders/" + orderId + "/early-repay";
+        if (periods != null) {
+            url += "?periods=" + periods;
+        }
         Request httpRequest = new Request.Builder()
-                .url(BASE_URL + "/orders/" + orderId + "/early-repay")
+                .url(url)
                 .addHeader("Authorization", "Bearer " + token)
                 .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
                 .build();
@@ -693,6 +699,19 @@ public class RemoteDataSource {
                         return response != null && response.getCode() == 200;
                     }
                 }, callback);
+    }
+
+    /**
+     * 订单统计：当前用户所有订单的待还总额/本金/利息（GET /orders/statistics）
+     */
+    public void getUserOrderStatistics(String token, final NetworkCallback<OrderStatisticsResponse> callback) {
+        Request httpRequest = new Request.Builder()
+                .url(BASE_URL + "/orders/statistics")
+                .addHeader("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        executeRequest(httpRequest, "Get order statistics", OrderStatisticsResponse.class, callback);
     }
 
     public interface NetworkCallback<T> {

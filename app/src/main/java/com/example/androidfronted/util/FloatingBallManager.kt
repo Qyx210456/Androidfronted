@@ -15,6 +15,7 @@ import com.example.androidfronted.ui.notification.NotificationBusinessDetailFrag
 import com.example.androidfronted.ui.personalinformationinfo.*
 import com.example.androidfronted.ui.settings.SettingsFragment
 import com.example.androidfronted.ui.smartcustomerservice.SmartCustomerServiceFragment
+import com.example.androidfronted.ui.smartcustomerservice.SmartCustomerServiceSearchFragment
 import com.example.androidfronted.ui.widget.FloatingBallView
 
 class FloatingBallManager private constructor(private val app: Application) {
@@ -54,6 +55,7 @@ class FloatingBallManager private constructor(private val app: Application) {
     private val fragmentBlackList: Set<Class<out Fragment>> = setOf(
         VerifyCodeLoginFragment::class.java,
         PasswordLoginFragment::class.java,
+        SmartCustomerServiceSearchFragment::class.java,
         AvatarEditFragment::class.java,
         PaymentFragment::class.java,
         AccountPasswordFragment::class.java,

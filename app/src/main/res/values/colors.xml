@@ -320,4 +320,37 @@
     <color name="safe_keyboard_special_stroke">#33405E</color>
     <color name="safe_keyboard_done_pressed">#DCE4F2</color>
     <color name="safe_keyboard_icon">#FFFFFF</color>
+
+    <!-- ================= 产品类型卡片背景颜色 ================= -->
+    <!-- 个人消费 -->
+    <color name="card_bg_personal_shadow">#80DAE7FB</color>
+    <color name="card_bg_personal_border">#BBDEFB</color>
+    <color name="card_bg_personal_content">#FFFFFF</color>
+    <!-- 农业生产 (阴影为描边 #C8E6C9 同色系半透明) -->
+    <color name="card_bg_agriculture_shadow">#80E8F5E9</color>
+    <color name="card_bg_agriculture_border">#C8E6C9</color>
+    <color name="card_bg_agriculture_content">#FFFFFF</color>
+    <!-- 企业经营 (阴影为描边 #FFE0B2 同色系半透明) -->
+    <color name="card_bg_business_shadow">#80FFF8E1</color>
+    <color name="card_bg_business_border">#FFE0B2</color>
+    <color name="card_bg_business_content">#FFFFFF</color>
+
+    <!-- ================= 产品类型标签颜色 (边框/背景/字体) ================= -->
+    <!-- 个人消费 -->
+    <color name="tag_personal_border">#90CAF9</color>
+    <color name="tag_personal_bg">#E3F2FD</color>
+    <color name="tag_personal_text">#2196F3</color>
+    <!-- 农业生产 -->
+    <color name="tag_agriculture_border">#81C784</color>
+    <color name="tag_agriculture_bg">#E8F5E9</color>
+    <color name="tag_agriculture_text">#4CAF50</color>
+    <!-- 企业经营 -->
+    <color name="tag_business_border">#FFB74D</color>
+    <color name="tag_business_bg">#FFF3E0</color>
+    <color name="tag_business_text">#FF9800</color>
+
+    <!-- ================= 产品类型最高额度数值颜色 ================= -->
+    <color name="amount_personal">#4EACFB</color>
+    <color name="amount_agriculture">#6A966C</color>
+    <color name="amount_business">#FCA82D</color>
 </resources>

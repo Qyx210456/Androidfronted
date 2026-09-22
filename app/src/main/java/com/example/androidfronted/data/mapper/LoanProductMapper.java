@@ -20,6 +20,7 @@ public class LoanProductMapper {
                 model.getPromotionDetails(),
                 model.getMinAmount(),
                 model.getMaxAmount(),
+                model.getProductType(),
                 gson.toJson(model.getTerms()),
                 gson.toJson(model.getOptions())
         );
@@ -37,6 +38,7 @@ public class LoanProductMapper {
         product.setPromotionDetails(entity.getPromotionDetails());
         product.setMinAmount(entity.getMinAmount());
         product.setMaxAmount(entity.getMaxAmount());
+        product.setProductType(entity.getProductType());
         
         if (entity.getTermsJson() != null) {
             product.setTerms(gson.fromJson(entity.getTermsJson(), 

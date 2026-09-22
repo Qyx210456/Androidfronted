@@ -117,7 +117,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textSize="16sp"
-                android:textColor="#2D79FF"/>
+                android:textColor="@color/loan_sort_text_selector"/>
 
             <!--个人消费-->
             <TextView

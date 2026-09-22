@@ -1,17 +1,25 @@
 package com.example.androidfronted.ui.loan;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.androidfronted.R;
 import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
@@ -46,8 +54,16 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
     private Button btnConfirm;
     private ProgressBar progressBar;
 
+    // 部分提前还款抽屉
+    private LinearLayout cardPartialDrawer;
+    private TextView tvPartialRange;
+    private TextView tvPartialError;
+    private EditText etPartialPeriods;
+    private CardView cvPartialPeriods;
+
     private double remainingPrincipal = 0;
     private double savedInterest = 0;
+    private int remainingUnpaidTerms = 0;
     private String endDate = "";
 
     public static EarlyRepaymentFragment newInstance(int orderId) {
@@ -92,8 +108,37 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
         btnConfirm = view.findViewById(R.id.btn_confirm);
         progressBar = new ProgressBar(requireContext());
 
+        cardPartialDrawer = view.findViewById(R.id.card_partial_drawer);
+        tvPartialRange = view.findViewById(R.id.tv_partial_range);
+        tvPartialError = view.findViewById(R.id.tv_partial_error);
+        etPartialPeriods = view.findViewById(R.id.et_partial_periods);
+        cvPartialPeriods = view.findViewById(R.id.cv_partial_periods);
+
         rbFull.setChecked(true);
-        rbPartial.setEnabled(false);
+
+        RadioGroup rgRepaymentType = view.findViewById(R.id.rg_repayment_type);
+        rgRepaymentType.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.rb_partial) {
+                showPartialDrawer();
+            } else {
+                hidePartialDrawer();
+            }
+        });
+
+        etPartialPeriods.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                clearPartialError();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         btnConfirm.setOnClickListener(v -> {
             performEarlyRepay();
@@ -126,7 +171,7 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
     }
 
     private void loadRepaymentPlan() {
-        repository.getRepaymentPlan(orderId, 0, new LoanOrderRepository.RepaymentPlanCallback() {
+        repository.getRepaymentPlan(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
             @Override
             public void onSuccess(List<RepaymentPlanEntity> plans) {
                 if (plans != null && !plans.isEmpty()) {
@@ -144,8 +189,6 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
     }
 
     private void updateLoanInfo(LoanOrderDetailEntity detail) {
-        DecimalFormat df = new DecimalFormat("#,##0.00");
-        
         tvInterestRate.setText(String.format("%.2f%%", detail.getInterestRate()));
         tvStartDate.setText(detail.getStartTime());
     }
@@ -153,21 +196,54 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
     private void calculateUnpaidAmounts(List<RepaymentPlanEntity> plans) {
         savedInterest = 0;
         remainingPrincipal = 0;
-        
+        remainingUnpaidTerms = 0;
+
         for (RepaymentPlanEntity plan : plans) {
             if ("未还".equals(plan.getStatus())) {
                 savedInterest += plan.getInterest();
                 remainingPrincipal += plan.getPrincipal();
+                remainingUnpaidTerms++;
             }
         }
-        
+
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
                 DecimalFormat df = new DecimalFormat("#,##0.00");
                 tvRemainingPrincipal.setText("¥ " + df.format(remainingPrincipal));
                 tvTotalPayment.setText("¥ " + df.format(remainingPrincipal));
+                updatePartialRangeText();
             });
         }
+    }
+
+    private void showPartialDrawer() {
+        cardPartialDrawer.setVisibility(View.VISIBLE);
+        updatePartialRangeText();
+        etPartialPeriods.requestFocus();
+    }
+
+    private void hidePartialDrawer() {
+        cardPartialDrawer.setVisibility(View.GONE);
+        clearPartialError();
+    }
+
+    private void updatePartialRangeText() {
+        tvPartialRange.setText("可提前还款期数：1 - " + remainingUnpaidTerms + " 期");
+    }
+
+    private void showPartialError(String error) {
+        tvPartialError.setText(error);
+        tvPartialError.setVisibility(View.VISIBLE);
+        FrameLayout frameLayout = (FrameLayout) cvPartialPeriods.getChildAt(0);
+        frameLayout.setBackgroundResource(R.drawable.bg_amount_error);
+        etPartialPeriods.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
+    }
+
+    private void clearPartialError() {
+        tvPartialError.setVisibility(View.GONE);
+        FrameLayout frameLayout = (FrameLayout) cvPartialPeriods.getChildAt(0);
+        frameLayout.setBackgroundResource(R.drawable.bg_term_selector);
+        etPartialPeriods.setTextColor(ContextCompat.getColor(requireContext(), R.color.number_amount));
     }
 
     private void findEndDate(List<RepaymentPlanEntity> plans) {
@@ -184,7 +260,7 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
 
     private void updateFeeDisplay() {
         DecimalFormat df = new DecimalFormat("#,##0.00");
-        
+
         if (getActivity() != null) {
             getActivity().runOnUiThread(() -> {
                 tvPenaltyFee.setText("¥ 0.00");
@@ -195,9 +271,35 @@ public class EarlyRepaymentFragment extends BaseDetailFragment {
     }
 
     private void performEarlyRepay() {
+        Integer periods = null;
+
+        if (rbPartial.isChecked()) {
+            String input = etPartialPeriods.getText().toString().trim();
+            if (input.isEmpty()) {
+                showPartialError("请输入提前还款期数");
+                return;
+            }
+            int value;
+            try {
+                value = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                showPartialError("请输入有效的数字");
+                return;
+            }
+            if (value <= 0) {
+                showPartialError("提前还款期数必须大于0");
+                return;
+            }
+            if (value > remainingUnpaidTerms) {
+                showPartialError("提前还款期数不能超过剩余期数 " + remainingUnpaidTerms + " 期");
+                return;
+            }
+            periods = value;
+        }
+
         btnConfirm.setEnabled(false);
-        
-        repository.earlyRepay(orderId, new LoanOrderRepository.EarlyRepayCallback() {
+
+        repository.earlyRepay(orderId, periods, new LoanOrderRepository.EarlyRepayCallback() {
             @Override
             public void onSuccess(String message) {
                 if (getActivity() != null) {

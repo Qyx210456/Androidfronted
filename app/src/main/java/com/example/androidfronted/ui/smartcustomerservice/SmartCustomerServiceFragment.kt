@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.androidfronted.R
 import com.example.androidfronted.ui.MainActivity
 import com.example.androidfronted.ui.smartcustomerservice.screen.SmartCustomerServiceScreen
 import com.example.androidfronted.viewmodel.smartcustomerservice.ChatViewModel
@@ -28,6 +29,9 @@ class SmartCustomerServiceFragment : Fragment() {
     
     private var onBackCallback: (() -> Unit)? = null
     private var finishOnBack: Boolean = false
+
+    /** 从搜索页返回时侧边栏保持展开（在跳转搜索前置 true，onResume 复位） */
+    private var startWithDrawerOpen = false
     
     fun setOnBackCallback(callback: () -> Unit) {
         onBackCallback = callback
@@ -52,6 +56,7 @@ class SmartCustomerServiceFragment : Fragment() {
             setContent {
                 SmartCustomerServiceScreen(
                     viewModel = viewModel,
+                    startDrawerOpen = startWithDrawerOpen,
                     onBackClick = {
                         if (onBackCallback != null) {
                             onBackCallback?.invoke()
@@ -60,6 +65,13 @@ class SmartCustomerServiceFragment : Fragment() {
                         } else {
                             activity?.finish()
                         }
+                    },
+                    onSearchClick = {
+                        startWithDrawerOpen = true
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.container, SmartCustomerServiceSearchFragment())
+                            .addToBackStack(null)
+                            .commit()
                     }
                 )
             }
@@ -69,6 +81,8 @@ class SmartCustomerServiceFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as? MainActivity)?.setBottomNavigationVisible(false)
+        // 标志位只在返回重建 View 时生效一次
+        startWithDrawerOpen = false
     }
     
     override fun onPause() {

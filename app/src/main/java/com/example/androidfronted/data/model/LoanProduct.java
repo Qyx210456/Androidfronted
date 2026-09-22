@@ -42,6 +42,10 @@ public class LoanProduct implements Serializable {
     @SerializedName("options")
     private List<LoanOption> options;
 
+    /** 产品类型：个人消费 / 农业生产 / 企业经营 */
+    @SerializedName("productType")
+    private String productType;
+
     public int getProductId() {return productId;}
 
     public void setProductId(int productId) {
@@ -112,6 +116,14 @@ public class LoanProduct implements Serializable {
 
     public void setOptions(List<LoanOption> options) {
         this.options = options;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 
 

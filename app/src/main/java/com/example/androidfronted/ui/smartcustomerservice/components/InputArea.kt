@@ -1,32 +1,28 @@
 /**
  * 输入区域组件
- * 
+ *
  * 该文件包含智能客服聊天界面的底部输入区域组件，包括：
  * - InputArea: 主输入区域组件
  * - QuickActionsBar: 快捷操作栏（横向滚动的常用功能）
  * - ToolsBar: 工具栏（拍照、相册、文件夹）
  * - ToolButton: 工具按钮组件
- * 
+ *
  * 功能说明：
  * 1. 支持键盘输入和语音输入两种模式切换
  * 2. 输入框有内容时显示发送按钮，无内容时显示相机按钮
  * 3. 点击加号按钮可展开/收起工具栏
  * 4. 点击工具栏按钮时自动收起键盘
- * 
- * UI尺寸参考：
- * - 输入框最小高度: 48.dp
- * - 输入框最大高度: 120.dp
- * - 输入框圆角: 24.dp
- * - 图标大小: 32.dp
- * - 图标按钮大小: 52.dp
- * - 快捷操作按钮高度: 32.dp
- * - 工具按钮大小: 48.dp
+ *
+ * 样式：
+ * - 推荐栏与输入栏背景白色
+ * - 推荐功能组件四周的边框颜色减淡，突出中间文本内容
  */
 package com.example.androidfronted.ui.smartcustomerservice.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -36,15 +32,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.androidfronted.R
+
+private val InputBarWhite = Color.White
+private val InputDivider = Color(0xFFEEEEEE)
+private val ChipLabelColor = Color(0xFF333333)
+/** chip浅灰边框 */
+private val ChipBorderColor = Color(0xFFDDDDDD)
 
 /**
  * 输入模式枚举
@@ -58,23 +59,6 @@ enum class InputMode {
 
 /**
  * 输入区域主组件
- * 
- * 包含快捷操作栏、输入框、功能按钮和工具栏
- * 
- * @param inputText 当前输入文本
- * @param isLoading 是否正在加载
- * @param inputMode 当前输入模式
- * @param showTools 是否显示工具栏
- * @param onInputChange 输入文本变化回调
- * @param onSendClick 发送按钮点击回调
- * @param onCancelClick 取消按钮点击回调
- * @param onInputModeChange 输入模式变化回调
- * @param onCameraClick 相机按钮点击回调
- * @param onToggleTools 切换工具栏显示状态回调
- * @param onPhotoClick 拍照按钮点击回调
- * @param onGalleryClick 相册按钮点击回调
- * @param onFileClick 文件夹按钮点击回调
- * @param modifier 修饰符
  */
 @Composable
 fun InputArea(
@@ -84,7 +68,6 @@ fun InputArea(
     showTools: Boolean,
     onInputChange: (String) -> Unit,
     onSendClick: () -> Unit,
-    onCancelClick: () -> Unit,
     onInputModeChange: (InputMode) -> Unit,
     onCameraClick: () -> Unit,
     onToggleTools: () -> Unit,
@@ -94,26 +77,23 @@ fun InputArea(
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    
+
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .background(InputBarWhite)
     ) {
-        // 快捷操作栏 - 横向滚动的常用功能
+        // 快捷操作栏 - 横向滚动的常用功能（白色背景）
         QuickActionsBar(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(InputBarWhite)
         )
-        
-        // 分隔线 - 位于快捷操作栏和输入栏之间
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-        
-        // 输入栏主体
+
+        // 输入栏主体（白色背景）
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface
+            color = InputBarWhite
         ) {
             Row(
                 modifier = Modifier
@@ -124,15 +104,15 @@ fun InputArea(
             ) {
                 // 语音/键盘切换按钮
                 IconButton(
-                    onClick = { 
+                    onClick = {
                         keyboardController?.hide()
-                        onInputModeChange(if (inputMode == InputMode.KEYBOARD) InputMode.VOICE else InputMode.KEYBOARD) 
+                        onInputModeChange(if (inputMode == InputMode.KEYBOARD) InputMode.VOICE else InputMode.KEYBOARD)
                     },
                     modifier = Modifier.size(52.dp)
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if (inputMode == InputMode.KEYBOARD) R.drawable.ic_smart_customer_service_voice 
+                            id = if (inputMode == InputMode.KEYBOARD) R.drawable.ic_smart_customer_service_voice
                             else R.drawable.ic_smart_customer_service_keyboard
                         ),
                         contentDescription = if (inputMode == InputMode.KEYBOARD) "语音输入" else "键盘输入",
@@ -140,7 +120,7 @@ fun InputArea(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-                
+
                 // 键盘输入模式
                 if (inputMode == InputMode.KEYBOARD) {
                     // 输入框
@@ -155,21 +135,21 @@ fun InputArea(
                         maxLines = 4,
                         enabled = !isLoading
                     )
-                    
+
                     // 有输入内容时显示：加号 + 发送按钮
                     if (inputText.isNotBlank()) {
                         // 加号按钮（在原来相机的位置）
                         androidx.compose.foundation.Image(
                             painter = painterResource(
-                                id = if (showTools) R.drawable.ic_smart_customer_service_close_add 
+                                id = if (showTools) R.drawable.ic_smart_customer_service_close_add
                                 else R.drawable.ic_smart_customer_service_add
                             ),
                             contentDescription = if (showTools) "关闭" else "更多功能",
                             modifier = Modifier
                                 .size(32.dp)
-                                .clickable { 
+                                .clickable {
                                     keyboardController?.hide()
-                                    onToggleTools() 
+                                    onToggleTools()
                                 }
                         )
                         // 发送按钮（使用图标）
@@ -178,9 +158,9 @@ fun InputArea(
                             contentDescription = "发送",
                             modifier = Modifier
                                 .size(32.dp)
-                                .clickable { 
+                                .clickable {
                                     keyboardController?.hide()
-                                    onSendClick() 
+                                    onSendClick()
                                 }
                         )
                     } else {
@@ -191,23 +171,23 @@ fun InputArea(
                             contentDescription = "相机",
                             modifier = Modifier
                                 .size(32.dp)
-                                .clickable { 
+                                .clickable {
                                     keyboardController?.hide()
-                                    onCameraClick() 
+                                    onCameraClick()
                                 }
                         )
                         // 加号按钮
                         androidx.compose.foundation.Image(
                             painter = painterResource(
-                                id = if (showTools) R.drawable.ic_smart_customer_service_close_add 
+                                id = if (showTools) R.drawable.ic_smart_customer_service_close_add
                                 else R.drawable.ic_smart_customer_service_add
                             ),
                             contentDescription = if (showTools) "关闭" else "更多功能",
                             modifier = Modifier
                                 .size(32.dp)
-                                .clickable { 
+                                .clickable {
                                     keyboardController?.hide()
-                                    onToggleTools() 
+                                    onToggleTools()
                                 }
                         )
                     }
@@ -224,64 +204,63 @@ fun InputArea(
                             shape = RoundedCornerShape(24.dp),
                             enabled = !isLoading,
                             contentPadding = PaddingValues(horizontal = 16.dp),
-                            // 设置按钮颜色
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.bg_top_bar), // 背景颜色
-                                contentColor = colorResource(id = R.color.white)               // 内容(文字)颜色
+                                containerColor = colorResource(id = R.color.bg_top_bar),
+                                contentColor = colorResource(id = R.color.white)
                             )
                         ) {
                             Text("按住说话")
                         }
                     }
-                    
+
                     // 相机按钮
                     androidx.compose.foundation.Image(
                         painter = painterResource(id = R.drawable.ic_smart_customer_service_camera),
                         contentDescription = "相机",
                         modifier = Modifier
                             .size(32.dp)
-                            .clickable { 
+                            .clickable {
                                 keyboardController?.hide()
-                                onCameraClick() 
+                                onCameraClick()
                             }
                     )
-                    
+
                     // 加号按钮
                     androidx.compose.foundation.Image(
                         painter = painterResource(
-                            id = if (showTools) R.drawable.ic_smart_customer_service_close_add 
+                            id = if (showTools) R.drawable.ic_smart_customer_service_close_add
                             else R.drawable.ic_smart_customer_service_add
                         ),
                         contentDescription = if (showTools) "关闭" else "更多功能",
                         modifier = Modifier
                             .size(32.dp)
-                            .clickable { 
+                            .clickable {
                                 keyboardController?.hide()
-                                onToggleTools() 
+                                onToggleTools()
                             }
                     )
                 }
             }
         }
-        
-        // 工具栏 - 拍照、相册、文件夹
+
+        // 工具栏 - 拍照、相册、文件夹（白色背景）
         AnimatedVisibility(
             visible = showTools,
             enter = expandVertically(),
             exit = shrinkVertically()
         ) {
             ToolsBar(
-                onPhotoClick = { 
+                onPhotoClick = {
                     keyboardController?.hide()
-                    onPhotoClick() 
+                    onPhotoClick()
                 },
-                onGalleryClick = { 
+                onGalleryClick = {
                     keyboardController?.hide()
-                    onGalleryClick() 
+                    onGalleryClick()
                 },
-                onFileClick = { 
+                onFileClick = {
                     keyboardController?.hide()
-                    onFileClick() 
+                    onFileClick()
                 }
             )
         }
@@ -289,11 +268,7 @@ fun InputArea(
 }
 
 /**
- * 快捷操作栏组件
- * 
- * 横向滚动的常用功能按钮列表
- * 
- * @param modifier 修饰符
+ * 快捷操作栏组件：白色背景 + 减淡边框，突出中间文本
  */
 @Composable
 private fun QuickActionsBar(
@@ -305,7 +280,7 @@ private fun QuickActionsBar(
         "申请进度" to "查询申请进度",
         "政策解读" to "贷款政策咨询"
     )
-    
+
     Row(
         modifier = modifier
             .horizontalScroll(rememberScrollState())
@@ -315,22 +290,30 @@ private fun QuickActionsBar(
         quickActions.forEach { (title, _) ->
             SuggestionChip(
                 onClick = { },
-                label = { Text(title) },
-                modifier = Modifier.height(32.dp)
+                label = {
+                    Text(
+                        title,
+                        fontSize = 13.sp,
+                        color = ChipLabelColor
+                    )
+                },
+                modifier = Modifier.height(32.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = InputBarWhite,
+                    labelColor = ChipLabelColor
+                ),
+                border = SuggestionChipDefaults.suggestionChipBorder(
+                    enabled = true,
+                    borderColor = ChipBorderColor
+                )
             )
         }
     }
 }
 
 /**
- * 工具栏组件
- * 
- * 显示拍照、相册、文件夹三个工具按钮
- * 
- * @param onPhotoClick 拍照按钮点击回调
- * @param onGalleryClick 相册按钮点击回调
- * @param onFileClick 文件夹按钮点击回调
- * @param modifier 修饰符
+ * 工具栏组件：白色背景
  */
 @Composable
 private fun ToolsBar(
@@ -341,7 +324,7 @@ private fun ToolsBar(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surfaceVariant
+        color = InputBarWhite
     ) {
         Row(
             modifier = Modifier
@@ -370,12 +353,6 @@ private fun ToolsBar(
 
 /**
  * 工具按钮组件
- * 
- * 单个工具按钮，包含图标和文字
- * 
- * @param iconRes 图标资源ID
- * @param text 按钮文字
- * @param onClick 点击回调
  */
 @Composable
 private fun ToolButton(

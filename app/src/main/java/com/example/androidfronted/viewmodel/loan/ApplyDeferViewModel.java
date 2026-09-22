@@ -114,8 +114,8 @@ public class ApplyDeferViewModel extends BaseViewModel {
                 Log.d(TAG, "loadOrderDetail onSuccess: detail=" + (detail != null ? "not null" : "null"));
                 if (detail != null) {
                     annualRate = detail.getInterestRate();
-                    Log.d(TAG, "loadOrderDetail: annualRate=" + annualRate + ", currentTerm=" + detail.getCurrentTerm());
-                    loadRepaymentPlan(orderId, detail.getCurrentTerm());
+                    Log.d(TAG, "loadOrderDetail: annualRate=" + annualRate);
+                    loadRepaymentPlan(orderId);
                 } else {
                     hideLoading();
                     showError("获取订单详情失败");
@@ -131,16 +131,16 @@ public class ApplyDeferViewModel extends BaseViewModel {
         });
     }
 
-    private void loadRepaymentPlan(int orderId, int currentTermValue) {
-        Log.d(TAG, "loadRepaymentPlan: currentTermValue=" + currentTermValue);
-        
-        loanOrderRepository.getRepaymentPlan(orderId, currentTermValue, new LoanOrderRepository.RepaymentPlanCallback() {
+    private void loadRepaymentPlan(int orderId) {
+        Log.d(TAG, "loadRepaymentPlan: orderId=" + orderId);
+
+        loanOrderRepository.getRepaymentPlan(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
             @Override
             public void onSuccess(List<RepaymentPlanEntity> plans) {
                 hideLoading();
                 Log.d(TAG, "loadRepaymentPlan onSuccess: plans size=" + (plans != null ? plans.size() : 0));
                 if (plans != null && !plans.isEmpty()) {
-                    processRepaymentPlans(plans, currentTermValue);
+                    processRepaymentPlans(plans);
                 } else {
                     Log.e(TAG, "loadRepaymentPlan: plans is null or empty");
                 }
@@ -155,59 +155,31 @@ public class ApplyDeferViewModel extends BaseViewModel {
         });
     }
 
-    private void processRepaymentPlans(List<RepaymentPlanEntity> plans, int currentTermValue) {
-        Log.d(TAG, "processRepaymentPlans: plans size=" + plans.size() + ", currentTermValue=" + currentTermValue);
-        
-        int actualCurrentTerm = currentTermValue + 1;
-        Log.d(TAG, "processRepaymentPlans: actualCurrentTerm=" + actualCurrentTerm);
-        
+    private void processRepaymentPlans(List<RepaymentPlanEntity> plans) {
+        Log.d(TAG, "processRepaymentPlans: plans size=" + plans.size());
+
         RepaymentPlanEntity currentPlan = null;
         RepaymentPlanEntity nextPlan = null;
         int unpaidCount = 0;
         double totalRemaining = 0;
         double totalRemainingPrincipal = 0;
         double totalRemainingInterest = 0;
-        int minUnpaidTerm = Integer.MAX_VALUE;
 
+        // 每期状态由后端直接返回：当期 = 未还中期数最小的一期，下期 = 次小的一期
         for (RepaymentPlanEntity plan : plans) {
             Log.d(TAG, "processRepaymentPlans: plan term=" + plan.getTerm() + ", status=" + plan.getStatus() + ", totalAmount=" + plan.getTotalAmount());
-            
+
             if ("未还".equals(plan.getStatus())) {
                 unpaidCount++;
                 totalRemaining += plan.getTotalAmount();
                 totalRemainingPrincipal += plan.getPrincipal();
                 totalRemainingInterest += plan.getInterest();
 
-                if (plan.getTerm() < minUnpaidTerm) {
-                    minUnpaidTerm = plan.getTerm();
-                }
-
-                if (plan.getTerm() == actualCurrentTerm) {
+                if (currentPlan == null || plan.getTerm() < currentPlan.getTerm()) {
+                    nextPlan = currentPlan;
                     currentPlan = plan;
-                    Log.d(TAG, "processRepaymentPlans: found currentPlan by currentTermValue, term=" + plan.getTerm());
-                } else if (plan.getTerm() == actualCurrentTerm + 1) {
+                } else if (nextPlan == null || plan.getTerm() < nextPlan.getTerm()) {
                     nextPlan = plan;
-                    Log.d(TAG, "processRepaymentPlans: found nextPlan by currentTermValue, term=" + plan.getTerm());
-                }
-            }
-        }
-
-        if (currentPlan == null && minUnpaidTerm != Integer.MAX_VALUE) {
-            Log.d(TAG, "processRepaymentPlans: currentPlan not found by currentTermValue, using minUnpaidTerm=" + minUnpaidTerm);
-            for (RepaymentPlanEntity plan : plans) {
-                if ("未还".equals(plan.getStatus()) && plan.getTerm() == minUnpaidTerm) {
-                    currentPlan = plan;
-                    Log.d(TAG, "processRepaymentPlans: found currentPlan by minUnpaidTerm, term=" + plan.getTerm());
-                    break;
-                }
-            }
-            if (currentPlan != null) {
-                for (RepaymentPlanEntity plan : plans) {
-                    if ("未还".equals(plan.getStatus()) && plan.getTerm() == minUnpaidTerm + 1) {
-                        nextPlan = plan;
-                        Log.d(TAG, "processRepaymentPlans: found nextPlan by minUnpaidTerm, term=" + plan.getTerm());
-                        break;
-                    }
                 }
             }
         }
@@ -221,7 +193,7 @@ public class ApplyDeferViewModel extends BaseViewModel {
             currentInterest.postValue(currentPlan.getInterest());
             dueDate.postValue(currentPlan.getDueDate());
             currentTerm.postValue("第 " + currentPlan.getTerm() + " 期");
-            
+
             calculateExtraInterest(currentPlan.getPrincipal());
         } else {
             Log.e(TAG, "processRepaymentPlans: currentPlan is null!");

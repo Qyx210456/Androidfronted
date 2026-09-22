@@ -64,7 +64,7 @@ public class PaymentViewModel extends BaseViewModel {
                 if (detail != null) {
                     orderDetail.postValue(detail);
                     currentTerm = detail.getCurrentTerm();
-                    loadCurrentTermPlan(orderId, currentTerm);
+                    loadCurrentTermPlan(orderId);
                 } else {
                     hideLoading();
                     showError("获取订单详情失败");
@@ -79,22 +79,20 @@ public class PaymentViewModel extends BaseViewModel {
         });
     }
 
-    private void loadCurrentTermPlan(int orderId, int currentTerm) {
-        loanOrderRepository.getRepaymentPlan(orderId, currentTerm, new LoanOrderRepository.RepaymentPlanCallback() {
+    private void loadCurrentTermPlan(int orderId) {
+        loanOrderRepository.getRepaymentPlan(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
             @Override
             public void onSuccess(List<RepaymentPlanEntity> plans) {
                 hideLoading();
                 if (plans != null && !plans.isEmpty()) {
-                    int targetTerm = currentTerm + 1;
+                    // 每期状态由后端直接返回：当期 = 第一期未还
                     for (RepaymentPlanEntity plan : plans) {
-                        if (plan.getTerm() == targetTerm) {
+                        if ("未还".equals(plan.getStatus())) {
                             currentTermPlan.postValue(plan);
                             return;
                         }
                     }
-                    if (!plans.isEmpty()) {
-                        currentTermPlan.postValue(plans.get(0));
-                    }
+                    currentTermPlan.postValue(plans.get(plans.size() - 1));
                 }
             }
 

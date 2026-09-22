@@ -27,7 +27,7 @@
             android:id="@+id/iv_product_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_item_product_sort"/>
+            android:src="@drawable/ic_item_product_sort_personal"/>
 
         <!-- 产品名称 -->
         <TextView

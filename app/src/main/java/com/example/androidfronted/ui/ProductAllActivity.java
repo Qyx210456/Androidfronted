@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +38,8 @@ public class ProductAllActivity extends AppCompatActivity {
     private ImageView ivSortRateAsc, ivSortRateDesc;
     private ImageView ivSortAmountAsc, ivSortAmountDesc;
     private ImageView ivSortTermAsc, ivSortTermDesc;
+
+    private TextView tvCategoryAll, tvCategoryPersonal, tvCategoryAgricultural, tvCategoryBusiness;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +116,12 @@ public class ProductAllActivity extends AppCompatActivity {
             updateSortIcons();
         });
 
+        viewModel.getCurrentCategory().observe(this, category -> {
+            if (category != null) {
+                updateCategoryTabs(category);
+            }
+        });
+
         viewModel.getNavigationEvent().observe(this, event -> {
             if (event != null) {
                 handleNavigation(event);
@@ -135,9 +144,27 @@ public class ProductAllActivity extends AppCompatActivity {
 
         findViewById(R.id.apply_btn_back).setOnClickListener(v -> finish());
 
+        // 产品分类栏：点击切换分类，选中态由 currentCategory observer 统一更新
+        tvCategoryAll = findViewById(R.id.tvCategoryAll);
+        tvCategoryPersonal = findViewById(R.id.tvCategoryPersonal);
+        tvCategoryAgricultural = findViewById(R.id.tvCategoryAgricultural);
+        tvCategoryBusiness = findViewById(R.id.tvCategoryBusiness);
+
+        tvCategoryAll.setOnClickListener(v -> viewModel.setCategory(ProductAllViewModel.CATEGORY_ALL));
+        tvCategoryPersonal.setOnClickListener(v -> viewModel.setCategory(ProductAllViewModel.CATEGORY_PERSONAL));
+        tvCategoryAgricultural.setOnClickListener(v -> viewModel.setCategory(ProductAllViewModel.CATEGORY_AGRICULTURAL));
+        tvCategoryBusiness.setOnClickListener(v -> viewModel.setCategory(ProductAllViewModel.CATEGORY_BUSINESS));
+
         adapter.setOnLearnMoreClickListener(product -> {
             viewModel.selectProduct(product);
         });
+    }
+
+    private void updateCategoryTabs(int category) {
+        tvCategoryAll.setSelected(category == ProductAllViewModel.CATEGORY_ALL);
+        tvCategoryPersonal.setSelected(category == ProductAllViewModel.CATEGORY_PERSONAL);
+        tvCategoryAgricultural.setSelected(category == ProductAllViewModel.CATEGORY_AGRICULTURAL);
+        tvCategoryBusiness.setSelected(category == ProductAllViewModel.CATEGORY_BUSINESS);
     }
 
     private void setupSortListeners() {

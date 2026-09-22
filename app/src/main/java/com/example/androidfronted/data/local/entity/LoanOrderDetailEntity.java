@@ -1,6 +1,7 @@
 package com.example.androidfronted.data.local.entity;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -23,6 +24,20 @@ public class LoanOrderDetailEntity implements Serializable {
     private String contract;
     private int overdueDays;
     private String startTime;
+
+    // ==== 以下为后端统计派生字段，@Ignore 不持久化（避免 DB 版本升级），离线缓存读出时为 -1 ====
+    /** 应还总额（后端 Σ 所有期数 total_amount）；-1 = 后端未提供 */
+    @Ignore
+    private double totalAmountDue = -1;
+    /** 待还总额（后端 Σ 未还期数 principal + interest）；-1 = 后端未提供 */
+    @Ignore
+    private double outstandingAmount = -1;
+    /** 待还本金（后端 Σ 未还期数 principal）；-1 = 后端未提供 */
+    @Ignore
+    private double outstandingPrincipal = -1;
+    /** 待还利息（后端 Σ 未还期数 interest）；-1 = 后端未提供 */
+    @Ignore
+    private double outstandingInterest = -1;
 
     public LoanOrderDetailEntity(int id, int userId, int productId, String productName, String status,
                                   double repaidAmount, double loanAmount, double interestRate,
@@ -163,5 +178,37 @@ public class LoanOrderDetailEntity implements Serializable {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public double getTotalAmountDue() {
+        return totalAmountDue;
+    }
+
+    public void setTotalAmountDue(double totalAmountDue) {
+        this.totalAmountDue = totalAmountDue;
+    }
+
+    public double getOutstandingAmount() {
+        return outstandingAmount;
+    }
+
+    public void setOutstandingAmount(double outstandingAmount) {
+        this.outstandingAmount = outstandingAmount;
+    }
+
+    public double getOutstandingPrincipal() {
+        return outstandingPrincipal;
+    }
+
+    public void setOutstandingPrincipal(double outstandingPrincipal) {
+        this.outstandingPrincipal = outstandingPrincipal;
+    }
+
+    public double getOutstandingInterest() {
+        return outstandingInterest;
+    }
+
+    public void setOutstandingInterest(double outstandingInterest) {
+        this.outstandingInterest = outstandingInterest;
     }
 }

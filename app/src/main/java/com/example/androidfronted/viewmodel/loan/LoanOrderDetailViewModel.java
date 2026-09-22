@@ -170,7 +170,7 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
     }
 
     private void loadRepaymentPlanData(int orderId, double repaidAmount, int currentTerm) {
-        loanOrderRepository.getRepaymentPlan(orderId, currentTerm, new LoanOrderRepository.RepaymentPlanCallback() {
+        loanOrderRepository.getRepaymentPlan(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
             @Override
             public void onSuccess(List<RepaymentPlanEntity> plans) {
                 if (plans != null && !plans.isEmpty()) {
@@ -207,6 +207,20 @@ public class LoanOrderDetailViewModel extends BaseViewModel {
                         }
                     }
                     
+                    // 后端统计金额优先（-1 = 后端未提供，回退还款计划本地累加）
+                    if (detail != null && detail.getTotalAmountDue() >= 0) {
+                        total = detail.getTotalAmountDue();
+                    }
+                    if (detail != null && detail.getOutstandingAmount() >= 0) {
+                        unpaidTotalSum = detail.getOutstandingAmount();
+                    }
+                    if (detail != null && detail.getOutstandingPrincipal() >= 0) {
+                        unpaidPrincipalSum = detail.getOutstandingPrincipal();
+                    }
+                    if (detail != null && detail.getOutstandingInterest() >= 0) {
+                        unpaidInterestSum = detail.getOutstandingInterest();
+                    }
+
                     totalLoanAmount.postValue(total);
                     unpaidTotal.postValue(unpaidTotalSum);
                     unpaidPrincipal.postValue(unpaidPrincipalSum);

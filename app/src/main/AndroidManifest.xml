@@ -94,7 +94,8 @@
         <activity android:name=".ui.ProductApplySuccessActivity" />
         <activity
             android:name=".ui.SmartCustomerServiceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- 前台服务 - SSE消息推送 -->
         <service

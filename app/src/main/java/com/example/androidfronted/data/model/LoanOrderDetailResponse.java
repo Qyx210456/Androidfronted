@@ -43,6 +43,22 @@ public class LoanOrderDetailResponse {
         @SerializedName("order")
         private OrderDetail order;
 
+        /** 应还总额：Σ 所有期数 total_amount */
+        @SerializedName("totalAmountDue")
+        private Double totalAmountDue;
+
+        /** 待还总额：Σ 未还期数 principal + interest */
+        @SerializedName("outstandingAmount")
+        private Double outstandingAmount;
+
+        /** 待还本金：Σ 未还期数 principal */
+        @SerializedName("outstandingPrincipal")
+        private Double outstandingPrincipal;
+
+        /** 待还利息：Σ 未还期数 interest */
+        @SerializedName("outstandingInterest")
+        private Double outstandingInterest;
+
         public String getProductName() {
             return productName;
         }
@@ -57,6 +73,22 @@ public class LoanOrderDetailResponse {
 
         public void setOrder(OrderDetail order) {
             this.order = order;
+        }
+
+        public Double getTotalAmountDue() {
+            return totalAmountDue;
+        }
+
+        public Double getOutstandingAmount() {
+            return outstandingAmount;
+        }
+
+        public Double getOutstandingPrincipal() {
+            return outstandingPrincipal;
+        }
+
+        public Double getOutstandingInterest() {
+            return outstandingInterest;
         }
     }
 

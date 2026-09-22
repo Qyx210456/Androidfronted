@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="12dp"
-    android:background="@drawable/bg_loan_product_item_new">
+    android:background="@drawable/bg_loan_product_item_personal">
 
     <!-- 第一行：图标 + 贷款名称 + 标签 -->
     <ImageView
@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/ic_item_product_sort"
+        android:src="@drawable/ic_item_product_sort_personal"
         android:contentDescription="@string/product_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

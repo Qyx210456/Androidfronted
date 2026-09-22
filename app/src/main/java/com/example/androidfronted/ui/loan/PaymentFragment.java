@@ -37,6 +37,7 @@ public class PaymentFragment extends Fragment {
     private String selectedPaymentMethod = null;
     private int orderId;
     private int currentTerm;
+    private int currentPlanTerm = -1;
 
     public static PaymentFragment newInstance(int orderId) {
         PaymentFragment fragment = new PaymentFragment();
@@ -118,8 +119,9 @@ public class PaymentFragment extends Fragment {
         viewModel.getCurrentTermPlan().observe(getViewLifecycleOwner(), plan -> {
             if (plan != null) {
                 tvAmount.setText(viewModel.formatAmount(plan.getTotalAmount()));
-                int term = currentTerm + 1;
-                tvTerm.setText(getString(R.string.payment_term_format, term));
+                // 期数直接取还款计划自身期数（状态由后端返回，不再依赖 currentTerm+1 推算）
+                currentPlanTerm = plan.getTerm();
+                tvTerm.setText(getString(R.string.payment_term_format, currentPlanTerm));
             }
         });
 
@@ -150,7 +152,7 @@ public class PaymentFragment extends Fragment {
     }
 
     private void navigateToSuccess() {
-        int term = currentTerm + 1;
+        int term = currentPlanTerm > 0 ? currentPlanTerm : currentTerm + 1;
         PaymentSuccessFragment fragment = PaymentSuccessFragment.newInstance(orderId, term);
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager()

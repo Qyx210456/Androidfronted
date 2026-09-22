@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-import com.example.androidfronted.data.local.entity.LoanOrderDetailEntity;
 import com.example.androidfronted.data.local.entity.RepaymentPlanEntity;
 import com.example.androidfronted.data.repository.LoanOrderRepository;
 import com.example.androidfronted.viewmodel.base.BaseViewModel;
@@ -61,59 +60,20 @@ public class RepaymentPlanViewModel extends BaseViewModel {
     }
 
     /**
-     * 加载还款计划（从网络获取）
-     * 先获取订单详情得到currentTerm，再获取还款计划
+     * 加载还款计划（从网络获取，每期状态由后端直接返回）
      */
     public void loadRepaymentPlan(int orderId) {
         showLoading();
         Log.d(TAG, "loadRepaymentPlan for orderId: " + orderId);
-        
-        loanOrderRepository.getLoanOrderDetail(orderId, new LoanOrderRepository.LoanOrderDetailCallback() {
-            @Override
-            public void onSuccess(LoanOrderDetailEntity detail) {
-                if (detail != null) {
-                    int currentTerm = detail.getCurrentTerm();
-                    int totalTerm = detail.getTerm();
-                    Log.d(TAG, "Got currentTerm: " + currentTerm + " from order detail");
-                    termInfo.postValue("分" + totalTerm + "期还款");
-                    loadRepaymentPlanWithCurrentTerm(orderId, currentTerm);
-                } else {
-                    hideLoading();
-                    showError("获取订单详情失败");
-                }
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-                Log.e(TAG, "Failed to get order detail: " + errorMsg);
-                loadRepaymentPlanWithCurrentTerm(orderId, 0);
-            }
-        });
+        loadPlansInternal(orderId, false);
     }
 
     /**
-     * 加载还款计划（从本地获取，用于刷新）
+     * 加载还款计划（兼容保留：先展示本地缓存，再网络刷新）
      */
     public void loadRepaymentPlanFromLocal(int orderId) {
         Log.d(TAG, "loadRepaymentPlanFromLocal for orderId: " + orderId);
-        
-        loanOrderRepository.getLoanOrderDetailFromLocal(orderId, new LoanOrderRepository.LoanOrderDetailCallback() {
-            @Override
-            public void onSuccess(LoanOrderDetailEntity detail) {
-                if (detail != null) {
-                    int currentTerm = detail.getCurrentTerm();
-                    int totalTerm = detail.getTerm();
-                    Log.d(TAG, "Got currentTerm from local: " + currentTerm);
-                    termInfo.postValue("分" + totalTerm + "期还款");
-                    loadRepaymentPlanWithCurrentTerm(orderId, currentTerm);
-                }
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-                Log.e(TAG, "Failed to get order detail from local: " + errorMsg);
-            }
-        });
+        loadPlansInternal(orderId, true);
     }
 
     /**
@@ -121,74 +81,36 @@ public class RepaymentPlanViewModel extends BaseViewModel {
      */
     public void refreshRepaymentPlan(int orderId) {
         Log.d(TAG, "refreshRepaymentPlan for orderId: " + orderId);
-        
-        loanOrderRepository.getLoanOrderDetailFromLocal(orderId, new LoanOrderRepository.LoanOrderDetailCallback() {
-            @Override
-            public void onSuccess(LoanOrderDetailEntity detail) {
-                if (detail != null) {
-                    int currentTerm = detail.getCurrentTerm();
-                    int totalTerm = detail.getTerm();
-                    Log.d(TAG, "Got currentTerm from local for refresh: " + currentTerm);
-                    termInfo.postValue("分" + totalTerm + "期还款");
-                    loadRepaymentPlanWithCurrentTerm(orderId, currentTerm);
-                }
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-                Log.e(TAG, "Failed to get order detail from local: " + errorMsg);
-            }
-        });
-        
-        loanOrderRepository.getLoanOrderDetail(orderId, new LoanOrderRepository.LoanOrderDetailCallback() {
-            @Override
-            public void onSuccess(LoanOrderDetailEntity detail) {
-                if (detail != null) {
-                    int currentTerm = detail.getCurrentTerm();
-                    int totalTerm = detail.getTerm();
-                    Log.d(TAG, "Got currentTerm from network for refresh: " + currentTerm);
-                    termInfo.postValue("分" + totalTerm + "期还款");
-                    loadRepaymentPlanWithCurrentTermSilent(orderId, currentTerm);
-                }
-            }
-
-            @Override
-            public void onError(String errorMsg) {
-                Log.e(TAG, "Failed to get order detail from network: " + errorMsg);
-            }
-        });
+        loadPlansInternal(orderId, true);
     }
 
     /**
-     * 根据currentTerm加载还款计划（静默加载，不显示loading）
+     * 直接加载还款计划并计算统计信息
+     * @param silentLocalFirst true 时先发本地缓存再静默网络刷新；false 时显示 loading 的网络加载
      */
-    private void loadRepaymentPlanWithCurrentTermSilent(int orderId, int currentTerm) {
-        loanOrderRepository.getRepaymentPlan(orderId, currentTerm, new LoanOrderRepository.RepaymentPlanCallback() {
-            @Override
-            public void onSuccess(List<RepaymentPlanEntity> plans) {
-                Log.d(TAG, "Got " + (plans != null ? plans.size() : 0) + " repayment plans (silent)");
-                allPlans.postValue(plans);
-                calculateTermStats(plans);
-                applyFilter(plans, currentFilter.getValue());
-            }
+    private void loadPlansInternal(int orderId, boolean silentLocalFirst) {
+        if (silentLocalFirst) {
+            loanOrderRepository.getRepaymentPlanFromLocal(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
+                @Override
+                public void onSuccess(List<RepaymentPlanEntity> plans) {
+                    allPlans.postValue(plans);
+                    calculateTermStats(plans);
+                    applyFilter(plans, currentFilter.getValue());
+                }
 
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Failed to load repayment plans (silent): " + errorMessage);
-            }
-        });
-    }
+                @Override
+                public void onError(String errorMessage) {
+                }
+            });
+        }
 
-    /**
-     * 根据currentTerm加载还款计划
-     */
-    private void loadRepaymentPlanWithCurrentTerm(int orderId, int currentTerm) {
-        loanOrderRepository.getRepaymentPlan(orderId, currentTerm, new LoanOrderRepository.RepaymentPlanCallback() {
+        loanOrderRepository.getRepaymentPlan(orderId, new LoanOrderRepository.RepaymentPlanCallback() {
             @Override
             public void onSuccess(List<RepaymentPlanEntity> plans) {
                 hideLoading();
                 Log.d(TAG, "Got " + (plans != null ? plans.size() : 0) + " repayment plans");
                 allPlans.postValue(plans);
+                termInfo.postValue("分" + (plans != null ? plans.size() : 0) + "期还款");
                 calculateTermStats(plans);
                 applyFilter(plans, currentFilter.getValue());
             }
@@ -196,7 +118,9 @@ public class RepaymentPlanViewModel extends BaseViewModel {
             @Override
             public void onError(String errorMessage) {
                 hideLoading();
-                showError(errorMessage);
+                if (!silentLocalFirst) {
+                    showError(errorMessage);
+                }
             }
         });
     }

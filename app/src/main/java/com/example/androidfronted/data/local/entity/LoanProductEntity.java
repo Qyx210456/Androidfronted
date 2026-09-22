@@ -15,12 +15,13 @@ public class LoanProductEntity {
     private String promotionDetails;
     private double minAmount;
     private double maxAmount;
+    private String productType;
     private String termsJson;
     private String optionsJson;
 
     public LoanProductEntity(int productId, String productName, String description, String loanUsage,
                           String promotionDetails, double minAmount, double maxAmount,
-                          String termsJson, String optionsJson) {
+                          String productType, String termsJson, String optionsJson) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
@@ -28,8 +29,17 @@ public class LoanProductEntity {
         this.promotionDetails = promotionDetails;
         this.minAmount = minAmount;
         this.maxAmount = maxAmount;
+        this.productType = productType;
         this.termsJson = termsJson;
         this.optionsJson = optionsJson;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 
     public int getProductId() {

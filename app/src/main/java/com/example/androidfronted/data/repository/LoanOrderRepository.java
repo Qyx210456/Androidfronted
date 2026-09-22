@@ -8,6 +8,7 @@ import com.example.androidfronted.data.local.entity.LoanOrderEntity;
 import com.example.androidfronted.data.local.entity.RepaymentPlanEntity;
 import com.example.androidfronted.data.model.LoanOrderDetailResponse;
 import com.example.androidfronted.data.model.LoanOrderResponse;
+import com.example.androidfronted.data.model.OrderStatisticsResponse;
 import com.example.androidfronted.data.model.RepaymentPlanResponse;
 import com.example.androidfronted.data.source.LocalDataSource;
 import com.example.androidfronted.data.source.RemoteDataSource;
@@ -151,7 +152,21 @@ public class LoanOrderRepository {
                         order.getOverdueDays(),
                         order.getStartTime() != null ? order.getStartTime() : ""
                     );
-                    
+
+                    // 后端统计派生金额（null = 后端未提供，保持 -1 标记由 ViewModel 回退本地计算）
+                    if (data.getTotalAmountDue() != null) {
+                        entity.setTotalAmountDue(data.getTotalAmountDue());
+                    }
+                    if (data.getOutstandingAmount() != null) {
+                        entity.setOutstandingAmount(data.getOutstandingAmount());
+                    }
+                    if (data.getOutstandingPrincipal() != null) {
+                        entity.setOutstandingPrincipal(data.getOutstandingPrincipal());
+                    }
+                    if (data.getOutstandingInterest() != null) {
+                        entity.setOutstandingInterest(data.getOutstandingInterest());
+                    }
+
                     localDataSource.saveLoanOrderDetail(entity);
                     
                     callback.onSuccess(entity);
@@ -225,14 +240,34 @@ public class LoanOrderRepository {
     }
 
     /**
-     * 获取还款计划
+     * 从本地缓存读取还款计划（离线兜底/先展示后刷新）
+     */
+    public void getRepaymentPlanFromLocal(int orderId, @NonNull RepaymentPlanCallback callback) {
+        localDataSource.getRepaymentPlansByOrderId(orderId, new LocalDataSource.DataSourceCallback<List<RepaymentPlanEntity>>() {
+            @Override
+            public void onSuccess(List<RepaymentPlanEntity> data) {
+                if (data != null && !data.isEmpty()) {
+                    callback.onSuccess(data);
+                } else {
+                    callback.onError("本地无还款计划缓存");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                callback.onError(errorMessage);
+            }
+        });
+    }
+
+    /**
+     * 获取还款计划（每期状态由后端直接返回，无需本地根据 currentTerm 推算）
      * @param orderId 订单ID
-     * @param currentTerm 当前已还期数（用于确定还款状态）
      * @param callback 回调
      */
-    public void getRepaymentPlan(int orderId, int currentTerm, @NonNull RepaymentPlanCallback callback) {
+    public void getRepaymentPlan(int orderId, @NonNull RepaymentPlanCallback callback) {
         String token = tokenManager.getToken();
-        Log.d(TAG, "getRepaymentPlan, orderId: " + orderId + ", currentTerm: " + currentTerm);
+        Log.d(TAG, "getRepaymentPlan, orderId: " + orderId);
         remoteDataSource.getRepaymentPlan(token, orderId, new RemoteDataSource.NetworkCallback<RepaymentPlanResponse>() {
             @Override
             public void onSuccess(RepaymentPlanResponse response) {
@@ -428,69 +463,31 @@ public class LoanOrderRepository {
         void onError(String errorMessage);
     }
 
-    public void getAllUnpaidStats(@NonNull UnpaidStatsCallback callback) {
-        Log.d(TAG, "getAllUnpaidStats: starting to fetch unpaid stats");
-        localDataSource.getAllLoanOrders(new LocalDataSource.DataSourceCallback<List<LoanOrderEntity>>() {
+    /**
+     * 订单统计（GET /orders/statistics，后端聚合）：
+     * 返回当前用户所有订单未还期数的待还总额/本金/利息，取代原逐单逐期本地 N+1 聚合
+     */
+    public void getOrderStatistics(@NonNull UnpaidStatsCallback callback) {
+        String token = tokenManager.getToken();
+        Log.d(TAG, "getOrderStatistics: fetching from backend");
+        remoteDataSource.getUserOrderStatistics(token, new RemoteDataSource.NetworkCallback<OrderStatisticsResponse>() {
             @Override
-            public void onSuccess(List<LoanOrderEntity> orders) {
-                Log.d(TAG, "getAllUnpaidStats: got " + (orders != null ? orders.size() : 0) + " loan orders");
-                if (orders == null || orders.isEmpty()) {
-                    Log.d(TAG, "getAllUnpaidStats: no orders, returning 0");
-                    callback.onSuccess(0, 0, 0);
-                    return;
-                }
-
-                final int totalOrders = orders.size();
-                final int[] processedOrders = {0};
-                final double[] principalSum = {0};
-                final double[] interestSum = {0};
-                final double[] amountSum = {0};
-
-                for (LoanOrderEntity order : orders) {
-                    int orderId = order.getId();
-                    int currentTerm = order.getCurrentTerm();
-                    Log.d(TAG, "getAllUnpaidStats: processing order " + orderId + ", currentTerm=" + currentTerm);
-                    
-                    getRepaymentPlan(orderId, currentTerm, new RepaymentPlanCallback() {
-                        @Override
-                        public void onSuccess(List<RepaymentPlanEntity> plans) {
-                            Log.d(TAG, "getAllUnpaidStats: got " + (plans != null ? plans.size() : 0) + " repayment plans for order " + orderId);
-                            if (plans != null) {
-                                for (RepaymentPlanEntity plan : plans) {
-                                    Log.d(TAG, "getAllUnpaidStats: plan term=" + plan.getTerm() + ", status=" + plan.getStatus() + ", principal=" + plan.getPrincipal());
-                                    if ("未还".equals(plan.getStatus())) {
-                                        principalSum[0] += plan.getPrincipal();
-                                        interestSum[0] += plan.getInterest();
-                                        amountSum[0] += plan.getTotalAmount();
-                                        Log.d(TAG, "getAllUnpaidStats: added unpaid plan, principalSum=" + principalSum[0]);
-                                    }
-                                }
-                            }
-                            
-                            processedOrders[0]++;
-                            Log.d(TAG, "getAllUnpaidStats: processed " + processedOrders[0] + "/" + totalOrders + " orders");
-                            if (processedOrders[0] == totalOrders) {
-                                Log.d(TAG, "getAllUnpaidStats: final result - principal=" + principalSum[0] + ", interest=" + interestSum[0] + ", amount=" + amountSum[0]);
-                                callback.onSuccess(principalSum[0], interestSum[0], amountSum[0]);
-                            }
-                        }
-
-                        @Override
-                        public void onError(String errorMessage) {
-                            Log.e(TAG, "getAllUnpaidStats: error getting repayment plan for order " + orderId + ": " + errorMessage);
-                            processedOrders[0]++;
-                            if (processedOrders[0] == totalOrders) {
-                                Log.d(TAG, "getAllUnpaidStats: final result (with errors) - principal=" + principalSum[0] + ", interest=" + interestSum[0] + ", amount=" + amountSum[0]);
-                                callback.onSuccess(principalSum[0], interestSum[0], amountSum[0]);
-                            }
-                        }
-                    });
+            public void onSuccess(OrderStatisticsResponse response) {
+                if (response != null && response.getCode() == 200 && response.getData() != null) {
+                    OrderStatisticsResponse.StatisticsData data = response.getData();
+                    double principal = data.getTotalOutstandingPrincipal() != null ? data.getTotalOutstandingPrincipal() : 0;
+                    double interest = data.getTotalOutstandingInterest() != null ? data.getTotalOutstandingInterest() : 0;
+                    double amount = data.getTotalOutstandingAmount() != null ? data.getTotalOutstandingAmount() : 0;
+                    Log.d(TAG, "getOrderStatistics: principal=" + principal + ", interest=" + interest + ", amount=" + amount);
+                    callback.onSuccess(principal, interest, amount);
+                } else {
+                    callback.onError(response != null ? response.getMessage() : "获取订单统计失败");
                 }
             }
 
             @Override
             public void onError(String errorMessage) {
-                Log.e(TAG, "getAllUnpaidStats: error getting loan orders: " + errorMessage);
+                Log.e(TAG, "getOrderStatistics error: " + errorMessage);
                 callback.onError(errorMessage);
             }
         });
@@ -499,12 +496,13 @@ public class LoanOrderRepository {
     /**
      * 提前还款
      * @param orderId 订单ID
+     * @param periods 提前还款期数（null=一次性结清剩余全部期数，1~剩余期数=提前偿还接下来N期）
      * @param callback 回调
      */
-    public void earlyRepay(int orderId, @NonNull EarlyRepayCallback callback) {
+    public void earlyRepay(int orderId, Integer periods, @NonNull EarlyRepayCallback callback) {
         String token = tokenManager.getToken();
-        Log.d(TAG, "earlyRepay, orderId: " + orderId);
-        remoteDataSource.earlyRepay(token, orderId, new RemoteDataSource.NetworkCallback<String>() {
+        Log.d(TAG, "earlyRepay, orderId: " + orderId + ", periods: " + periods);
+        remoteDataSource.earlyRepay(token, orderId, periods, new RemoteDataSource.NetworkCallback<String>() {
             @Override
             public void onSuccess(String response) {
                 Log.d(TAG, "Early repay success: " + response);

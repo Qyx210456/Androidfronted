@@ -38,7 +38,7 @@ public class LoanManageViewModel extends BaseViewModel {
 
     public void loadUnpaidStats() {
         Log.d(TAG, "loadUnpaidStats called");
-        loanOrderRepository.getAllUnpaidStats(new LoanOrderRepository.UnpaidStatsCallback() {
+        loanOrderRepository.getOrderStatistics(new LoanOrderRepository.UnpaidStatsCallback() {
             @Override
             public void onSuccess(double principal, double interest, double amount) {
                 Log.d(TAG, "onSuccess: principal=" + principal + ", interest=" + interest + ", amount=" + amount);
